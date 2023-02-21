@@ -1,0 +1,71 @@
+import React, { useState } from "react";
+import Sidebar from "./Sidebar";
+import "../../assets/css/style.css";
+const EditProfile = () => {
+  const [slide, setSlide] = useState("Dash");
+  let Admin = JSON.parse(localStorage.getItem("token-admin-data"));
+  console.log(Admin);
+  const [sideBar, setSideBar] = useState();
+  const getBarClick = (val) => {
+    console.log(val);
+    setSideBar(val);
+  };
+  return (
+    <div className={sideBar === "click" ? "expanded_main" : "admin_main"}>
+      <Sidebar slide={slide} getBarClick={getBarClick} />
+
+      <div className="admin_panel_data height_adjust">
+        <div className="row">
+          <div className="col-12 editprofile design_outter_comman shadow">
+            <div className="row comman_header justify-content-between">
+              <div className="col-auto">
+                <h2>Edit Profile</h2>
+              </div>
+            </div>
+            <div className="row justify-content-center">
+              <div className="col-md-6">
+                <form className="row form-design justify-content-center position-relative mx-0 p-4">
+                  <div className="form-group col-auto">
+                    <div className="account_profile position-relative">
+                      <div className="circle">
+                        <img
+                          className="profile-pic"
+                          src="assets/img/profile_img1.png"
+                        />
+                      </div>
+                      <div className="p-image">
+                        <i className="upload-button fas fa-camera" />
+                        <input
+                          className="file-upload"
+                          type="file"
+                          accept="image/*"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="form-group col-12">
+                    <label htmlFor="">Full Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      defaultValue={Admin?.name}
+                      name="name"
+                      id="name"
+                    />
+                  </div>
+                  <div className="form-group col-12 text-center">
+                    <a className="comman_btn" href="javscript:;">
+                      Save
+                    </a>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default EditProfile;

@@ -1,0 +1,398 @@
+import classNames from "classnames";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import Swal from "sweetalert2";
+import {
+  AddSubCategory,
+  AllCategory,
+  AllSubCategory,
+  editSubCategoryData,
+  getViewSubCategory,
+} from "../../httpServices/dashHttpService";
+
+const SubCategories = ({ cate }) => {
+  const [allCategories, setAllCategories] = useState([]);
+  const [allSubCategories, setAllSubCategories] = useState([]);
+  const [files, setFiles] = useState();
+  const [editedSubCategories, setEditedSubCategories] = useState([]);
+  const [CatId, setCatId] = useState();
+  const [editSubCatEn, setEditSubCatEn] = useState("");
+  const [editCatEn, setEditCatEn] = useState("");
+  const [editSubCatAr, setEditSubCatAr] = useState("");
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  useEffect(() => {
+    getAllCat();
+    getAllSubCat();
+  }, [cate]);
+
+  const getAllCat = async () => {
+    const { data } = await AllCategory();
+    setAllCategories(data?.results?.categories);
+  };
+  const getAllSubCat = async () => {
+    const { data } = await AllSubCategory();
+    setAllSubCategories(data?.results?.subCategories);
+  };
+  const onFileSelection = (e, key) => {
+    setFiles({ ...files, [key]: e.target.files[0] });
+  };
+  const onSubmit = async (data) => {
+    const formData = new FormData();
+    formData.append("name_en", data?.sub_category?.trim());
+    formData.append("name_ar", data?.sub_category_ar?.trim());
+    formData.append("category", data?.category);
+    formData.append("image", files?.upload_video);
+    const res = await AddSubCategory(formData);
+    console.log(res);
+    if (!res.data.error) {
+      getAllSubCat();
+      document.getElementById("ResetSub").click();
+      Swal.fire({
+        title: "New Sub-Category Added!",
+        icon: "success",
+        confirmButtonText: "Ok",
+        confirmButtonColor: "#e25829",
+      });
+    }
+  };
+
+  const editSubCategory = async (id) => {
+    setCatId(id);
+    const { data } = await getViewSubCategory(id);
+    setEditedSubCategories(data?.results.subCategories);
+  };
+
+  const saveSubCategory = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("category", editCatEn);
+    formData.append("name_ar", editSubCatAr);
+    formData.append("name_en", editSubCatEn);
+    formData.append("image", files?.upload_video);
+    console.log(formData);
+    const { data } = await editSubCategoryData(CatId, formData);
+    if (!data.error) {
+      document.getElementById("modal2").click();
+      getAllSubCat();
+      Swal.fire({
+        title: "Category Modified Successfully!",
+        icon: "success",
+        confirmButtonText: "Ok",
+        confirmButtonColor: "#e25829",
+      });
+    }
+  };
+
+  return (
+    <div className="">
+      <div className="row p-4 mx-0">
+        <div className="col-12 mb-4 inner_design_comman border">
+          <div className="row comman_header justify-content-between">
+            <div className="col-auto">
+              <h2>Add New Sub Category</h2>
+            </div>
+          </div>
+          <form
+            className="form-design py-4 px-3 help-support-form row  justify-content-between"
+            action=""
+            onSubmit={handleSubmit(onSubmit)}
+          >
+            <div className="form-group col-6">
+              <label htmlFor="">Category</label>
+              <select
+                className={classNames("form-select form-control", {
+                  "is-invalid": errors.category,
+                })}
+                aria-label="Default select example"
+                name="category"
+                {...register("category", {
+                  required: "Category is required!",
+                })}
+              >
+                <option selected="">Select Category</option>
+                {(allCategories || [])?.map((item, index) => (
+                  <option key={index} value={item?._id}>
+                    {item?.name_en}
+                  </option>
+                ))}
+              </select>
+              {errors.category && (
+                <small className="errorText mx-1">
+                  *{errors.category?.message}
+                </small>
+              )}
+            </div>
+            <div className="form-group col-6">
+              <label htmlFor="">Sub Category Name (En)</label>
+              <input
+                type="text"
+                className={classNames("form-control", {
+                  "is-invalid": errors.sub_category,
+                })}
+                name="sub_category"
+                {...register("sub_category", {
+                  required: "Sub Category Name is required!",
+                  pattern: {
+                    value: /^[^*|\":<>[\]{}`\\()';@"!^$]+$/,
+                    message: "Special Character not allowed!",
+                  },
+                  maxLength: {
+                    value: 25,
+                    message: "Max length is 25 characters!",
+                  },
+                })}
+              />
+              {errors.sub_category && (
+                <small className="errorText mx-1">
+                  *{errors.sub_category?.message}
+                </small>
+              )}
+            </div>
+            <div className="form-group mb-0 col">
+              <label htmlFor="">Sub Category Name (Ar)</label>
+              <input
+                type="text"
+                lang="ar"
+                dir="rtl"
+                className={classNames("form-control", {
+                  "is-invalid": errors.sub_category_ar,
+                })}
+                name="sub_category_ar"
+                {...register("sub_category_ar", {
+                  required: "Sub Category(ar) Name is required!",
+                  pattern: {
+                    value: /^[^*|\":<>[\]{}`\\()';@"!^$]+$/,
+                    message: "Special Character not allowed!",
+                  },
+                  maxLength: {
+                    value: 25,
+                    message: "Max length is 25 characters!",
+                  },
+                })}
+              />
+              {errors.sub_category_ar && (
+                <small className="errorText mx-1">
+                  *{errors.sub_category_ar?.message}
+                </small>
+              )}
+            </div>
+            <div className="form-group mb-0 col choose_file position-relative">
+              <span>Sub Category Image </span>{" "}
+              <label htmlFor="upload_video">
+                <i className="fa fa-camera me-1" />
+                Choose File
+              </label>{" "}
+              <input
+                type="file"
+                className="form-control"
+                defaultValue=""
+                name="upload_video"
+                accept="image/*"
+                id="upload_video"
+                onChange={(e) => onFileSelection(e, "upload_video")}
+              />
+            </div>
+            <div className="form-group mt-4 col-auto">
+              <button className="comman_btn mt-1">Save</button>
+            </div>
+            <div className="form-group mt-4 col-auto">
+              <button
+                className="comman_btn mt-1 d-none"
+                type="reset"
+                id="ResetSub"
+              >
+                reset
+              </button>
+            </div>
+          </form>
+        </div>
+        <div className="col-12 inner_design_comman border">
+          <div className="row comman_header justify-content-between">
+            <div className="col-auto">
+              <h2>Categories</h2>
+            </div>
+            <div className="col-3">
+              <form className="form-design" action="">
+                <div className="form-group mb-0 position-relative icons_set">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Search"
+                    name="name"
+                    id="name"
+                  />
+                  <i className="far fa-search" />
+                </div>
+              </form>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-12 comman_table_design px-0">
+              <div className="table-responsive">
+                <table className="table mb-0">
+                  <thead>
+                    <tr>
+                      <th>S.No.</th>
+                      <th>Image</th>
+                      <th>Category (En)</th>
+                      <th>Sub Category (EN)</th>
+                      <th>Sub Category (AR)</th>
+                      <th>Added On</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(allSubCategories || [])?.map((item, index) => (
+                      <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>
+                          <img
+                            className="table_img"
+                            src={
+                              item?.image
+                                ? item?.image
+                                : require("../../../assets/img/Nupload.jpg")
+                            }
+                            alt=""
+                          />
+                        </td>
+                        <td>{item?.category?.name_en}</td>
+                        <td>{item?.name_en}</td>
+                        <td>{item?.name_ar}</td>
+                        <td>{item?.createdAt?.slice(0, 10)}</td>
+                        <td>
+                          <a
+                            data-bs-toggle="modal"
+                            data-bs-target="#staticBackdrop1"
+                            className="comman_btn table_viewbtn mx-1"
+                            href="javascript:;"
+                            onClick={() => editSubCategory(item._id)}
+                          >
+                            Edit
+                          </a>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="modal fade comman_modal"
+        id="staticBackdrop1"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabIndex={-1}
+        aria-labelledby="staticBackdropLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content border-0">
+            <div className="modal-header">
+              <h5 className="modal-title" id="staticBackdropLabel">
+                Edit Sub Category
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                id="modal2"
+                onClick={() => {
+                  document.getElementById("modalSubReset").click();
+                }}
+              />
+            </div>
+            <div className="modal-body">
+              <form
+                className="form-design px-3 py-2 help-support-form row align-items-end justify-content-center"
+                action=""
+              >
+                <div className="form-group col-6 choose_file position-relative">
+                  <span>Sub Category Image </span>{" "}
+                  <label htmlFor="upload_video">
+                    <i className="fa fa-camera me-1" />
+                    Choose File
+                  </label>{" "}
+                  <input
+                    type="file"
+                    className="form-control"
+                    defaultValue=""
+                    name="upload_video"
+                    id="upload_video"
+                  />
+                </div>
+
+                <div className="form-group col-6">
+                  <label htmlFor="">Category Name</label>
+                  <select
+                    aria-label="Default select example"
+                    name="category"
+                    className="form-control"
+                    onChange={(e) => setEditCatEn(e.target.value)}
+                  >
+                    <option
+                      selected=""
+                      value={editedSubCategories?.category?._id}
+                    >
+                      {editedSubCategories?.category?.name_en}
+                    </option>
+                    {(allCategories || [])?.map((item, index) => (
+                      <option key={index} value={item?._id}>
+                        {item?.name_en}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.category && (
+                    <small className="errorText mx-1">
+                      *{errors.category?.message}
+                    </small>
+                  )}
+                </div>
+                <div className="form-group col-6">
+                  <label htmlFor="">Sub Category Name (En)</label>
+                  <input
+                    type="text"
+                    defaultValue={editedSubCategories?.name_en}
+                    className="form-control"
+                    onChange={(e) => setEditSubCatEn(e.target.value)}
+                  />
+                </div>
+                <div className="form-group col-6">
+                  <label htmlFor="">Sub Category Name (Ar)</label>
+                  <input
+                    type="text"
+                    defaultValue={editedSubCategories?.name_ar}
+                    className="form-control"
+                    onChange={(e) => setEditSubCatAr(e.target.value)}
+                  />
+                </div>
+                <div className="form-group mb-0 col-auto mt-3">
+                  <button className="comman_btn" onClick={saveSubCategory}>
+                    Save
+                  </button>
+                </div>
+                <button
+                  className="comman_btn d-none"
+                  id="modalSubReset"
+                  type="reset"
+                ></button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SubCategories;
