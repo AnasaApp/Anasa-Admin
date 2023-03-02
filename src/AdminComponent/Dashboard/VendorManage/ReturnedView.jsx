@@ -45,7 +45,14 @@ const ReturnedView = () => {
                 <div className="row py-2">
                   <div className="col-12 text-center mb-4">
                     <div className="Pending-view_img">
-                      <img src="assets/img/profile_img1.png" alt="" />
+                      <img
+                        src={
+                          vendor?.shop_cover_image
+                            ? vendor?.shop_cover_image
+                            : require("../../../assets/img/uploadImg.jfif")
+                        }
+                        alt=""
+                      />
                     </div>
                     <h4 className="user_name">{vendor?.full_name}</h4>
                   </div>
@@ -131,7 +138,7 @@ const ReturnedView = () => {
                   </div>
                   <div className="col-md-6 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
-                      <span>Trade Licence copy:</span>
+                      <span>Signed Contract:</span>
                       <div className="col img_box_show">
                         <input
                           className="d-none"
@@ -140,8 +147,8 @@ const ReturnedView = () => {
                           name="file"
                         />
                         <label htmlFor="file1">
-                          <div className="license_id">
-                            <i className="fa     fa-download" />{" "}
+                          <div className="licence_id">
+                            <i className="fa fa-download" />{" "}
                             {vendor?.trade_licence_copy}
                           </div>
                         </label>
@@ -167,10 +174,10 @@ const ReturnedView = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-12 text-center mt-3">
+                  {/* <div className="col-12 text-center mt-3">
                     <button className="comman_btn me-4">Return</button>
                     <button className="comman_btn2">Approve</button>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

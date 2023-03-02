@@ -3,20 +3,25 @@ import Sidebar from "../Sidebar";
 import { useForm } from "react-hook-form";
 import Select from "react-select";
 import {
+  AddAddvertise,
   AllAdvertisement,
   AllCategory,
   SearchVendor,
 } from "../../httpServices/dashHttpService";
 import { useEffect } from "react";
+import Swal from "sweetalert2";
 
 const AdvertiseManagement = () => {
   const [slide, setSlide] = useState("ADM");
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const [selectedCate, setSelectedCate] = useState([]);
   const [type, setType] = useState("TV");
   const [allAdds, setAllAdds] = useState([]);
   const [sideBar, setSideBar] = useState();
   const [options, setOptions] = useState([]);
+  const [optionsCate, setOptionsCate] = useState([]);
   const [searchKey, setSearchKey] = useState("");
+  const [searchKey2, setSearchKey2] = useState("");
   const [allCategories, setAllCategories] = useState([]);
 
   const {
@@ -28,6 +33,10 @@ const AdvertiseManagement = () => {
   useEffect(() => {
     createOptions();
   }, [searchKey]);
+
+  useEffect(() => {
+    createOptionsCate();
+  }, [searchKey2]);
 
   useEffect(() => {
     GetAllAdds();
@@ -50,19 +59,64 @@ const AdvertiseManagement = () => {
       }
     });
   };
+  const createOptionsCate = async () => {
+    await AllCategory().then((res) => {
+      if (!res.error) {
+        let data = res?.data.results?.categories;
+        console.log(data);
+        const optionList = data?.map((item, index) => ({
+          value: item?._id,
+          label: item?.name_en,
+        }));
+        setOptionsCate(optionList);
+      }
+    });
+  };
   const handleChange = (selected) => {
     setSelectedUsers({
       usersSelected: selected,
     });
   };
+
+  const handleChangeCate = (selected) => {
+    setSelectedCate({
+      cateSelected: selected,
+    });
+  };
+
   const handleInputChange = (inputValue) => {
     setSearchKey(inputValue);
   };
+  const handleInputChangeCate = (inputValue) => {
+    setSearchKey2(inputValue);
+  };
   const GetAllAdds = async () => {
     await AllAdvertisement().then((res) => {
-      setAllAdds(res?.data.results.advertisements)
+      setAllAdds(res?.data.results.advertisements);
     });
   };
+
+  const saveAdd = async (e) => {
+    e.preventDefault();
+    await AddAddvertise({
+      vendor: "",
+      category: "",
+      selectedUsers: "",
+      subCategory: "",
+      userType: "",
+    }).then((res) => {
+      // console.log(res);
+      if (!res.data.error) {
+        Swal.fire({
+          title: "Advertise Added!",
+          icon: "success",
+          confirmButtonText: "Ok",
+          confirmButtonColor: "#e25829",
+        });
+      }
+    });
+  };
+
   const getBarClick = (val) => {
     console.log(val);
     setSideBar(val);
@@ -97,19 +151,19 @@ const AdvertiseManagement = () => {
                       <option value="TC">Top Categories</option>
                     </select>
                   </div>
+
                   <div className={type === "TC" ? "form-group col" : "d-none"}>
                     <label htmlFor="">Select Category</label>
-                    <select
-                      className="form-select "
-                      aria-label="Default select example"
-                    >
-                      <option selected="" value="">
-                        Select Category
-                      </option>
-                      {allCategories?.map((item) => (
-                        <option value={item?._id}>{item?.name_en}</option>
-                      ))}
-                    </select>
+                    <Select
+                      defaultValue=""
+                      isMulti
+                      name="users"
+                      options={optionsCate}
+                      className="basic-multi-select z-3"
+                      classNamePrefix="select"
+                      onChange={handleChangeCate}
+                      onInputChange={handleInputChangeCate}
+                    />
                   </div>
 
                   <div className={type === "TV" ? "form-group col" : "d-none"}>
@@ -126,7 +180,9 @@ const AdvertiseManagement = () => {
                     />
                   </div>
                   <div className="form-group mb-0 col-auto mt-4">
-                    <button className="comman_btn">Save</button>
+                    <button className="comman_btn" onClick={saveAdd}>
+                      Save
+                    </button>
                   </div>
                 </form>
               </div>
@@ -165,7 +221,7 @@ const AdvertiseManagement = () => {
                         <tbody>
                           {allAdds?.map((item, ind) => (
                             <tr>
-                              <td>{ind +1}</td>
+                              <td>{ind + 1}</td>
                               <td>Top Vendor</td>
                               <td>Name</td>
                               <td>

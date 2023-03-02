@@ -251,11 +251,12 @@ h6 {
   flex-wrap: wrap;
 }
 .otp-field__input {
-  width: 3rem;
+  width: 2.5rem !important;
   height: 3rem;
   margin-bottom: 1rem;
   box-sizing: border-box;
   border-radius: 0.5rem;
+  border: 2px solid;
   color: #e25829;
   font-family: "Rubik", sans-serif;
   font-size: 2rem;
@@ -839,6 +840,7 @@ strong.booking_head {
 
 .Pending-view_img img {
   max-width: 100%;
+  max-height: 85%;
   border-radius: 10px;
 }
 .user_name {

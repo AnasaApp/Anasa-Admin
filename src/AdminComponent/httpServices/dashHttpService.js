@@ -112,6 +112,28 @@ export async function getBuyerBookingDetails(id) {
     return { error };
   }
 }
+export async function getBuyerSupport(id) {
+  try {
+    const { data } = await appHttpService.post(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/getChatSupports` + "/" + id
+    );
+    console.log(data);
+
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Ok",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
 export async function AddCategory(formData) {
   try {
     const { data } = await appHttpService.post(
@@ -474,10 +496,11 @@ export async function ApproveVender(id) {
     return { error };
   }
 }
-export async function RejectVender(id) {
+export async function RejectVender(id, formData) {
   try {
     const { data } = await appHttpService.post(
-      `${process.env.REACT_APP_APIENDPOINT}api/admin/rejectVendor` + "/" + id
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/rejectVendor` + "/" + id,
+      formData
     );
     console.log(data);
 
@@ -724,6 +747,37 @@ export async function DeletePromoCode(formData) {
   try {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/`,
+      formData
+    );
+    console.log(data);
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Ok",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      console.log(error?.response?.data);
+      Swal.fire({
+        title: error?.response?.data.message,
+        text: "",
+        icon: "error",
+        confirmButtonText: "Ok",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
+
+export async function AddAddvertise(formData) {
+  try {
+    const { data } = await appHttpService.post(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/addAdvertisement`,
       formData
     );
     console.log(data);
@@ -1562,6 +1616,29 @@ export async function SendMessageBuy(formData, id) {
       console.log(error?.response?.data);
       Swal.fire({
         title: error?.response?.data.message,
+        text: "",
+        icon: "error",
+        confirmButtonText: "Ok",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
+
+export async function changeBuyerTicketStatus(id) {
+  try {
+    const { data } = await appHttpService.post(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/supportStatus` + "/" + id
+    );
+    console.log(data);
+
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
         text: "",
         icon: "error",
         confirmButtonText: "Ok",

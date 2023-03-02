@@ -7,6 +7,7 @@ import {
   changeBuyerStatus,
   getBuyerBookings,
   getBuyersDetails,
+  getBuyerSupport,
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
 const BuyerDetails = () => {
@@ -16,6 +17,8 @@ const BuyerDetails = () => {
   const [booking, setBookings] = useState([]);
   let location = useLocation();
   const [sideBar, setSideBar] = useState();
+  const [support, setSupport] = useState();
+
   const getBarClick = (val) => {
     console.log(val);
     setSideBar(val);
@@ -24,6 +27,7 @@ const BuyerDetails = () => {
   useEffect(() => {
     getBuyer();
     getBookings();
+    getChatSupport();
   }, []);
 
   const getBuyer = async () => {
@@ -32,7 +36,12 @@ const BuyerDetails = () => {
 
     setBuyerDetails(data?.results?.buyer);
   };
-
+  const getChatSupport = async () => {
+    let id = location.state?.id;
+    await getBuyerSupport(id).then((res) => {
+      setSupport(res?.data?.results.support);
+    });
+  };
   const getBookings = async () => {
     let id = location.state?.id;
     const { data } = await getBuyerBookings(id);
@@ -62,6 +71,26 @@ const BuyerDetails = () => {
     if (values?.from && values?.to) {
       e.preventDefault();
       const { data } = await AllBookings({
+        from: values?.from,
+        to: values?.to,
+        page: 1,
+      });
+      setValues({ from: "", to: "" });
+    } else {
+      e.preventDefault();
+      Swal.fire({
+        title: "Please select a Date range!",
+        icon: "warning",
+        button: "ok",
+        confirmButtonColor: "#e25829",
+      });
+    }
+  };
+
+  const onSearchSupport = async (e) => {
+    if (values?.from && values?.to) {
+      e.preventDefault();
+      const { data } = await getBuyerSupport({
         from: values?.from,
         to: values?.to,
         page: 1,
@@ -137,6 +166,7 @@ const BuyerDetails = () => {
                             defaultValue={buyerDetails?.phone_number}
                             name="name"
                             id="name"
+                            disabled
                           />
                         </div>
                         <div className="form-group col-12 mb-0">
@@ -147,6 +177,7 @@ const BuyerDetails = () => {
                             defaultValue={buyerDetails?.email}
                             name="name"
                             id="name"
+                            disabled
                           />
                         </div>
                       </div>
@@ -299,14 +330,32 @@ const BuyerDetails = () => {
                             >
                               <div className="form-group mb-0 col-5">
                                 <label htmlFor="">From</label>
-                                <input type="date" className="form-control" />
+                                <input
+                                  type="date"
+                                  className="form-control"
+                                  name="from"
+                                  id="chatFrom"
+                                  value={values.from}
+                                  onChange={handleDate}
+                                />
                               </div>
                               <div className="form-group mb-0 col-5">
                                 <label htmlFor="">To</label>
-                                <input type="date" className="form-control" />
+                                <input
+                                  type="date"
+                                  className="form-control"
+                                  id="chatTo"
+                                  value={values.to}
+                                  onChange={handleDate}
+                                />
                               </div>
                               <div className="form-group mb-0 col-auto">
-                                <button className="comman_btn2">Search</button>
+                                <button
+                                  className="comman_btn2"
+                                  onClick={onSearchSupport}
+                                >
+                                  Search
+                                </button>
                               </div>
                             </form>
                             <div className="row">
@@ -325,196 +374,46 @@ const BuyerDetails = () => {
                                       </tr>
                                     </thead>
                                     <tbody>
-                                      <tr>
-                                        <td>1</td>
-                                        <td>xyz@gmail.com</td>
-                                        <td>Lorem ipsum</td>
-                                        <td>Lorem ipsum dolor sit amet</td>
-                                        <td>March 28,2022</td>
-                                        <td>
-                                          <div className="check_toggle">
-                                            <input
-                                              type="checkbox"
-                                              name="checkv1"
-                                              id="checkv1"
-                                              className="d-none"
-                                            />
-                                            <label
+                                      {(support || [])?.map((item, index) => (
+                                        <tr>
+                                          <td>{index + 1}</td>
+                                          <td>{item?.email}</td>
+                                          <td>{item?.subject}</td>
+                                          <td>Lorem ipsum dolor sit amet</td>
+                                          <td>March 28,2022</td>
+                                          <td>
+                                            <div className="check_toggle">
+                                              <input
+                                                type="checkbox"
+                                                name="checkv1"
+                                                id="checkv1"
+                                                className="d-none"
+                                              />
+                                              <label
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#staticBackdrop12"
+                                                htmlFor="checkv1"
+                                              />
+                                            </div>
+                                          </td>
+                                          <td>
+                                            <a
                                               data-bs-toggle="modal"
-                                              data-bs-target="#staticBackdrop12"
-                                              htmlFor="checkv1"
-                                            />
-                                          </div>
-                                        </td>
-                                        <td>
-                                          <a
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#staticBackdrop"
-                                            className="comman_btn table_viewbtn"
-                                            href="javscript:;"
-                                          >
-                                            View
-                                          </a>
-                                          <a
-                                            className="comman_btn2 table_viewbtn bg-red"
-                                            href="javscript:;"
-                                          >
-                                            Delete
-                                          </a>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td>2</td>
-                                        <td>xyz@gmail.com</td>
-                                        <td>Lorem ipsum</td>
-                                        <td>Lorem ipsum dolor sit amet</td>
-                                        <td>March 28,2022</td>
-                                        <td>
-                                          <div className="check_toggle">
-                                            <input
-                                              type="checkbox"
-                                              name="checkv2"
-                                              id="checkv2"
-                                              className="d-none"
-                                            />
-                                            <label
-                                              data-bs-toggle="modal"
-                                              data-bs-target="#staticBackdrop12"
-                                              htmlFor="checkv2"
-                                            />
-                                          </div>
-                                        </td>
-                                        <td>
-                                          <a
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#staticBackdrop"
-                                            className="comman_btn table_viewbtn"
-                                            href="javscript:;"
-                                          >
-                                            View
-                                          </a>
-                                          <a
-                                            className="comman_btn2 table_viewbtn bg-red"
-                                            href="javscript:;"
-                                          >
-                                            Delete
-                                          </a>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td>3</td>
-                                        <td>xyz@gmail.com</td>
-                                        <td>Lorem ipsum</td>
-                                        <td>Lorem ipsum dolor sit amet</td>
-                                        <td>March 28,2022</td>
-                                        <td>
-                                          <div className="check_toggle">
-                                            <input
-                                              type="checkbox"
-                                              name="checkv3"
-                                              id="checkv3"
-                                              className="d-none"
-                                            />
-                                            <label
-                                              data-bs-toggle="modal"
-                                              data-bs-target="#staticBackdrop12"
-                                              htmlFor="checkv3"
-                                            />
-                                          </div>
-                                        </td>
-                                        <td>
-                                          <a
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#staticBackdrop"
-                                            className="comman_btn table_viewbtn"
-                                            href="javscript:;"
-                                          >
-                                            View
-                                          </a>
-                                          <a
-                                            className="comman_btn2 table_viewbtn bg-red"
-                                            href="javscript:;"
-                                          >
-                                            Delete
-                                          </a>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td>4</td>
-                                        <td>xyz@gmail.com</td>
-                                        <td>Lorem ipsum</td>
-                                        <td>Lorem ipsum dolor sit amet</td>
-                                        <td>March 28,2022</td>
-                                        <td>
-                                          <div className="check_toggle">
-                                            <input
-                                              type="checkbox"
-                                              name="checkv4"
-                                              id="checkv4"
-                                              className="d-none"
-                                            />
-                                            <label
-                                              data-bs-toggle="modal"
-                                              data-bs-target="#staticBackdrop12"
-                                              htmlFor="checkv4"
-                                            />
-                                          </div>
-                                        </td>
-                                        <td>
-                                          <a
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#staticBackdrop"
-                                            className="comman_btn table_viewbtn"
-                                            href="javscript:;"
-                                          >
-                                            View
-                                          </a>
-                                          <a
-                                            className="comman_btn2 table_viewbtn bg-red"
-                                            href="javscript:;"
-                                          >
-                                            Delete
-                                          </a>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td>5</td>
-                                        <td>xyz@gmail.com</td>
-                                        <td>Lorem ipsum</td>
-                                        <td>Lorem ipsum dolor sit amet</td>
-                                        <td>March 28,2022</td>
-                                        <td>
-                                          <div className="check_toggle">
-                                            <input
-                                              type="checkbox"
-                                              name="checkv5"
-                                              id="checkv5"
-                                              className="d-none"
-                                            />
-                                            <label
-                                              data-bs-toggle="modal"
-                                              data-bs-target="#staticBackdrop12"
-                                              htmlFor="checkv5"
-                                            />
-                                          </div>
-                                        </td>
-                                        <td>
-                                          <a
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#staticBackdrop"
-                                            className="comman_btn table_viewbtn"
-                                            href="javscript:;"
-                                          >
-                                            View
-                                          </a>
-                                          <a
-                                            className="comman_btn2 table_viewbtn bg-red"
-                                            href="javscript:;"
-                                          >
-                                            Delete
-                                          </a>
-                                        </td>
-                                      </tr>
+                                              data-bs-target="#staticBackdrop"
+                                              className="comman_btn table_viewbtn"
+                                              href="javscript:;"
+                                            >
+                                              View
+                                            </a>
+                                            <a
+                                              className="comman_btn2 table_viewbtn bg-red"
+                                              href="javscript:;"
+                                            >
+                                              Delete
+                                            </a>
+                                          </td>
+                                        </tr>
+                                      ))}
                                     </tbody>
                                   </table>
                                 </div>

@@ -38,7 +38,6 @@ const ApprovedView = () => {
     const { data } = await getVendorBooking(id);
     setVendorBooking(data?.results.bookings);
   };
-  
 
   const onSearchBookings = async (e) => {
     if (values?.from && values?.to) {
@@ -94,7 +93,14 @@ const ApprovedView = () => {
                 <div className="row py-2">
                   <div className="col-12 text-center mb-4">
                     <div className="Pending-view_img">
-                      <img src="assets/img/profile_img1.png" alt="" />
+                      <img
+                        src={
+                          vendor?.shop_cover_image
+                            ? vendor?.shop_cover_image
+                            : require("../../../assets/img/uploadImg.jfif")
+                        }
+                        alt=""
+                      />
                     </div>
                     <h4 className="user_name">{vendor?.full_name}</h4>
                   </div>

@@ -3,6 +3,7 @@ import "../../assets/css/style.css";
 import OtpField from "react-otp-field";
 import { useLocation, useNavigate } from "react-router-dom";
 import { adminVerifyOtp } from "../httpServices/LoginHttpService";
+import OtpInput from "react-otp-input";
 
 const OtpVerify = () => {
   const [value, setValue] = useState("");
@@ -49,20 +50,17 @@ const OtpVerify = () => {
                   </div>
                   <div className="col-12">
                     <form className="row form-design otp__content " action="">
-                      <div className=" form-group col-12 d-flex  otp-field">
+                      <div className=" form-group col-12 d-flex justify-content-center mt-2 mb-1">
                         <div>
-                          <OtpField
+                          <OtpInput
                             value={value}
                             onChange={setValue}
                             numInputs={4}
                             onChangeRegex={/^([0-9]{0,})$/}
-                            autoFocus
-                            separator={<span>-</span>}
-                            isTypeNumber
-                            inputProps={{
-                              className: "otp-field__input form",
-                              disabled: false,
-                            }}
+                            separator={<span>&nbsp;&nbsp;&nbsp;&nbsp;</span>}
+                            isInputNum
+                            inputStyle="otp-field__input "
+                            containerStyle="form-group "
                           />
                         </div>
                       </div>
@@ -84,9 +82,10 @@ const OtpVerify = () => {
                             </span>
                           ) : (
                             <span
-                              className="otp-sec mx-1 text-dark"
+                              className="otp-sec mx-1 text-primary"
                               id="resendOTP"
                               onClick={ResendOtp}
+                              style={{ cursor: "pointer" }}
                             >
                               Request again
                             </span>

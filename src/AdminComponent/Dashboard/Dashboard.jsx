@@ -67,10 +67,7 @@ const Dashboard = () => {
           <div className="col-12">
             <div className="row ms-3 mb-5 justify-content-center">
               <div className="col d-flex align-items-stretch">
-                <a
-                  href="buyers-management.html"
-                  className="row dashboard_box box_design me-3 w-100"
-                >
+                <a href="#" className="row dashboard_box box_design me-3 w-100">
                   <div className="col-auto px-0">
                     <span className="dashboard_icon">
                       <i className="fas fa-user" />
@@ -102,10 +99,7 @@ const Dashboard = () => {
                 </a>
               </div>
               <div className="col d-flex align-items-stretch">
-                <a
-                  href="javascript:;"
-                  className="row dashboard_box box_design me-3 w-100"
-                >
+                <a href="#" className="row dashboard_box box_design me-3 w-100">
                   <div className="col-auto px-0">
                     <span className="dashboard_icon">
                       <i class="fa fa-coins"></i>
@@ -138,10 +132,7 @@ const Dashboard = () => {
                 </a>
               </div>
               <div className="col d-flex align-items-stretch">
-                <a
-                  href="booking-management.html"
-                  className="row dashboard_box box_design me-3 w-100"
-                >
+                <a href="#" className="row dashboard_box box_design me-3 w-100">
                   <div className="col-auto px-0">
                     <span className="dashboard_icon">
                       <i className="fa fa-clipboard-list" />
@@ -174,10 +165,7 @@ const Dashboard = () => {
                 </a>
               </div>
               <div className="col d-flex align-items-stretch pe-0">
-                <a
-                  href="vendor-management.html"
-                  className="row dashboard_box box_design me-0 w-100"
-                >
+                <a href="#" className="row dashboard_box box_design me-0 w-100">
                   <div className="col-auto px-0">
                     <span className="dashboard_icon">
                       <i className="fa fa-store" />

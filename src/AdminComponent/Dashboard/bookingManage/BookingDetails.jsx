@@ -6,6 +6,7 @@ import {
   changeBuyerStatus,
   getBuyerBookingDetails,
   getBuyersDetails,
+  getBuyerSupport,
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
 
@@ -106,6 +107,7 @@ const BookingDetails = () => {
                             defaultValue={buyerDetails?.phone_number}
                             name="name"
                             id="name"
+                            disabled
                           />
                         </div>
                         <div className="form-group col-12 mb-0">
@@ -116,6 +118,7 @@ const BookingDetails = () => {
                             defaultValue={buyerDetails?.email}
                             name="name"
                             id="name"
+                            disabled
                           />
                         </div>
                       </div>
@@ -132,7 +135,7 @@ const BookingDetails = () => {
                       id="myTab"
                       role="tablist"
                     >
-                      <li className="nav-item" role="presentation">
+                      <li className="nav-item w-100" role="presentation">
                         <button
                           className="nav-link active"
                           id="home-tab"

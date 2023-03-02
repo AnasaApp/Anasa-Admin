@@ -52,7 +52,14 @@ const Services = () => {
                         <div className="form-group col-12 mb-2">
                           <div className="userinfor_box text-center">
                             <span className="user_imgg">
-                              <img src="assets/img/profile.png" alt="" />
+                              <img
+                                src={
+                                  vendor?.shop_cover_image
+                                    ? vendor?.shop_cover_image
+                                    : require("../../../assets/img/uploadImg.jfif")
+                                }
+                                alt=""
+                              />
                             </span>
                             <strong>{vendor?.full_name}</strong>
                           </div>
@@ -72,6 +79,7 @@ const Services = () => {
                             defaultValue={vendor?.phone_number}
                             name="name"
                             id="name"
+                            disabled
                           />
                         </div>
                         <div className="form-group col-12 mb-0">
@@ -82,6 +90,7 @@ const Services = () => {
                             defaultValue={vendor?.email}
                             name="name"
                             id="name"
+                            disabled
                           />
                         </div>
                       </div>
@@ -97,118 +106,129 @@ const Services = () => {
                   </div>
                 </div>
                 <div className="row mx-0">
-                  <div className="col-12 px-4 pb-4">
-                    {vendorService?.map((item, index) => (
-                      <div className="row booking_details_box mt-4" key={index}>
-                        <div className="col-6 py-1">
-                          <div className="row mx-0">
-                            <div className="col-6">
-                              <strong className="booking_head">
-                                Service Name :
-                              </strong>
+                  {vendorService.length ? (
+                    <div className="col-12 px-4 pb-4">
+                      {vendorService?.map((item, index) => (
+                        <div
+                          className="row booking_details_box mt-4"
+                          key={index}
+                        >
+                          <div className="col-6 py-1">
+                            <div className="row mx-0">
+                              <div className="col-6">
+                                <strong className="booking_head">
+                                  Service Name :
+                                </strong>
+                              </div>
+                              <div className="col-6">
+                                <span className="booking_head">
+                                  {item?.name_en}
+                                </span>
+                              </div>
                             </div>
-                            <div className="col-6">
-                              <span className="booking_head">
-                                {item?.name_en}
-                              </span>
+                          </div>
+                          <div className="col-6 py-1">
+                            <div className="row mx-0">
+                              <div className="col-6">
+                                <strong className="booking_head">
+                                  Customization :
+                                </strong>
+                              </div>
+                              <div className="col-6">
+                                <span className="booking_head">
+                                  {item?.customization ? "YES" : "NO"}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-6 py-1">
+                            <div className="row mx-0">
+                              <div className="col-6">
+                                <strong className="booking_head">
+                                  Category :
+                                </strong>
+                              </div>
+                              <div className="col-6">
+                                <span className="booking_head">
+                                  Category name
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-6 py-1">
+                            <div className="row mx-0">
+                              <div className="col-6">
+                                <strong className="booking_head">
+                                  Customization Deatils :
+                                </strong>
+                              </div>
+                              <div className="col-6">
+                                <span className="booking_head">Name</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-6 py-2">
+                            <div className="row mx-0">
+                              <div className="col-6">
+                                <strong className="booking_head">
+                                  Sub Category :
+                                </strong>
+                              </div>
+                              <div className="col-6">
+                                <span className="booking_head">
+                                  Sub Category Name
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-6 py-1">
+                            <div className="row mx-0">
+                              <div className="col-6">
+                                <strong className="booking_head">SAR :</strong>
+                              </div>
+                              <div className="col-6">
+                                <span className="booking_head">
+                                  {item?.price}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-6 py-1">
+                            <div className="row mx-0">
+                              <div className="col-6">
+                                <strong className="booking_head">
+                                  Price :
+                                </strong>
+                              </div>
+                              <div className="col-6">
+                                <span className="booking_head">
+                                  {item?.price}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-6 py-1">
+                            <div className="row mx-0">
+                              <div className="col-6">
+                                <strong className="booking_head">
+                                  Description :
+                                </strong>
+                              </div>
+                              <div className="col-6">
+                                <span className="booking_head">
+                                  {item?.description_en}
+                                </span>
+                              </div>
                             </div>
                           </div>
                         </div>
-                        <div className="col-6 py-1">
-                          <div className="row mx-0">
-                            <div className="col-6">
-                              <strong className="booking_head">
-                                Customization :
-                              </strong>
-                            </div>
-                            <div className="col-6">
-                              <span className="booking_head">
-                                {item?.customization ? "YES" : "NO"}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-6 py-1">
-                          <div className="row mx-0">
-                            <div className="col-6">
-                              <strong className="booking_head">
-                                Category :
-                              </strong>
-                            </div>
-                            <div className="col-6">
-                              <span className="booking_head">
-                                Category name
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-6 py-1">
-                          <div className="row mx-0">
-                            <div className="col-6">
-                              <strong className="booking_head">
-                                Customization Deatils :
-                              </strong>
-                            </div>
-                            <div className="col-6">
-                              <span className="booking_head">Name</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-6 py-2">
-                          <div className="row mx-0">
-                            <div className="col-6">
-                              <strong className="booking_head">
-                                Sub Category :
-                              </strong>
-                            </div>
-                            <div className="col-6">
-                              <span className="booking_head">
-                                Sub Category Name
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-6 py-1">
-                          <div className="row mx-0">
-                            <div className="col-6">
-                              <strong className="booking_head">SAR :</strong>
-                            </div>
-                            <div className="col-6">
-                              <span className="booking_head">
-                                {item?.price}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-6 py-1">
-                          <div className="row mx-0">
-                            <div className="col-6">
-                              <strong className="booking_head">Price :</strong>
-                            </div>
-                            <div className="col-6">
-                              <span className="booking_head">
-                                {item?.price}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-6 py-1">
-                          <div className="row mx-0">
-                            <div className="col-6">
-                              <strong className="booking_head">
-                                Description :
-                              </strong>
-                            </div>
-                            <div className="col-6">
-                              <span className="booking_head">
-                                {item?.description_en}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="col-12 px-4 pb-4">
+                      <h6 className="mt-4">NO SERIVICES FOUND.... </h6>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

@@ -10,6 +10,9 @@ import {
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
 
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+
 const BuyerManage = () => {
   const [slide, setSlide] = useState("BuyM");
   const [buyers, setBuyers] = useState([]);
@@ -28,10 +31,10 @@ const BuyerManage = () => {
     getAllBuyers();
   }, []);
   const getAllBuyers = async () => {
-    const { data } = await getBuyers({page:1});
+    const { data } = await getBuyers({ page: 1 });
     if (!data?.error) {
       console.log(buyers);
-      setBuyers(data.results?.buyers);
+      setBuyers(data.results.buyers);
     }
   };
 
@@ -39,7 +42,6 @@ const BuyerManage = () => {
     const { data } = await changeBuyerStatus(id);
 
     if (!data?.error) {
-      getAllBuyers();
       Swal.fire({
         title: " Buyer Status Changed!",
         icon: "success",
@@ -49,15 +51,19 @@ const BuyerManage = () => {
     }
   };
 
+  let dateSlicer = (data) => {
+    return `${data?.createdAt?.slice(0, 10)}`;
+  };
   const onSubmit = async (data) => {
     let formData = {
       from: data?.from,
       to: data?.to,
       page: 1,
     };
-    const { res } = await getBuyers(formData);
-    setBuyers(res?.results?.buyers);
+    const res = await getBuyers(formData);
+    setBuyers(res.data.results?.buyers);
   };
+
   var today = new Date().toISOString().split("T")[0];
   document.getElementById("From")?.setAttribute("max", today);
   document.getElementById("To")?.setAttribute("max", today);
@@ -115,6 +121,36 @@ const BuyerManage = () => {
                 </form>
                 <div className="row">
                   <div className="col-12 comman_table_design px-0">
+                    {/* <DataTable
+                      value={buyers}
+                      paginator
+                      rows={5}
+                      rowsPerPageOptions={[5, 10, 25, 50]}
+                      tableStyle={{ minWidth: "50rem" }}
+                    >
+                    
+                      <Column
+                        field="full_name"
+                        header="Name"
+                        style={{ width: "25%" }}
+                      ></Column>
+                      <Column
+                        field="email"
+                        header="Country"
+                        style={{ width: "25%" }}
+                      ></Column>
+                      <Column
+                        field="createdAt"
+                        body={dateSlicer}
+                        header="Company"
+                        style={{ width: "25%" }}
+                      ></Column>
+                      <Column
+                        field="status"
+                        header="Status"
+                        style={{ width: "25%" }}
+                      ></Column>
+                    </DataTable> */}
                     <div className="table-responsive">
                       <table className="table mb-0">
                         <thead>
@@ -137,7 +173,10 @@ const BuyerManage = () => {
                                 <td>{item?.createdAt?.slice(0, 10)}</td>
                                 <td>
                                   <form className="table_btns d-flex align-items-center">
-                                    <div className="check_toggle">
+                                    <div
+                                      className="check_toggle"
+                                      key={item?._id}
+                                    >
                                       <input
                                         type="checkbox"
                                         defaultChecked={item?.status}
@@ -163,6 +202,9 @@ const BuyerManage = () => {
                                 </td>
                               </tr>
                             ))}
+                            {/* <button className="comman_btn2 table_viewbtn">
+                              More +
+                            </button> */}
                           </tbody>
                         ) : (
                           <tbody className="justify-content-center">

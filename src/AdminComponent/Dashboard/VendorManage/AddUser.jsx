@@ -110,7 +110,7 @@ const AddUser = () => {
                       {...register("full_name", {
                         required: "*Vendor Name is Required!",
                         pattern: {
-                          value: /^[^*|\":<>[\]{}`\\()';@&$]+$/,
+                          value: /^[A-Za-z\s]{1,}[\.]{0,1}[A-Za-z\s]{0,}$/, 
                           message: "Special Character is not allowed!",
                         },
                         maxLength: {

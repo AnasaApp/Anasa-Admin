@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+import { useRef } from "react";
 import { useEffect } from "react";
+import Swal from "sweetalert2";
 import {
+  changeBuyerTicketStatus,
   getViewBuyerSupport,
   SendMessageBuy,
   SupportList,
@@ -15,17 +18,37 @@ const HelpSupport = () => {
   const [chat, setChat] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [buyId, setBuyId] = useState();
-
+  const [VenId, setVenId] = useState();
+  const ref = useRef(null);
   useEffect(() => {
     getBuyerSupport();
     getVendorSupport();
   }, []);
-  const ViewBuyerSupport = async (id) => {
-    setBuyId(id);
+  useEffect(() => {
+    scrollToBottom();
+  }, [chat]);
+
+  const ViewBuyerSupport = async (id, status) => {
+    if (status) {
+      setBuyId(id);
+      const { data } = await getViewBuyerSupport(id);
+      setChat(data?.results.message?.reply);
+    } else {
+      Swal.fire({
+        title: "Ticket Closed!",
+        text: "Please open support ticket to continue.",
+        icon: "warning",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+  };
+
+  const VieWVendorSupport = async (id) => {
+    setVenId(id);
     const { data } = await getViewBuyerSupport(id);
     setChat(data?.results.message?.reply);
   };
-
   const getBuyerSupport = async () => {
     const { data } = await SupportList({ page: 1, type: "Buyer" });
     setBuyerSupport(data.results);
@@ -47,13 +70,25 @@ const HelpSupport = () => {
     let msg = data?.results?.reply?.reply?.slice(-1);
     setChat((chat) => [...chat, msg[0]]);
     setNewMessage("");
-    if (!data.error) {
-      let eld = document.getElementById("chat2");
-      eld.scrollTop = eld.scrollHeight;
+    scrollToBottom();
+  };
+  const scrollToBottom = () => {
+    ref.current.scrollIntoView({ behavior: "smooth" });
+  };
+  console.log(chat);
+  const TicketStatus = async (id) => {
+    const { data } = await changeBuyerTicketStatus(id);
+    if (!data?.error) {
+      Swal.fire({
+        title: "Ticket Status Changed!",
+        text: data?.message,
+        icon: "success",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
     }
   };
 
-  console.log(chat);
   const getBarClick = (val) => {
     console.log(val);
     setSideBar(val);
@@ -150,55 +185,84 @@ const HelpSupport = () => {
                                         <th>Action</th>
                                       </tr>
                                     </thead>
-                                    <tbody>
-                                      {(buyerSupport?.chats || [])?.map(
-                                        (item, ind) => (
-                                          <tr key={ind}>
-                                            <td>{ind + 1}</td>
-                                            <td>{item?.buyer?.full_name}</td>
-                                            <td>{item?.buyer?.email}</td>
-                                            <td>{item?.subject}</td>
-                                            <td>{item?.concern}</td>
-                                            <td>
-                                              {item?.createdAt?.slice(0, 10)}
-                                            </td>
-                                            <td>
-                                              <div className="check_toggle">
-                                                <input
-                                                  type="checkbox"
-                                                  name="checkv1"
-                                                  id="checkv1"
-                                                  className="d-none"
-                                                />
-                                                <label
+
+                                    {buyerSupport ? (
+                                      <tbody>
+                                        {(buyerSupport?.chats || [])?.map(
+                                          (item, ind) => (
+                                            <tr key={ind}>
+                                              <td>{ind + 1}</td>
+                                              <td>{item?.buyer?.full_name}</td>
+                                              <td>{item?.buyer?.email}</td>
+                                              <td>{item?.subject}</td>
+                                              <td>{item?.concern}</td>
+                                              <td>
+                                                {item?.createdAt?.slice(0, 10)}
+                                              </td>
+                                              <td>
+                                                <div className="check_toggle">
+                                                  <input
+                                                    defaultChecked={
+                                                      item?.status
+                                                    }
+                                                    type="checkbox"
+                                                    name="checkv1"
+                                                    id={item?._id}
+                                                    className="d-none"
+                                                    onClick={() => {
+                                                      TicketStatus(item?._id);
+                                                    }}
+                                                  />
+                                                  <label htmlFor={item?._id} />
+                                                </div>
+                                              </td>
+                                              <td>
+                                                <a
                                                   data-bs-toggle="modal"
-                                                  data-bs-target="#staticBackdrop12"
-                                                  htmlFor="checkv1"
-                                                />
-                                              </div>
-                                            </td>
-                                            <td>
-                                              <a
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#staticBackdrop"
-                                                className="comman_btn table_viewbtn"
-                                                onClick={() =>
-                                                  ViewBuyerSupport(item?._id)
-                                                }
-                                              >
-                                                View
-                                              </a>
-                                              <a
-                                                className="comman_btn2 table_viewbtn bg-red"
-                                                href="javscript:;"
-                                              >
-                                                Delete
-                                              </a>
-                                            </td>
-                                          </tr>
-                                        )
-                                      )}
-                                    </tbody>
+                                                  data-bs-target={
+                                                    item?.status
+                                                      ? "#staticBackdrop"
+                                                      : ""
+                                                  }
+                                                  className="comman_btn table_viewbtn"
+                                                  onClick={() => {
+                                                    ViewBuyerSupport(
+                                                      item?._id,
+                                                      item?.status
+                                                    );
+                                                    scrollToBottom();
+                                                  }}
+                                                >
+                                                  View
+                                                </a>
+                                                <a
+                                                  className="comman_btn2 table_viewbtn bg-red"
+                                                  href="javscript:;"
+                                                >
+                                                  Delete
+                                                </a>
+                                              </td>
+                                            </tr>
+                                          )
+                                        )}
+                                      </tbody>
+                                    ) : (
+                                      <tbody>
+                                        <tr>
+                                          <td>No results..</td>
+                                          <td>No results..</td>
+                                          <td>
+                                            No results..
+                                            <br />
+                                          </td>
+                                          <td>No results..</td>
+                                          <td>No results..</td>
+                                          <td>No results..</td>
+                                          <td>No actions..</td>
+                                          <td>No actions..</td>
+                                        </tr>
+                                      </tbody>
+                                    )}
                                   </table>
                                 </div>
                               </div>
@@ -251,203 +315,76 @@ const HelpSupport = () => {
                                         <th>Action</th>
                                       </tr>
                                     </thead>
-                                    <tbody>
-                                      <tr>
-                                        <td>1</td>
-                                        <td>Ajay Sharma</td>
-                                        <td>xyz@gmail.com</td>
-                                        <td>Lorem ipsum</td>
-                                        <td>Lorem ipsum dolor sit amet</td>
-                                        <td>March 28,2022</td>
-                                        <td>
-                                          <div className="check_toggle">
-                                            <input
-                                              type="checkbox"
-                                              name="checkv1"
-                                              id="checkv1"
-                                              className="d-none"
-                                            />
-                                            <label
-                                              data-bs-toggle="modal"
-                                              data-bs-target="#staticBackdrop12"
-                                              htmlFor="checkv1"
-                                            />
-                                          </div>
-                                        </td>
-                                        <td>
-                                          <a
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#staticBackdrop"
-                                            className="comman_btn table_viewbtn"
-                                            href="javscript:;"
-                                          >
-                                            View
-                                          </a>
-                                          <a
-                                            className="comman_btn2 table_viewbtn bg-red"
-                                            href="javscript:;"
-                                          >
-                                            Delete
-                                          </a>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td>2</td>
-                                        <td>Ajay Sharma</td>
-                                        <td>xyz@gmail.com</td>
-                                        <td>Lorem ipsum</td>
-                                        <td>Lorem ipsum dolor sit amet</td>
-                                        <td>March 28,2022</td>
-                                        <td>
-                                          <div className="check_toggle">
-                                            <input
-                                              type="checkbox"
-                                              name="checkv2"
-                                              id="checkv2"
-                                              className="d-none"
-                                            />
-                                            <label
-                                              data-bs-toggle="modal"
-                                              data-bs-target="#staticBackdrop12"
-                                              htmlFor="checkv2"
-                                            />
-                                          </div>
-                                        </td>
-                                        <td>
-                                          <a
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#staticBackdrop"
-                                            className="comman_btn table_viewbtn"
-                                            href="javscript:;"
-                                          >
-                                            View
-                                          </a>
-                                          <a
-                                            className="comman_btn2 table_viewbtn bg-red"
-                                            href="javscript:;"
-                                          >
-                                            Delete
-                                          </a>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td>3</td>
-                                        <td>Ajay Sharma</td>
-                                        <td>xyz@gmail.com</td>
-                                        <td>Lorem ipsum</td>
-                                        <td>Lorem ipsum dolor sit amet</td>
-                                        <td>March 28,2022</td>
-                                        <td>
-                                          <div className="check_toggle">
-                                            <input
-                                              type="checkbox"
-                                              name="checkv3"
-                                              id="checkv3"
-                                              className="d-none"
-                                            />
-                                            <label
-                                              data-bs-toggle="modal"
-                                              data-bs-target="#staticBackdrop12"
-                                              htmlFor="checkv3"
-                                            />
-                                          </div>
-                                        </td>
-                                        <td>
-                                          <a
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#staticBackdrop"
-                                            className="comman_btn table_viewbtn"
-                                            href="javscript:;"
-                                          >
-                                            View
-                                          </a>
-                                          <a
-                                            className="comman_btn2 table_viewbtn bg-red"
-                                            href="javscript:;"
-                                          >
-                                            Delete
-                                          </a>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td>4</td>
-                                        <td>Ajay Sharma</td>
-                                        <td>xyz@gmail.com</td>
-                                        <td>Lorem ipsum</td>
-                                        <td>Lorem ipsum dolor sit amet</td>
-                                        <td>March 28,2022</td>
-                                        <td>
-                                          <div className="check_toggle">
-                                            <input
-                                              type="checkbox"
-                                              name="checkv4"
-                                              id="checkv4"
-                                              className="d-none"
-                                            />
-                                            <label
-                                              data-bs-toggle="modal"
-                                              data-bs-target="#staticBackdrop12"
-                                              htmlFor="checkv4"
-                                            />
-                                          </div>
-                                        </td>
-                                        <td>
-                                          <a
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#staticBackdrop"
-                                            className="comman_btn table_viewbtn"
-                                            href="javscript:;"
-                                          >
-                                            View
-                                          </a>
-                                          <a
-                                            className="comman_btn2 table_viewbtn bg-red"
-                                            href="javscript:;"
-                                          >
-                                            Delete
-                                          </a>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td>5</td>
-                                        <td>Ajay Sharma</td>
-                                        <td>xyz@gmail.com</td>
-                                        <td>Lorem ipsum</td>
-                                        <td>Lorem ipsum dolor sit amet</td>
-                                        <td>March 28,2022</td>
-                                        <td>
-                                          <div className="check_toggle">
-                                            <input
-                                              type="checkbox"
-                                              name="checkv5"
-                                              id="checkv5"
-                                              className="d-none"
-                                            />
-                                            <label
-                                              data-bs-toggle="modal"
-                                              data-bs-target="#staticBackdrop12"
-                                              htmlFor="checkv5"
-                                            />
-                                          </div>
-                                        </td>
-                                        <td>
-                                          <a
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#staticBackdrop"
-                                            className="comman_btn table_viewbtn"
-                                            href="javscript:;"
-                                          >
-                                            View
-                                          </a>
-                                          <a
-                                            className="comman_btn2 table_viewbtn bg-red"
-                                            href="javscript:;"
-                                          >
-                                            Delete
-                                          </a>
-                                        </td>
-                                      </tr>
-                                    </tbody>
+
+                                    {vendorSupport.length ? (
+                                      <tbody>
+                                        {(vendorSupport?.chats || [])?.map(
+                                          (item, ind) => (
+                                            <tr key={ind}>
+                                              <td>{ind + 1}</td>
+                                              <td>{item?.buyer?.full_name}</td>
+                                              <td>{item?.buyer?.email}</td>
+                                              <td>{item?.subject}</td>
+                                              <td>{item?.concern}</td>
+                                              <td>
+                                                {item?.createdAt?.slice(0, 10)}
+                                              </td>
+                                              <td>
+                                                <div className="check_toggle">
+                                                  <input
+                                                    defaultChecked={
+                                                      item?.status
+                                                    }
+                                                    type="checkbox"
+                                                    name="checkv1"
+                                                    id={item?._id}
+                                                    className="d-none"
+                                                    onClick={() => {
+                                                      TicketStatus(item?._id);
+                                                    }}
+                                                  />
+                                                  <label htmlFor={item?._id} />
+                                                </div>
+                                              </td>
+                                              <td>
+                                                <a
+                                                  data-bs-toggle="modal"
+                                                  data-bs-target="#staticBackdrop"
+                                                  className="comman_btn table_viewbtn"
+                                                  onClick={() =>
+                                                    ViewBuyerSupport(item?._id)
+                                                  }
+                                                >
+                                                  View
+                                                </a>
+                                                <a
+                                                  className="comman_btn2 table_viewbtn bg-red"
+                                                  href="javscript:;"
+                                                >
+                                                  Delete
+                                                </a>
+                                              </td>
+                                            </tr>
+                                          )
+                                        )}
+                                      </tbody>
+                                    ) : (
+                                      <tbody>
+                                        <tr>
+                                          <td>No results..</td>
+                                          <td>No results..</td>
+                                          <td>
+                                            No results..
+                                            <br />
+                                          </td>
+                                          <td>No results..</td>
+                                          <td>No results..</td>
+                                          <td>No results..</td>
+                                          <td>No actions..</td>
+                                          <td>No actions..</td>
+                                        </tr>
+                                      </tbody>
+                                    )}
                                   </table>
                                 </div>
                               </div>
@@ -513,6 +450,7 @@ const HelpSupport = () => {
                         </div>
                       </div>
                     ))}
+                    <div ref={ref}></div>
                   </div>
                 </div>
               </div>
@@ -527,6 +465,7 @@ const HelpSupport = () => {
                       value={newMessage}
                     />
                   </div>
+
                   <div className="form-group col-auto ps-0">
                     <button
                       className="send_btn"
@@ -534,8 +473,6 @@ const HelpSupport = () => {
                       onClick={(e) => {
                         e.preventDefault();
                         sendMessage();
-                        let el = document.getElementById("chat");
-                        el.scrollTop = el.scrollHeight;
                       }}
                     >
                       <i className="fab fa-telegram-plane" />

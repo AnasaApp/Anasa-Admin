@@ -154,6 +154,13 @@ const VendorManagement = () => {
     console.log(val);
     setSideBar(val);
   };
+  var today = new Date().toISOString().split("T")[0];
+  document.getElementById("appFrom")?.setAttribute("max", today);
+  document.getElementById("appTo")?.setAttribute("max", today);
+  document.getElementById("penFrom")?.setAttribute("max", today);
+  document.getElementById("penTo")?.setAttribute("max", today);
+  document.getElementById("retFrom")?.setAttribute("max", today);
+  document.getElementById("retTo")?.setAttribute("max", today);
   return (
     <div className={sideBar === "click" ? "expanded_main" : "admin_main"}>
       <Sidebar slide={slide} getBarClick={getBarClick} />
