@@ -2,6 +2,7 @@ import classNames from "classnames";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { Button, Loader } from "rsuite";
 import Swal from "sweetalert2";
 import { AddVendor } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
@@ -9,6 +10,7 @@ import Sidebar from "../Sidebar";
 const AddUser = () => {
   const [slide, setSlide] = useState("VM");
   const [sideBar, setSideBar] = useState();
+  const [loader, setLoader] = useState("");
   const [files, setFiles] = useState([]);
   const {
     register,
@@ -23,7 +25,8 @@ const AddUser = () => {
   };
 
   const onSave = async (data) => {
-    console.log(data);
+    setLoader(true);
+
     const formData = new FormData();
     formData.append("shop_cover_image", files?.shop_cover_image);
     formData.append("full_name", data?.full_name.trim());
@@ -110,7 +113,7 @@ const AddUser = () => {
                       {...register("full_name", {
                         required: "*Vendor Name is Required!",
                         pattern: {
-                          value: /^[A-Za-z\s]{1,}[\.]{0,1}[A-Za-z\s]{0,}$/, 
+                          value: /^[A-Za-z\s]{1,}[\.]{0,1}[A-Za-z\s]{0,}$/,
                           message: "Special Character is not allowed!",
                         },
                         maxLength: {
@@ -167,7 +170,7 @@ const AddUser = () => {
                       {...register("shop_name", {
                         required: "*Shop Name is Required!",
                         pattern: {
-                          value: /^[^*|\":<>[\]{}`\\()';@&$]+$/,
+                          value: /^[A-Za-z\s]{1,}[\.]{0,1}[A-Za-z\s]{0,}$/,
                           message: "Special Character is not allowed!",
                         },
                         maxLength: {
@@ -346,7 +349,7 @@ const AddUser = () => {
                       {...register("city", {
                         required: "*City is Required!",
                         pattern: {
-                          value: /^[^*|\":<>[\]{}`\\()';@&$]+$/,
+                          value: /^[A-Za-z\s]{1,}[\.]{0,1}[A-Za-z\s]{0,}$/,
                           message: "Special Character is not allowed!",
                         },
                         maxLength: {
@@ -362,29 +365,26 @@ const AddUser = () => {
                     )}
                   </div>
                   <div className="form-group col-4 mb-4">
-                    <label htmlFor="">Country</label>
+                    <label htmlFor="">Country Code</label>
                     <input
-                      type="text"
+                      type="number"
                       className={classNames("form-control", {
-                        "is-invalid": errors.country,
+                        "is-invalid": errors.country_code,
                       })}
-                      name="country"
+                      name="country_code"
                       id="name"
-                      {...register("country", {
-                        required: "*Country is Required!",
-                        pattern: {
-                          value: /^[^*|\":<>[\]{}`\\()';@&$]+$/,
-                          message: "Special Character is not allowed!",
-                        },
+                      {...register("country_code", {
+                        required: "*Country Code is Required!",
+
                         maxLength: {
-                          value: 30,
-                          message: "maximium 30 Characters",
+                          value: 4,
+                          message: "maximium 4 Characters",
                         },
                       })}
                     />
-                    {errors.country && (
+                    {errors.country_code && (
                       <small className="errorText mx-1 ">
-                        {errors.country?.message}
+                        {errors.country_code?.message}
                       </small>
                     )}
                   </div>
@@ -501,9 +501,15 @@ const AddUser = () => {
                     </div>
                   </div>
                   <div className="col-12 text-center">
-                    <button className="comman_btn2" type="submit">
+                    <Button
+                      loading={loader}
+                      appearance="primary"
+                      className="comman_btn2"
+                      type="submit"
+                    >
                       Save
-                    </button>
+                    </Button>
+                    <Loader />
                   </div>
                 </form>
               </div>

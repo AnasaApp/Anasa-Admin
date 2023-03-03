@@ -74,14 +74,14 @@ const SubCategories = ({ cate }) => {
     formData.append("category", editCatEn);
     formData.append("name_ar", editSubCatAr);
     formData.append("name_en", editSubCatEn);
-    formData.append("image", files?.upload_video);
+    formData.append("image", files?.upload_video2);
     console.log(formData);
     const { data } = await editSubCategoryData(CatId, formData);
     if (!data.error) {
       document.getElementById("modal2").click();
       getAllSubCat();
       Swal.fire({
-        title: "Category Modified Successfully!",
+        title: "Sub Category Modified Successfully!",
         icon: "success",
         confirmButtonText: "Ok",
         confirmButtonColor: "#e25829",
@@ -143,8 +143,12 @@ const SubCategories = ({ cate }) => {
                     message: "Special Character not allowed!",
                   },
                   maxLength: {
-                    value: 25,
-                    message: "Max length is 25 characters!",
+                    value: 30,
+                    message: "Max length is 30 characters!",
+                  },
+                  minLength: {
+                    value: 5,
+                    message: "Min length is 5 characters!",
                   },
                 })}
               />
@@ -171,8 +175,12 @@ const SubCategories = ({ cate }) => {
                     message: "Special Character not allowed!",
                   },
                   maxLength: {
-                    value: 25,
-                    message: "Max length is 25 characters!",
+                    value: 30,
+                    message: "Max length is 30 characters!",
+                  },
+                  minLength: {
+                    value: 5,
+                    message: "Min length is 5 characters!",
                   },
                 })}
               />
@@ -327,8 +335,9 @@ const SubCategories = ({ cate }) => {
                     type="file"
                     className="form-control"
                     defaultValue=""
-                    name="upload_video"
-                    id="upload_video"
+                    name="upload_video2"
+                    id="upload_video2"
+                    onChange={(e) => onFileSelection(e, "upload_video2")}
                   />
                 </div>
 

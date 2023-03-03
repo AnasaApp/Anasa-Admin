@@ -1,6 +1,36 @@
 import appHttpService from "../adminHttpService";
 import Swal from "sweetalert2";
 
+export async function updateProfile(formData) {
+  try {
+    const { data } = await appHttpService.post(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/updateProfile`,
+      formData
+    );
+    console.log(data);
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Ok",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      console.log(error?.response?.data);
+      Swal.fire({
+        title: error?.response?.data.message,
+        text: "",
+        icon: "error",
+        confirmButtonText: "Ok",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
 export async function getBuyers(formData) {
   try {
     const { data } = await appHttpService.post(
@@ -74,7 +104,6 @@ export async function getBuyerBookings(id) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/getBookings` + "/" + id
     );
     console.log(data);
-
     return { data };
   } catch (error) {
     if (error.response) {
@@ -269,6 +298,7 @@ export async function AddSubCategory(formData) {
       formData
     );
     console.log(data);
+
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -328,6 +358,14 @@ export async function editCategoryData(id, formData) {
       formData
     );
     console.log(data);
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Ok",
+        confirmButtonColor: "#e25829",
+      });
+    }
 
     return { data };
   } catch (error) {
@@ -351,7 +389,14 @@ export async function editSubCategoryData(id, formData) {
       formData
     );
     console.log(data);
-
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Ok",
+        confirmButtonColor: "#e25829",
+      });
+    }
     return { data };
   } catch (error) {
     if (error.response) {
@@ -668,7 +713,14 @@ export async function SearchUser(formData) {
       formData
     );
     console.log(data);
-
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Ok",
+        confirmButtonColor: "#e25829",
+      });
+    }
     return { data };
   } catch (error) {
     if (error.response) {
@@ -862,7 +914,14 @@ export async function editPromocode(id, formData) {
       formData
     );
     console.log(data);
-
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Ok",
+        confirmButtonColor: "#e25829",
+      });
+    }
     return { data };
   } catch (error) {
     if (error.response) {

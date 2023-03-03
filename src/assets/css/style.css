@@ -837,7 +837,16 @@ strong.booking_head {
 .vendor-management li.nav-item {
   width: 33.33%;
 }
-
+.profile{
+  position: relative;
+  overflow: hidden;
+  left: -4px;
+  opacity: 5%;
+  z-index: 0;
+}
+.preview_image{
+  max-width: 760px;
+}
 .Pending-view_img img {
   max-width: 100%;
   max-height: 85%;
@@ -1026,7 +1035,12 @@ strong.booking_head {
   cursor: pointer;
   border-radius: 50px;
   font-size: 13px;
+  z-index: 9;
   border: 2px solid #dfdddf;
+}
+.upload-button{
+  position: relative;
+  left: 5px;
 }
 .account_profile .circle {
   overflow: hidden;

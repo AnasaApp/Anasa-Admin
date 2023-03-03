@@ -14,7 +14,7 @@ import SubCategories from "./SubCategories";
 
 const Categories = () => {
   const [slide, setSlide] = useState("CM");
-  const [files, setFiles] = useState();
+  const [files, setFiles] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
   const [editedCategories, setEditedCategories] = useState([]);
   const [CatId, setCatId] = useState();
@@ -22,10 +22,12 @@ const Categories = () => {
   const [editCatAr, setEditCatAr] = useState("");
   const [sideBar, setSideBar] = useState();
   const [cate, setCate] = useState(false);
+
   const getBarClick = (val) => {
     console.log(val);
     setSideBar(val);
   };
+
   const {
     register,
     handleSubmit,
@@ -35,6 +37,7 @@ const Categories = () => {
   useEffect(() => {
     getAllCat();
   }, []);
+
   const getAllCat = async () => {
     const { data } = await AllCategory();
     setAllCategories(data?.results?.categories);
@@ -69,13 +72,14 @@ const Categories = () => {
     const { data } = await getViewCategory(id);
     setEditedCategories(data?.results.categories);
   };
-  console.log(editCatAr);
+  console.log(files);
+
   const saveCategories = async (e) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("name_en", editCatEn);
     formData.append("name_ar", editCatAr);
-    formData.append("image", files?.upload_video);
+    formData.append("image", files?.upload_video2);
     console.log(formData);
     const { data } = await editCategoryData(CatId, formData);
     console.log(data);
@@ -172,8 +176,12 @@ const Categories = () => {
                                       message: "Special Character not allowed!",
                                     },
                                     maxLength: {
-                                      value: 15,
-                                      message: "Max length is 15 characters!",
+                                      value: 30,
+                                      message: "Max length is 30 characters!",
+                                    },
+                                    minLength: {
+                                      value: 5,
+                                      message: "Min length is 5 characters!",
                                     },
                                   })}
                                 />
@@ -200,8 +208,12 @@ const Categories = () => {
                                       message: "Special Character not allowed!",
                                     },
                                     maxLength: {
-                                      value: 15,
-                                      message: "Max length is 15 characters!",
+                                      value: 30,
+                                      message: "Max length is 30 characters!",
+                                    },
+                                    minLength: {
+                                      value: 5,
+                                      message: "Min length is 5 characters!",
                                     },
                                   })}
                                 />
@@ -385,8 +397,9 @@ const Categories = () => {
                     type="file"
                     className="form-control"
                     defaultValue=""
-                    name="upload_video"
-                    id="upload_video"
+                    name="upload_video2"
+                    id="upload_video2"
+                    onChange={(e) => onFileSelection(e, "upload_video2")}
                   />
                 </div>
                 <div className="form-group col-6">

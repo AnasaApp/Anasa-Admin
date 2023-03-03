@@ -172,7 +172,7 @@ const ApprovedView = () => {
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Country:</span>
                       <div className="col">
-                        <strong>{vendor?.country}</strong>
+                        <strong>{vendor?.country_code}</strong>
                       </div>
                     </div>
                   </div>
