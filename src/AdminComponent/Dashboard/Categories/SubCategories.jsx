@@ -9,7 +9,8 @@ import {
   editSubCategoryData,
   getViewSubCategory,
 } from "../../httpServices/dashHttpService";
-
+import { MDBDataTable } from "mdbreact";
+import moment from "moment";
 const SubCategories = ({ cate }) => {
   const [allCategories, setAllCategories] = useState([]);
   const [allSubCategories, setAllSubCategories] = useState([]);
@@ -19,6 +20,55 @@ const SubCategories = ({ cate }) => {
   const [editSubCatEn, setEditSubCatEn] = useState("");
   const [editCatEn, setEditCatEn] = useState("");
   const [editSubCatAr, setEditSubCatAr] = useState("");
+  const [category, setCategory] = useState({
+    columns: [
+      {
+        label: "S.NO.",
+        field: "sn",
+        sort: "asc",
+        width: 150,
+      },
+      {
+        label: "IMAGE",
+        field: "image",
+        sort: "asc",
+        width: 150,
+      },
+      {
+        label: "CATEGORY",
+        field: "name_cate",
+        sort: "asc",
+        width: 150,
+      },
+      {
+        label: "SUB CATEGORY (EN)",
+        field: "name_en",
+        sort: "asc",
+        width: 150,
+      },
+
+      {
+        label: "SUB CATEGORY (AR)",
+        field: "name_ar",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "ADDED ON",
+        field: "date",
+        sort: "asc",
+        width: 100,
+      },
+
+      {
+        label: "ACTION",
+        field: "action",
+        sort: "asc",
+        width: 100,
+      },
+    ],
+    rows: [],
+  });
 
   const {
     register,
@@ -37,7 +87,46 @@ const SubCategories = ({ cate }) => {
   };
   const getAllSubCat = async () => {
     const { data } = await AllSubCategory();
-    setAllSubCategories(data?.results?.subCategories);
+    const newRows = [];
+    if (!data.error) {
+      let values = data?.results?.subCategories;
+      console.log(values);
+      values?.map((list, index) => {
+        const returnData = {};
+        returnData.sn = index + 1 + ".";
+        returnData.image = (
+          <img
+            src={
+              list?.image
+                ? list?.image
+                : require("../../../assets/img/Nupload.jpg")
+            }
+            alt="image"
+            className="table_img"
+          />
+        );
+        returnData.name_cate = list?.category?.name_en;
+        returnData.name_en = list?.name_en;
+        returnData.name_ar = list?.name_ar;
+        returnData.date = moment(list?.createdAt).format("L");
+        returnData.action = (
+          <>
+            <a
+              data-bs-toggle="modal"
+              data-bs-target="#staticBackdrop1"
+              className="comman_btn table_viewbtn mx-1"
+              href="javascript:;"
+              onClick={() => editSubCategory(list?._id)}
+            >
+              Edit
+            </a>
+          </>
+        );
+        newRows.push(returnData);
+      });
+
+      setCategory({ ...category, rows: newRows });
+    }
   };
   const onFileSelection = (e, key) => {
     setFiles({ ...files, [key]: e.target.files[0] });
@@ -75,8 +164,8 @@ const SubCategories = ({ cate }) => {
     formData.append("name_ar", editSubCatAr);
     formData.append("name_en", editSubCatEn);
     formData.append("image", files?.upload_video2);
-    console.log(formData);
     const { data } = await editSubCategoryData(CatId, formData);
+
     if (!data.error) {
       document.getElementById("modal2").click();
       getAllSubCat();
@@ -147,8 +236,8 @@ const SubCategories = ({ cate }) => {
                     message: "Max length is 30 characters!",
                   },
                   minLength: {
-                    value: 5,
-                    message: "Min length is 5 characters!",
+                    value: 2,
+                    message: "Min length is 2 characters!",
                   },
                 })}
               />
@@ -179,8 +268,8 @@ const SubCategories = ({ cate }) => {
                     message: "Max length is 30 characters!",
                   },
                   minLength: {
-                    value: 5,
-                    message: "Min length is 5 characters!",
+                    value: 2,
+                    message: "Min length is 2 characters!",
                   },
                 })}
               />
@@ -223,10 +312,10 @@ const SubCategories = ({ cate }) => {
         <div className="col-12 inner_design_comman border">
           <div className="row comman_header justify-content-between">
             <div className="col-auto">
-              <h2>Categories</h2>
+              <h2>Sub Categories</h2>
             </div>
             <div className="col-3">
-              <form className="form-design" action="">
+              {/* <form className="form-design" action="">
                 <div className="form-group mb-0 position-relative icons_set">
                   <input
                     type="text"
@@ -237,13 +326,21 @@ const SubCategories = ({ cate }) => {
                   />
                   <i className="far fa-search" />
                 </div>
-              </form>
+              </form> */}
             </div>
           </div>
           <div className="row">
             <div className="col-12 comman_table_design px-0">
-              <div className="table-responsive">
-                <table className="table mb-0">
+              <div className="table-responsive p-1">
+                <MDBDataTable
+                  bordered
+                  className="mt-2"
+                  hover
+                  data={category}
+                  noBottomColumns
+                  sortable
+                />
+                {/* <table className="table mb-0">
                   <thead>
                     <tr>
                       <th>S.No.</th>
@@ -288,7 +385,7 @@ const SubCategories = ({ cate }) => {
                       </tr>
                     ))}
                   </tbody>
-                </table>
+                </table> */}
               </div>
             </div>
           </div>

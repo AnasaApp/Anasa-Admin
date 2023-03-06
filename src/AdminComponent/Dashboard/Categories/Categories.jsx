@@ -11,17 +11,61 @@ import {
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
 import SubCategories from "./SubCategories";
+import { MDBDataTable } from "mdbreact";
+import moment from "moment";
 
 const Categories = () => {
   const [slide, setSlide] = useState("CM");
   const [files, setFiles] = useState([]);
-  const [allCategories, setAllCategories] = useState([]);
   const [editedCategories, setEditedCategories] = useState([]);
   const [CatId, setCatId] = useState();
   const [editCatEn, setEditCatEn] = useState("");
   const [editCatAr, setEditCatAr] = useState("");
   const [sideBar, setSideBar] = useState();
   const [cate, setCate] = useState(false);
+  const [category, setCategory] = useState({
+    columns: [
+      {
+        label: "S.NO.",
+        field: "sn",
+        sort: "asc",
+        width: 150,
+      },
+      {
+        label: "IMAGE",
+        field: "image",
+        sort: "asc",
+        width: 150,
+      },
+      {
+        label: "CATEGORY (EN)",
+        field: "name_en",
+        sort: "asc",
+        width: 150,
+      },
+
+      {
+        label: "CATEGORY (AR)",
+        field: "name_ar",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "ADDED ON",
+        field: "date",
+        sort: "asc",
+        width: 100,
+      },
+
+      {
+        label: "ACTION",
+        field: "action",
+        sort: "asc",
+        width: 100,
+      },
+    ],
+    rows: [],
+  });
 
   const getBarClick = (val) => {
     console.log(val);
@@ -40,7 +84,39 @@ const Categories = () => {
 
   const getAllCat = async () => {
     const { data } = await AllCategory();
-    setAllCategories(data?.results?.categories);
+    const newRows = [];
+    if (!data.error) {
+      let values = data?.results?.categories;
+      console.log(values);
+      values?.map((list, index) => {
+        const returnData = {};
+        returnData.sn = index + 1 + ".";
+        returnData.image = (
+          <img src={list.image} alt="image" className="table_img" />
+        );
+        returnData.name_en = list?.name_en;
+        returnData.name_ar = list?.name_ar;
+        returnData.date = moment(list?.createdAt).format("L");
+        returnData.action = (
+          <>
+            <a
+              data-bs-toggle="modal"
+              data-bs-target="#staticBackdrop"
+              className=" table_viewbtn"
+              style={{ color: "#fff", background: "#4f73af" }}
+              // href="javascript:;"
+              onClick={() => editCategory(list._id)}
+            >
+              Edit
+            </a>
+          </>
+        );
+        newRows.push(returnData);
+      });
+
+      setCategory({ ...category, rows: newRows });
+    }
+    // setAllCategories(data?.results?.categories);
   };
 
   const onFileSelection = (e, key) => {
@@ -111,7 +187,7 @@ const Categories = () => {
                     >
                       <li className="nav-item" role="presentation">
                         <button
-                          className="nav-link active"
+                          className="nav-link active "
                           id="home-tab"
                           data-bs-toggle="tab"
                           data-bs-target="#home"
@@ -152,8 +228,8 @@ const Categories = () => {
                         <div className="row p-4 mx-0">
                           <div className="col-12 mb-4 inner_design_comman border">
                             <div className="row comman_header justify-content-between">
-                              <div className="col-auto">
-                                <h2>Add New Category</h2>
+                              <div className="col-auto ">
+                                <h2 className="fw-bolder">Add New Category</h2>
                               </div>
                             </div>
                             <form
@@ -180,8 +256,8 @@ const Categories = () => {
                                       message: "Max length is 30 characters!",
                                     },
                                     minLength: {
-                                      value: 5,
-                                      message: "Min length is 5 characters!",
+                                      value: 2,
+                                      message: "Min length is 2 characters!",
                                     },
                                   })}
                                 />
@@ -212,8 +288,8 @@ const Categories = () => {
                                       message: "Max length is 30 characters!",
                                     },
                                     minLength: {
-                                      value: 5,
-                                      message: "Min length is 5 characters!",
+                                      value: 2,
+                                      message: "Min length is 2 characters!",
                                     },
                                   })}
                                 />
@@ -264,27 +340,22 @@ const Categories = () => {
                           <div className="col-12 inner_design_comman border">
                             <div className="row comman_header justify-content-between">
                               <div className="col-auto">
-                                <h2>Categories</h2>
+                                <h2 className="fw-bolder">Categories</h2>
                               </div>
-                              <div className="col-3">
-                                <form className="form-design" action="">
-                                  <div className="form-group mb-0 position-relative icons_set">
-                                    <input
-                                      type="text"
-                                      className="form-control"
-                                      placeholder="Search"
-                                      name="name"
-                                      id="name"
-                                    />
-                                    <i className="far fa-search" />
-                                  </div>
-                                </form>
-                              </div>
+                              <div className="col-3"></div>
                             </div>
                             <div className="row">
                               <div className="col-12 comman_table_design px-0">
-                                <div className="table-responsive">
-                                  <table className="table mb-0">
+                                <div className="table-responsive p-1">
+                                  <MDBDataTable
+                                    bordered
+                                    className="mt-2"
+                                    hover
+                                    data={category}
+                                    noBottomColumns
+                                    sortable
+                                  />
+                                  {/* <table className="table mb-0">
                                     <thead>
                                       <tr>
                                         <th>S.No.</th>
@@ -333,7 +404,7 @@ const Categories = () => {
                                         )
                                       )}
                                     </tbody>
-                                  </table>
+                                  </table> */}
                                 </div>
                               </div>
                             </div>

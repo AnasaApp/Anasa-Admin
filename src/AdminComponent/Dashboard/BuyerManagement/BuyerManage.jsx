@@ -9,9 +9,8 @@ import {
   getBuyers,
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
-
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
+import { MDBDataTable } from "mdbreact";
+import moment from "moment";
 
 const BuyerManage = () => {
   const [slide, setSlide] = useState("BuyM");
@@ -21,6 +20,55 @@ const BuyerManage = () => {
     console.log(val);
     setSideBar(val);
   };
+  const [users, setUsers] = useState({
+    
+    columns: [
+      {
+        label: "S.NO.",
+        field: "sn",
+        sort: "asc",
+        width: 150,
+      },
+      {
+        label: "Full Name",
+        field: "name",
+        sort: "asc",
+        width: 150,
+      },
+
+      {
+        label: "EMAIL ADDRESS",
+        field: "email",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "PHONE NUMBER",
+        field: "number",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "ADDED ON",
+        field: "date",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "STATUS",
+        field: "status",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "ACTION",
+        field: "action",
+        sort: "asc",
+        width: 100,
+      },
+    ],
+    rows: [],
+  });
   const {
     register,
     handleSubmit,
@@ -30,18 +78,59 @@ const BuyerManage = () => {
   useEffect(() => {
     getAllBuyers();
   }, []);
+
   const getAllBuyers = async () => {
     const { data } = await getBuyers({ page: 1 });
-    if (!data?.error) {
-      console.log(buyers);
-      setBuyers(data.results.buyers);
+    const newRows = [];
+    if (!data.error) {
+      let values = data?.results?.buyers;
+      console.log(values);
+      values?.map((list, index) => {
+        const returnData = {};
+        returnData.sn = index + 1 + ".";
+        returnData.name = list?.full_name;
+        returnData.email = list?.email;
+        returnData.number = list?.phone_number;
+        returnData.date = moment(list?.createdAt).format("L");
+        returnData.status = (
+          <div className="check_toggle" key={list?._id}>
+            <input
+              type="checkbox"
+              defaultChecked={list?.status}
+              name="check1"
+              id={list?._id}
+              className="d-none"
+              onClick={() => {
+                BuyerStatus(list?._id);
+              }}
+            />
+            <label for={list?._id}></label>
+          </div>
+        );
+        returnData.action = (
+          <>
+            <Link
+              className="comman_btn2 table_viewbtn"
+              to="/Admin/Dashboard/Buyer-Details"
+              state={{ id: list?._id }}
+            >
+              View
+            </Link>
+          </>
+        );
+        newRows.push(returnData);
+      });
+
+      setUsers({ ...users, rows: newRows });
     }
+    
   };
 
   const BuyerStatus = async (id) => {
     const { data } = await changeBuyerStatus(id);
 
     if (!data?.error) {
+      getAllBuyers();
       Swal.fire({
         title: " Buyer Status Changed!",
         icon: "success",
@@ -151,8 +240,17 @@ const BuyerManage = () => {
                         style={{ width: "25%" }}
                       ></Column>
                     </DataTable> */}
-                    <div className="table-responsive">
-                      <table className="table mb-0">
+                    <div className="table-responsive p-2">
+                      <MDBDataTable
+                        bordered
+                        className="mt-2"
+                        hover
+                        data={users}
+                        noBottomColumns
+                        sortable
+            
+                      />
+                      {/* <table className="table mb-0">
                         <thead>
                           <tr>
                             <th>S.No.</th>
@@ -202,9 +300,6 @@ const BuyerManage = () => {
                                 </td>
                               </tr>
                             ))}
-                            {/* <button className="comman_btn2 table_viewbtn">
-                              More +
-                            </button> */}
                           </tbody>
                         ) : (
                           <tbody className="justify-content-center">
@@ -218,7 +313,7 @@ const BuyerManage = () => {
                             </tr>
                           </tbody>
                         )}
-                      </table>
+                      </table> */}
                     </div>
                   </div>
                 </div>

@@ -106,7 +106,7 @@ const Services = () => {
                   </div>
                 </div>
                 <div className="row mx-0">
-                  {vendorService.length ? (
+                  {vendorService?.length ? (
                     <div className="col-12 px-4 pb-4">
                       {vendorService?.map((item, index) => (
                         <div

@@ -11,6 +11,8 @@ import "../node_modules/@fortawesome/free-solid-svg-icons/faBars"
 
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.js";
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import "mdbreact/dist/css/mdb.css";
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

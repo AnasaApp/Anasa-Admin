@@ -411,6 +411,86 @@ const AddUser = () => {
                       </small>
                     )}
                   </div>
+
+                  <br className="border" />
+                  <div className="form-group col-4 mb-4">
+                    <label htmlFor="">BANK NAME (optional)</label>
+                    <input
+                      type="text"
+                      className={classNames("form-control", {
+                        "is-invalid": errors.bank_name,
+                      })}
+                      name="bank_name"
+                      id="name"
+                      {...register("bank_name", {
+                        pattern: {
+                          value: /^[A-Za-z\s]{1,}[\.]{0,1}[A-Za-z\s]{0,}$/,
+                          message: "Special Character is not allowed!",
+                        },
+                        maxLength: {
+                          value: 20,
+                          message: "Maximium 20 Characters!",
+                        },
+                      })}
+                    />
+                    {errors.bank_name && (
+                      <small className="errorText mx-1 ">
+                        {errors.bank_name?.message}
+                      </small>
+                    )}
+                  </div>
+                  <div className="form-group col-4 mb-4">
+                    <label htmlFor="">Account Number(optional)</label>
+                    <input
+                      type="number"
+                      className={classNames("form-control", {
+                        "is-invalid": errors.bank_account,
+                      })}
+                      name="bank_account"
+                      id="name"
+                      {...register("bank_account", {
+                        minLength: {
+                          value: 8,
+                          message: "Minimium 8 Characters!",
+                        },
+                        maxLength: {
+                          value: 25,
+                          message: "Maximium 25 Characters!",
+                        },
+                      })}
+                    />
+                    {errors.bank_account && (
+                      <small className="errorText mx-1 ">
+                        {errors.bank_account?.message}
+                      </small>
+                    )}
+                  </div>
+                  <div className="form-group col-4 mb-4">
+                    <label htmlFor="">Account Holder Name (optional)</label>
+                    <input
+                      type="text"
+                      className={classNames("form-control", {
+                        "is-invalid": errors.account_holder,
+                      })}
+                      name="account_holder"
+                      id="name"
+                      {...register("account_holder", {
+                        pattern: {
+                          value: /^[A-Za-z\s]{1,}[\.]{0,1}[A-Za-z\s]{0,}$/,
+                          message: "Special Character is not allowed!",
+                        },
+                        maxLength: {
+                          value: 20,
+                          message: "Maximium 20 Characters!",
+                        },
+                      })}
+                    />
+                    {errors.account_holder && (
+                      <small className="errorText mx-1 ">
+                        {errors.account_holder?.message}
+                      </small>
+                    )}
+                  </div>
                   <div className="col-md-6 mb-4 d-flex align-items-stretch">
                     <div
                       className={
