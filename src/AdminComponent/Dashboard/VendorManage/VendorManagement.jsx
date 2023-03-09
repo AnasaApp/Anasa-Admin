@@ -8,18 +8,165 @@ import {
   VendorsCount,
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
-
+import { MDBDataTable } from "mdbreact";
+import moment from "moment";
 const VendorManagement = () => {
   const [slide, setSlide] = useState("VM");
   const navigate = useNavigate();
-  const [penVendors, setPenVendors] = useState();
-  const [AppVendors, setAppVendors] = useState();
   const [sideBar, setSideBar] = useState();
-  const [retVendors, setRetVendors] = useState();
   const [counters, setCounters] = useState();
   const [values, setValues] = useState({ from: "", to: "" });
   let location = useLocation();
+  const [approved, setApproved] = useState({
+    columns: [
+      {
+        label: "S.NO.",
+        field: "sn",
+        sort: "asc",
+        maxWidth: 50,
+      },
+      {
+        label: "FULL NAME",
+        field: "name",
+        sort: "asc",
+        width: 150,
+      },
 
+      {
+        label: "EMAIL ADDRESS",
+        field: "email",
+        sort: "asc",
+        width: 150,
+      },
+      {
+        label: "PHONE NUMBER",
+        field: "number",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "Payout",
+        field: "payout",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "ADDED ON",
+        field: "date",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "STATUS",
+        field: "status",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "ACTION",
+        field: "action",
+        sort: "asc",
+        width: 100,
+      },
+    ],
+    rows: [],
+  });
+  const [pending, setPending] = useState({
+    columns: [
+      {
+        label: "S.NO.",
+        field: "sn",
+        sort: "asc",
+        width: 50,
+      },
+      {
+        label: "FULL NAME",
+        field: "name",
+        sort: "asc",
+        width: 150,
+      },
+      {
+        label: "SHOP NAME",
+        field: "name_shop",
+        sort: "asc",
+        width: 150,
+      },
+
+      {
+        label: "EMAIL ADDRESS",
+        field: "email",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "PHONE NUMBER",
+        field: "number",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "ADDED ON",
+        field: "date",
+        sort: "asc",
+        width: 100,
+      },
+
+      {
+        label: "ACTION",
+        field: "action",
+        sort: "asc",
+        width: 100,
+      },
+    ],
+    rows: [],
+  });
+  const [rejected, setRejected] = useState({
+    columns: [
+      {
+        label: "S.NO.",
+        field: "sn",
+        sort: "asc",
+        width: 150,
+      },
+      {
+        label: "FULL NAME",
+        field: "name",
+        sort: "asc",
+        width: 150,
+      },
+      {
+        label: "SHOP NAME",
+        field: "name_shop",
+        sort: "asc",
+        width: 150,
+      },
+      {
+        label: "EMAIL ADDRESS",
+        field: "email",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "PHONE NUMBER",
+        field: "number",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "ADDED ON",
+        field: "date",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "ACTION",
+        field: "action",
+        sort: "asc",
+        width: 100,
+      },
+    ],
+    rows: [],
+  });
   useEffect(() => {
     getPendingVendors();
     getApprovedVendors();
@@ -40,8 +187,34 @@ const VendorManagement = () => {
       status: "PENDING",
       page: 1,
     });
-    console.log(data);
-    setPenVendors(data?.results.vendors);
+    const newRows = [];
+    if (!data.error) {
+      let values = data?.results?.vendors;
+      console.log(values);
+      values?.map((list, index) => {
+        const returnData = {};
+        returnData.sn = index + 1 + ".";
+        returnData.name = list?.full_name;
+        returnData.name_shop = list?.shop_name;
+        returnData.email = list?.email;
+        returnData.number = list?.phone_number;
+        returnData.date = moment(list?.createdAt).format("L");
+        returnData.action = (
+          <>
+            <Link
+              className="comman_btn2 table_viewbtn"
+              to="/Admin/Dashboard/Vendor-Management/Pending"
+              state={{ id: list?._id }}
+            >
+              View
+            </Link>
+          </>
+        );
+        newRows.push(returnData);
+      });
+
+      setPending({ ...pending, rows: newRows });
+    }
   };
 
   const getApprovedVendors = async () => {
@@ -51,8 +224,49 @@ const VendorManagement = () => {
       status: "APPROVED",
       page: 1,
     });
-    console.log(data);
-    setAppVendors(data?.results.vendors);
+    const newRows = [];
+    if (!data.error) {
+      let values = data?.results?.vendors;
+      console.log(values);
+      values?.map((list, index) => {
+        const returnData = {};
+        returnData.sn = index + 1 + ".";
+        returnData.name = list?.full_name;
+        returnData.email = list?.email;
+        returnData.number = list?.phone_number;
+        returnData.payout = "5000";
+        returnData.date = moment(list?.createdAt).format("L");
+        returnData.status = (
+          <div className="check_toggle" key={list?._id}>
+            <input
+              type="checkbox"
+              defaultChecked={list?.active_status}
+              name="check1"
+              id={list?._id}
+              className="d-none"
+              onClick={() => {
+                VendorStatus(list?._id);
+              }}
+            />
+            <label for={list?._id}></label>
+          </div>
+        );
+        returnData.action = (
+          <>
+            <Link
+              className="comman_btn2 table_viewbtn"
+              to="/Admin/Dashboard/Vendor-Management/Approved"
+              state={{ id: list?._id }}
+            >
+              View
+            </Link>
+          </>
+        );
+        newRows.push(returnData);
+      });
+
+      setApproved({ ...approved, rows: newRows });
+    }
   };
 
   const getReturnedVendors = async () => {
@@ -62,8 +276,34 @@ const VendorManagement = () => {
       status: "RETURNED",
       page: 1,
     });
-    console.log(data);
-    setRetVendors(data?.results.vendors);
+    const newRows = [];
+    if (!data.error) {
+      let values = data?.results?.vendors;
+      console.log(values);
+      values?.map((list, index) => {
+        const returnData = {};
+        returnData.sn = index + 1 + ".";
+        returnData.name = list?.full_name;
+        returnData.name_shop = list?.shop_name;
+        returnData.email = list?.email;
+        returnData.number = list?.phone_number;
+        returnData.date = moment(list?.createdAt).format("L");
+        returnData.action = (
+          <>
+            <Link
+              className="comman_btn2 table_viewbtn"
+              to="/Admin/Dashboard/Vendor-Management/Returned"
+              state={{ id: list?._id }}
+            >
+              View
+            </Link>
+          </>
+        );
+        newRows.push(returnData);
+      });
+
+      setRejected({ ...rejected, rows: newRows });
+    }
   };
   const handleDate = (e) => {
     const value = e.target.value;
@@ -82,7 +322,49 @@ const VendorManagement = () => {
         status: "APPROVED",
         page: 1,
       });
-      setAppVendors(data?.results.vendors);
+      const newRows = [];
+      if (!data.error) {
+        let values = data?.results?.vendors;
+        console.log(values);
+        values?.map((list, index) => {
+          const returnData = {};
+          returnData.sn = index + 1 + ".";
+          returnData.name = list?.full_name;
+          returnData.email = list?.email;
+          returnData.number = list?.phone_number;
+          returnData.payout = "8550";
+          returnData.date = moment(list?.createdAt).format("L");
+          returnData.status = (
+            <div className="check_toggle" key={list?._id}>
+              <input
+                type="checkbox"
+                defaultChecked={list?.active_status}
+                name="check1"
+                id={list?._id}
+                className="d-none"
+                onClick={() => {
+                  VendorStatus(list?._id);
+                }}
+              />
+              <label for={list?._id}></label>
+            </div>
+          );
+          returnData.action = (
+            <>
+              <Link
+                className="comman_btn2 table_viewbtn"
+                to="/Admin/Dashboard/Vendor-Management/Approved"
+                state={{ id: list?._id }}
+              >
+                View
+              </Link>
+            </>
+          );
+          newRows.push(returnData);
+        });
+
+        setApproved({ ...approved, rows: newRows });
+      }
       setValues({ from: "", to: "" });
     } else {
       e.preventDefault();
@@ -103,7 +385,34 @@ const VendorManagement = () => {
         status: "PENDING",
         page: 1,
       });
-      setPenVendors(data?.results.vendors);
+      const newRows = [];
+      if (!data.error) {
+        let values = data?.results?.vendors;
+        console.log(values);
+        values?.map((list, index) => {
+          const returnData = {};
+          returnData.sn = index + 1 + ".";
+          returnData.name = list?.full_name;
+          returnData.name_shop = list?.shop_name;
+          returnData.email = list?.email;
+          returnData.number = list?.phone_number;
+          returnData.date = moment(list?.createdAt).format("L");
+          returnData.action = (
+            <>
+              <Link
+                className="comman_btn2 table_viewbtn"
+                to="/Admin/Dashboard/Vendor-Management/Pending"
+                state={{ id: list?._id }}
+              >
+                View
+              </Link>
+            </>
+          );
+          newRows.push(returnData);
+        });
+
+        setPending({ ...pending, rows: newRows });
+      }
       setValues({ from: "", to: "" });
     } else {
       e.preventDefault();
@@ -125,7 +434,34 @@ const VendorManagement = () => {
         page: 1,
       });
       if (!data.error) {
-        setRetVendors(data?.results.vendors);
+        const newRows = [];
+        if (!data.error) {
+          let values = data?.results?.vendors;
+          console.log(values);
+          values?.map((list, index) => {
+            const returnData = {};
+            returnData.sn = index + 1 + ".";
+            returnData.name = list?.full_name;
+            returnData.name_shop = list?.shop_name;
+            returnData.email = list?.email;
+            returnData.number = list?.phone_number;
+            returnData.date = moment(list?.createdAt).format("L");
+            returnData.action = (
+              <>
+                <Link
+                  className="comman_btn2 table_viewbtn"
+                  to="/Admin/Dashboard/Vendor-Management/Returned"
+                  state={{ id: list?._id }}
+                >
+                  View
+                </Link>
+              </>
+            );
+            newRows.push(returnData);
+          });
+
+          setRejected({ ...rejected, rows: newRows });
+        }
         setValues({ from: "", to: "" });
       }
     } else {
@@ -295,8 +631,16 @@ const VendorManagement = () => {
                               </form>
                               <div className="row">
                                 <div className="col-12 comman_table_design px-0">
-                                  <div className="table-responsive">
-                                    <table className="table mb-0">
+                                  <div className="table-responsive p-1">
+                                    <MDBDataTable
+                                      bordered
+                                      className="mt-2"
+                                      hover
+                                      data={approved}
+                                      noBottomColumns
+                                      sortable
+                                    />
+                                    {/* <table className="table mb-0">
                                       <thead>
                                         <tr>
                                           <th>S.No.</th>
@@ -368,7 +712,7 @@ const VendorManagement = () => {
                                           </tr>
                                         </tbody>
                                       )}
-                                    </table>
+                                    </table> */}
                                   </div>
                                 </div>
                               </div>
@@ -427,8 +771,16 @@ const VendorManagement = () => {
                               </form>
                               <div className="row">
                                 <div className="col-12 comman_table_design px-0">
-                                  <div className="table-responsive">
-                                    <table className="table mb-0">
+                                  <div className="table-responsive p-1">
+                                    <MDBDataTable
+                                      bordered
+                                      className="mt-2"
+                                      hover
+                                      data={pending}
+                                      noBottomColumns
+                                      sortable
+                                    />
+                                    {/* <table className="table mb-0">
                                       <thead>
                                         <tr>
                                           <th>S.No.</th>
@@ -480,7 +832,7 @@ const VendorManagement = () => {
                                           </tr>
                                         </tbody>
                                       )}
-                                    </table>
+                                    </table> */}
                                   </div>
                                 </div>
                               </div>
@@ -539,8 +891,16 @@ const VendorManagement = () => {
                               </form>
                               <div className="row">
                                 <div className="col-12 comman_table_design px-0">
-                                  <div className="table-responsive">
-                                    <table className="table mb-0">
+                                  <div className="table-responsive p-1">
+                                    <MDBDataTable
+                                      bordered
+                                      className="mt-2"
+                                      hover
+                                      data={rejected}
+                                      noBottomColumns
+                                      sortable
+                                    />
+                                    {/* <table className="table mb-0">
                                       <thead>
                                         <tr>
                                           <th>S.No.</th>
@@ -591,7 +951,7 @@ const VendorManagement = () => {
                                           </tr>
                                         </tbody>
                                       )}
-                                    </table>
+                                    </table> */}
                                   </div>
                                 </div>
                               </div>

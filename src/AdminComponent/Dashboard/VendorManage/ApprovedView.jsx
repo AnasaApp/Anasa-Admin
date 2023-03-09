@@ -245,6 +245,18 @@ const ApprovedView = () => {
                       </div>
                     </div>
                   </div>
+                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                    <div className="row view-inner-box border mx-0 w-100">
+                      <div className="col">
+                        <Link
+                          data-bs-toggle="modal"
+                          data-bs-target="#staticBackdrop44"
+                        >
+                          <strong>Manage Payout</strong>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -376,11 +388,64 @@ const ApprovedView = () => {
             <div class="modal-footer">
               <button
                 type="button"
-                class="btn btn-secondary"
+                class="comman_btn2 "
                 data-bs-dismiss="modal"
               >
                 Close
               </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        className="modal fade comman_modal"
+        id="staticBackdrop44"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabIndex={-1}
+        aria-labelledby="staticBackdropLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content border-0">
+            <div className="modal-header">
+              <h5 className="modal-title" id="staticBackdropLabel">
+                Payout
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              />
+            </div>
+            <div className="modal-body">
+              <form
+                className="form-design px-3 py-2 help-support-form row align-items-end justify-content-center"
+                action=""
+              >
+                <div className="form-group col-6">
+                  <label htmlFor="">Total Payout</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    defaultValue="5000"
+                    disabled
+                  />
+                </div>
+                <div className="form-group col-6">
+                  <label htmlFor="">Withdraw</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter Amount"
+                  />
+                </div>
+                <div className="form-group mb-0 col-auto mt-3">
+                  <button className="comman_btn">Confirm</button>
+                </div>
+              </form>
             </div>
           </div>
         </div>

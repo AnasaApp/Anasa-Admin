@@ -9,9 +9,10 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
   useEffect(() => {
     setSlideState(slide);
   }, []);
-  console.log(getBar);
   let token = localStorage.getItem("token-admin");
+  let AdminData = JSON.parse(localStorage.getItem("token-admin-data"));
 
+  console.log(AdminData);
   if (token === null) {
     Swal.fire({
       title: "PLease Login to Continue!",
@@ -197,10 +198,10 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
                   </Link>
                 </li>
                 <li>
-                  <a className="" onClick={Logout}>
+                  <Link className="" onClick={Logout}>
                     <i className="fas fa-sign-out" />
                     Sign Out
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -249,7 +250,14 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  <img src={require("../../assets/img/profile.png")} alt="" />
+                  <img
+                    src={
+                      AdminData?.image
+                        ? AdminData?.image
+                        : require("../../assets/img/Nupload.jpg")
+                    }
+                    alt=""
+                  />
                 </button>
                 <ul
                   className="dropdown-menu"

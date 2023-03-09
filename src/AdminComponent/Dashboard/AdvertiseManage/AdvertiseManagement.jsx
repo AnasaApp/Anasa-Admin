@@ -10,6 +10,7 @@ import {
 } from "../../httpServices/dashHttpService";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
+import { CategoryRounded } from "@mui/icons-material";
 
 const AdvertiseManagement = () => {
   const [slide, setSlide] = useState("ADM");
@@ -47,6 +48,7 @@ const AdvertiseManagement = () => {
     const { data } = await AllCategory();
     setAllCategories(data?.results?.categories);
   };
+  
   const createOptions = async () => {
     await SearchVendor({ search: searchKey }).then((res) => {
       if (!res.error) {
@@ -59,6 +61,7 @@ const AdvertiseManagement = () => {
       }
     });
   };
+
   const createOptionsCate = async () => {
     await AllCategory().then((res) => {
       if (!res.error) {
@@ -72,6 +75,7 @@ const AdvertiseManagement = () => {
       }
     });
   };
+
   const handleChange = (selected) => {
     setSelectedUsers({
       usersSelected: selected,
@@ -99,13 +103,10 @@ const AdvertiseManagement = () => {
   const saveAdd = async (e) => {
     e.preventDefault();
     await AddAddvertise({
-      vendor: "",
-      category: "",
-      selectedUsers: "",
-      subCategory: "",
-      userType: "",
+      selectedUsers: selectedUsers?.usersSelected,
+      subCategory: selectedCate?.usersSelected,
+      userType: type === "TC" ? "category" : "vendor",
     }).then((res) => {
-      // console.log(res);
       if (!res.data.error) {
         Swal.fire({
           title: "Advertise Added!",
@@ -121,6 +122,7 @@ const AdvertiseManagement = () => {
     console.log(val);
     setSideBar(val);
   };
+
   return (
     <div className={sideBar === "click" ? "expanded_main" : "admin_main"}>
       <Sidebar slide={slide} getBarClick={getBarClick} />

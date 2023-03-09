@@ -300,7 +300,7 @@ const BookingDetails = () => {
                                         </div>
                                         <div className="col-6">
                                           <span className="booking_head">
-                                            {}
+                                            {item?.service?.name_en}
                                           </span>
                                         </div>
                                       </div>

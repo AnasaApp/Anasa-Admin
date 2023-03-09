@@ -228,7 +228,7 @@ const SubCategories = ({ cate }) => {
                 {...register("sub_category", {
                   required: "Sub Category Name is required!",
                   pattern: {
-                    value: /^[^*|\":<>[\]{}`\\()';@"!^$]+$/,
+                    value: /^[A-Za-z\s]{1,}[\.]{0,1}[A-Za-z\s]{0,}$/,
                     message: "Special Character not allowed!",
                   },
                   maxLength: {
@@ -260,13 +260,14 @@ const SubCategories = ({ cate }) => {
                 {...register("sub_category_ar", {
                   required: "Sub Category(ar) Name is required!",
                   pattern: {
-                    value: /^[^*|\":<>[\]{}`\\()';@"!^$]+$/,
+                    value: /^[\u0621-\u064A\u0660-\u0669 ]+$/,
                     message: "Special Character not allowed!",
                   },
                   maxLength: {
                     value: 30,
                     message: "Max length is 30 characters!",
                   },
+
                   minLength: {
                     value: 2,
                     message: "Min length is 2 characters!",

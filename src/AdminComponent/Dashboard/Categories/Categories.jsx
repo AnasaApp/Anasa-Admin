@@ -248,7 +248,8 @@ const Categories = () => {
                                   {...register("Category_name", {
                                     required: "Category Name is required!",
                                     pattern: {
-                                      value: /^[^*|\":<>[\]{}`\\()';@"!^&$]+$/,
+                                      value:
+                                        /^[A-Za-z\s]{1,}[\.]{0,1}[A-Za-z\s]{0,}$/,
                                       message: "Special Character not allowed!",
                                     },
                                     maxLength: {
@@ -280,8 +281,8 @@ const Categories = () => {
                                   {...register("Category_name_ar", {
                                     required: "Category Name is required!",
                                     pattern: {
-                                      value: /^[^*|\":<>[\]{}`\\()';@"!^&$]+$/,
-                                      message: "Special Character not allowed!",
+                                      value: /^[\u0621-\u064A\u0660-\u0669 ]+$/,
+                                      message: "Only Arabic Characters are allowed!",
                                     },
                                     maxLength: {
                                       value: 30,

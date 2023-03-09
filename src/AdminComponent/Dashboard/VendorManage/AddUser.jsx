@@ -178,8 +178,8 @@ const AddUser = () => {
                           message: "maximium 20 Characters",
                         },
                         minLength: {
-                          value: 5,
-                          message: "Minimium 4 letters Should be in Shop Name", // JS only: <p>error message</p> TS only support string
+                          value: 3,
+                          message: "Minimium 3 letters Should be in Shop Name", // JS only: <p>error message</p> TS only support string
                         },
                       })}
                     />

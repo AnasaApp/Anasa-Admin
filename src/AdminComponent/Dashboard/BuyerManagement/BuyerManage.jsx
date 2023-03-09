@@ -21,7 +21,6 @@ const BuyerManage = () => {
     setSideBar(val);
   };
   const [users, setUsers] = useState({
-    
     columns: [
       {
         label: "S.NO.",
@@ -123,7 +122,6 @@ const BuyerManage = () => {
 
       setUsers({ ...users, rows: newRows });
     }
-    
   };
 
   const BuyerStatus = async (id) => {
@@ -210,36 +208,6 @@ const BuyerManage = () => {
                 </form>
                 <div className="row">
                   <div className="col-12 comman_table_design px-0">
-                    {/* <DataTable
-                      value={buyers}
-                      paginator
-                      rows={5}
-                      rowsPerPageOptions={[5, 10, 25, 50]}
-                      tableStyle={{ minWidth: "50rem" }}
-                    >
-                    
-                      <Column
-                        field="full_name"
-                        header="Name"
-                        style={{ width: "25%" }}
-                      ></Column>
-                      <Column
-                        field="email"
-                        header="Country"
-                        style={{ width: "25%" }}
-                      ></Column>
-                      <Column
-                        field="createdAt"
-                        body={dateSlicer}
-                        header="Company"
-                        style={{ width: "25%" }}
-                      ></Column>
-                      <Column
-                        field="status"
-                        header="Status"
-                        style={{ width: "25%" }}
-                      ></Column>
-                    </DataTable> */}
                     <div className="table-responsive p-2">
                       <MDBDataTable
                         bordered
@@ -248,7 +216,6 @@ const BuyerManage = () => {
                         data={users}
                         noBottomColumns
                         sortable
-            
                       />
                       {/* <table className="table mb-0">
                         <thead>
