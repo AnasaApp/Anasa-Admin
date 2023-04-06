@@ -10,9 +10,12 @@ import {
   changePromocodeStatus,
   editPromocode,
   getViewPromo,
+  ImageUpload,
   SearchUser,
 } from "../../httpServices/dashHttpService";
 import Swal from "sweetalert2";
+import moment from "moment";
+import { MDBDataTable } from "mdbreact";
 
 const PromoManagement = () => {
   const [files, setFiles] = useState();
@@ -40,7 +43,66 @@ const PromoManagement = () => {
   } = useForm();
 
   const [options, setOptions] = useState([]);
+  const [promos, setPromos] = useState({
+    columns: [
+      {
+        label: "S.NO.",
+        field: "sn",
+        sort: "asc",
+        width: 50,
+      },
+      {
+        label: "PROMO(En)",
+        field: "name_en",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "PROMO(Ar)",
+        field: "name_ar",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "IMAGE",
+        field: "image",
+        sort: "asc",
+        width: 150,
+      },
 
+      {
+        label: "DISCOUNT-%",
+        field: "number",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "VALID FROM",
+        field: "date_from",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "VALID TILL",
+        field: "date_till",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "STATUS",
+        field: "status",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "ACTION",
+        field: "action",
+        sort: "asc",
+        width: 100,
+      },
+    ],
+    rows: [],
+  });
   useEffect(() => {
     createOptions();
   }, [searchKey]);
@@ -64,6 +126,71 @@ const PromoManagement = () => {
 
   const GetPromocodes = async () => {
     await AllPromocodes().then((res) => {
+      const newRows = [];
+      if (!res.data.error) {
+        let values = res.data.results?.promocodes;
+        console.log(values);
+        values?.map((list, index) => {
+          const returnData = {};
+          returnData.sn = index + 1 + ".";
+          returnData.name_en = list?.name_en;
+          returnData.name_ar = list?.name_ar;
+          returnData.sub_cate_name = list?.subCategory?.name_en;
+          returnData.number = list?.discount;
+          returnData.date_from = moment(list?.validFrom).format("L");
+          returnData.date_till = moment(list?.validTo).format("L");
+          returnData.status = (
+            <div className="check_toggle">
+              <input
+                type="checkbox"
+                defaultChecked={list?.status}
+                name="checkv4"
+                id={list?._id}
+                className="d-none"
+                onClick={() => {
+                  PromoCodeStatus(list?._id);
+                }}
+              />
+              <label
+                data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop12"
+                htmlFor={list?._id}
+              />
+            </div>
+          );
+          returnData.image = (
+            <img
+              className="table_img"
+              width={70}
+              height={60}
+              src={
+                list?.image
+                  ? list?.image
+                  : require("../../../assets/img/Nupload.jpg")
+              }
+              alt=""
+            />
+          );
+          returnData.action = (
+            <>
+              <a
+                className="comman_btn table_viewbtn mx-1"
+                data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop22"
+                onClick={() => handleView(list?._id)}
+              >
+                Edit
+              </a>
+              <a className="comman_btn2 table_viewbtn" onClick={DeleteCode}>
+                Delete
+              </a>
+            </>
+          );
+          newRows.push(returnData);
+        });
+
+        setPromos({ ...promos, rows: newRows });
+      }
       setPromoCodes(res.data.results?.promocodes);
     });
   };
@@ -76,7 +203,7 @@ const PromoManagement = () => {
     formData.append("validFrom", data?.dateFrom);
     formData.append("validTo", data?.dateTo);
     formData.append("userType", userTypes);
-    formData.append("image", files?.upload_video);
+    formData.append("image", files);
     userTypes === "specific" &&
       formData.append(
         "selectedUsers",
@@ -85,7 +212,7 @@ const PromoManagement = () => {
 
     await AddPromoCode(formData).then((res) => {
       // console.log(res);
-      if (!res.error) {
+      if (!res.data.error) {
         Swal.fire({
           title: "Promo Code Added!",
           icon: "success",
@@ -102,14 +229,14 @@ const PromoManagement = () => {
     formData.append("discount", data?.EditDiscount);
     formData.append("validFrom", data?.dateFrom);
     formData.append("validTo", data?.dateTo);
-    // formData.append("image", files?.upload_video);
+    formData.append("image", files);
 
     await editPromocode(promoId, formData).then((res) => {
       if (!res.data.error) {
         document.getElementById("modal").click();
         GetPromocodes();
         Swal.fire({
-          title: "Category Modified Successfully!",
+          title: "Promocode Modified Successfully!",
           icon: "success",
           confirmButtonText: "Ok",
           confirmButtonColor: "#e25829",
@@ -117,6 +244,7 @@ const PromoManagement = () => {
       }
     });
   };
+
   const DeleteCode = async () => {};
   const handleChange = (selected) => {
     setSelectedUsers({
@@ -145,10 +273,14 @@ const PromoManagement = () => {
   const handleInputChange = (inputValue) => {
     setSearchKey(inputValue);
   };
-  const onFileSelection = (e, key) => {
-    setFiles({ ...files, [key]: e.target.files[0] });
+  const onFileSelection = async (e) => {
+    const formData = new FormData();
+    formData.append("image", e.target.files[0]);
+    await ImageUpload(formData).then((res) => {
+      setFiles(res?.data.results?.obj);
+    });
   };
-
+  console.log(files);
   const PromoCodeStatus = async (id) => {
     const { data } = await changePromocodeStatus(id);
     if (!data?.error) {
@@ -161,14 +293,16 @@ const PromoManagement = () => {
       });
     }
   };
+
   var today = new Date().toISOString().split("T")[0];
   document.getElementsByName("dateTo")[0]?.setAttribute("max", today);
-  document.getElementsByName("dateFrom")[0]?.setAttribute("max", today);
+  document.getElementsByName("dateFrom")[0]?.setAttribute("min", today);
 
   const getBarClick = (val) => {
     console.log(val);
     setSideBar(val);
   };
+
   return (
     <div className={sideBar === "click" ? "expanded_main" : "admin_main"}>
       <Sidebar slide={slide} getBarClick={getBarClick} />
@@ -209,6 +343,8 @@ const PromoManagement = () => {
                     <label htmlFor="">Promo Code (Ar)</label>
                     <input
                       type="text"
+                      lang="ar"
+                      dir="rtl"
                       className={classNames("form-control", {
                         "is-invalid": errors.promo_code_ar,
                       })}
@@ -342,7 +478,7 @@ const PromoManagement = () => {
                     <h2>Promo Code Management</h2>
                   </div>
                   <div className="col-3">
-                    <form className="form-design" action="">
+                    {/* <form className="form-design" action="">
                       <div className="form-group mb-0 position-relative icons_set">
                         <input
                           type="text"
@@ -353,13 +489,22 @@ const PromoManagement = () => {
                         />
                         <i className="far fa-search" />
                       </div>
-                    </form>
+                    </form> */}
                   </div>
                 </div>
                 <div className="row">
                   <div className="col-12 comman_table_design px-0">
-                    <div className="table-responsive">
-                      <table className="table mb-0">
+                    <div className="table-responsive p-0">
+                      <MDBDataTable
+                        bordered
+                        displayEntries={false}
+                        className=""
+                        hover
+                        data={promos}
+                        noBottomColumns
+                        sortable
+                      />
+                      {/* <table className="table mb-0">
                         <thead>
                           <tr>
                             <th>S.No.</th>
@@ -433,7 +578,7 @@ const PromoManagement = () => {
                             </tr>
                           ))}
                         </tbody>
-                      </table>
+                      </table> */}
                     </div>
                   </div>
                 </div>
@@ -464,7 +609,7 @@ const PromoManagement = () => {
                 id="modal"
                 aria-label="Close"
                 onClick={() => {
-                  document.getElementById("modalReset").click();
+                  document.getElementById("resetModal").click();
                 }}
               />
             </div>
@@ -476,16 +621,16 @@ const PromoManagement = () => {
               >
                 <div className="form-group col-6 choose_file position-relative">
                   <span>Promo Code Image </span>{" "}
-                  <label htmlFor="upload_video">
+                  <label htmlFor="upload_video_1">
                     <i className="fa fa-camera me-1" />
                     Choose File
                   </label>{" "}
                   <input
                     type="file"
                     className="form-control"
-                    defaultValue=""
-                    name="upload_video"
-                    id="upload_video"
+                    name="upload_video_1"
+                    id="upload_video_1"
+                    onChange={(e) => onFileSelection(e)}
                   />
                 </div>
                 <div className="form-group col-6">
@@ -589,6 +734,9 @@ const PromoManagement = () => {
                 <div className="form-group mb-0 col-auto mt-3">
                   <button className="comman_btn" type="submit">
                     Save
+                  </button>
+                  <button className="comman_btn" type="reset" id="resetModal">
+                    reset
                   </button>
                 </div>
               </form>

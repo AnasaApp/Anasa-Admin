@@ -1707,3 +1707,27 @@ export async function changeBuyerTicketStatus(id) {
     return { error };
   }
 }
+
+export async function ImageUpload(formData) {
+  try {
+    const { data } = await appHttpService.post(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/imageUpload`,
+      formData
+    );
+    console.log(data);
+
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Ok",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}

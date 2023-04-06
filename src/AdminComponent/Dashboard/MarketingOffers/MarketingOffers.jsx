@@ -387,6 +387,7 @@ const MarketingOffers = () => {
                             <th>Sub Category</th>
                             <th>Combo name (En)</th>
                             <th>Combo name (Ar)</th>
+                            <th>Users</th>
                             <th>Action</th>
                           </tr>
                         </thead>
@@ -394,10 +395,16 @@ const MarketingOffers = () => {
                           {(offers || [])?.map((item, index) => (
                             <tr>
                               <td>{index + 1}.</td>
-                              <td>Lorem ipsum</td>
-                              <td>Lorem ipsum</td>
+                              <td>{item?.category?.name_en}</td>
+                              <td>{item?.subCategory?.name_en}</td>
                               <td>{item?.name_en}</td>
                               <td> {item?.name_ar}</td>
+                              <td>
+                                {" "}
+                                {item?.userType === "all"
+                                  ? "All Users"
+                                  : item?.selectedUsers?.map((item) => item)}
+                              </td>
                               <td>
                                 <a
                                   className="comman_btn table_viewbtn"
@@ -407,12 +414,6 @@ const MarketingOffers = () => {
                                   onClick={() => handleView(item?._id)}
                                 >
                                   View
-                                </a>
-                                <a
-                                  className="comman_btn2 table_viewbtn"
-                                  href="javascript:;"
-                                >
-                                  Delete
                                 </a>
                               </td>
                             </tr>

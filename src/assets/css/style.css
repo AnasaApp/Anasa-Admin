@@ -1115,10 +1115,12 @@ strong.booking_head {
   transition: all 0.2s linear;
 }
 .form-control-sm {
-  min-height: calc(1.5em + 0.5rem + calc(var(--bs-border-width) * 2));
+  min-height: calc(1.8em + 0.5rem + calc(var(--bs-border-width) * 2));
   padding: 0.25rem 0.5rem;
+  height: 2.1rem;
   font-size: 0.875rem;
-  border-radius: 0.5rem;
+  border-radius: 2rem;
+  border: 1px solid rgb(190, 186, 186) !important;
 }
 table.table th,
 table.table td {
@@ -1128,4 +1130,50 @@ table.table td {
   overflow: hidden !important;
   white-space: normal !important;
   word-wrap: break-word;
+}
+.form-control-sm {
+  height: 36px;
+  border-radius: 6px;
+  padding: 0 17px;
+  box-shadow: unset !important;
+  border: 0;
+  font-size: 13px;
+  position: absolute;
+  top: 7px;
+  right: 1%;
+  max-width: 15rem;
+}
+.design_outter_comman {
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+.inner_design_comman {
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+.userData .form-control-sm {
+  height: 36px;
+  border-radius: 6px;
+  padding: 0 17px;
+  box-shadow: unset !important;
+  border: 0;
+  font-size: 13px;
+  position: absolute;
+  top: 8px;
+  right: 4%;
+  max-width: 15rem;
+}
+.categoryTable .form-control-sm {
+  height: 36px;
+  border-radius: 6px;
+  padding: 0 17px;
+  box-shadow: unset !important;
+  border: 0;
+  font-size: 13px;
+  position: absolute;
+  top: 2px;
+  right: 1%;
+  max-width: 15rem;
 }

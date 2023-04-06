@@ -232,7 +232,7 @@ const BuyerDetails = () => {
                       >
                         <div className="row mx-0">
                           <div className="col-12">
-                            <form
+                            {/* <form
                               className="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"
                               action=""
                             >
@@ -273,7 +273,7 @@ const BuyerDetails = () => {
                                   Search
                                 </button>
                               </div>
-                            </form>
+                            </form> */}
                             <div className="row">
                               <div className="col-12 comman_table_design px-0">
                                 <div className="table-responsive">
@@ -291,7 +291,7 @@ const BuyerDetails = () => {
                                     <tbody>
                                       {(booking || [])?.map((item, index) => (
                                         <tr key={index}>
-                                          <td>1</td>
+                                          <td>{index + 1}.</td>
                                           <td>{item?.bookingID}</td>
                                           <td>
                                             <Link
@@ -324,7 +324,7 @@ const BuyerDetails = () => {
                       >
                         <div className="row mx-0">
                           <div className="col-12">
-                            <form
+                            {/* <form
                               className="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"
                               action=""
                             >
@@ -357,7 +357,7 @@ const BuyerDetails = () => {
                                   Search
                                 </button>
                               </div>
-                            </form>
+                            </form> */}
                             <div className="row">
                               <div className="col-12 comman_table_design px-0">
                                 <div className="table-responsive">

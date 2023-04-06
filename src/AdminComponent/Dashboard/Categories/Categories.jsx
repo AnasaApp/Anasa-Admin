@@ -282,7 +282,8 @@ const Categories = () => {
                                     required: "Category Name is required!",
                                     pattern: {
                                       value: /^[\u0621-\u064A\u0660-\u0669 ]+$/,
-                                      message: "Only Arabic Characters are allowed!",
+                                      message:
+                                        "Only Arabic Characters are allowed!",
                                     },
                                     maxLength: {
                                       value: 30,
@@ -347,10 +348,11 @@ const Categories = () => {
                             </div>
                             <div className="row">
                               <div className="col-12 comman_table_design px-0">
-                                <div className="table-responsive p-1">
+                                <div className="table-responsive p-0">
                                   <MDBDataTable
                                     bordered
-                                    className="mt-2"
+                                    displayEntries={false}
+                                    className="categoryTable"
                                     hover
                                     data={category}
                                     noBottomColumns

@@ -48,7 +48,7 @@ const AdvertiseManagement = () => {
     const { data } = await AllCategory();
     setAllCategories(data?.results?.categories);
   };
-  
+
   const createOptions = async () => {
     await SearchVendor({ search: searchKey }).then((res) => {
       if (!res.error) {
@@ -103,11 +103,12 @@ const AdvertiseManagement = () => {
   const saveAdd = async (e) => {
     e.preventDefault();
     await AddAddvertise({
-      selectedUsers: selectedUsers?.usersSelected,
-      subCategory: selectedCate?.usersSelected,
-      userType: type === "TC" ? "category" : "vendor",
+      vendor: selectedUsers?.usersSelected?.map((item) => item?.value),
+      category: selectedCate?.cateSelected?.map((item) => item?.value),
+      type: type === "TC" ? "category" : "vendor",
     }).then((res) => {
       if (!res.data.error) {
+        GetAllAdds();
         Swal.fire({
           title: "Advertise Added!",
           icon: "success",
@@ -215,8 +216,9 @@ const AdvertiseManagement = () => {
                         <thead>
                           <tr>
                             <th>S.No.</th>
-                            <th>Advertisment</th>
-                            <th>Vendor</th>
+                            <th>Advertisment Type</th>
+                            <th>Vendors</th>
+                            <th>Categories</th>
                             <th>Action</th>
                           </tr>
                         </thead>
@@ -224,17 +226,26 @@ const AdvertiseManagement = () => {
                           {allAdds?.map((item, ind) => (
                             <tr>
                               <td>{ind + 1}</td>
-                              <td>Top Vendor</td>
-                              <td>Name</td>
+                              <td>{item?.type}</td>
                               <td>
-                                <a
-                                  className="comman_btn table_viewbtn"
-                                  href="javascript:;"
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#staticBackdrop"
-                                >
-                                  View
-                                </a>
+                                {item?.vendor?.length
+                                  ? item?.vendor?.map((val) => (
+                                      <li>
+                                        {val?.account_holder_name
+                                          ? val?.account_holder_name
+                                          : "No results"}
+                                      </li>
+                                    ))
+                                  : "No Results"}
+                              </td>
+                              <td>
+                                {item?.category?.length
+                                  ? item?.category?.map((val) => (
+                                      <li>{val?.name_en}</li>
+                                    ))
+                                  : "No Results"}
+                              </td>
+                              <td>
                                 <a
                                   className="comman_btn2 table_viewbtn"
                                   href="javascript:;"

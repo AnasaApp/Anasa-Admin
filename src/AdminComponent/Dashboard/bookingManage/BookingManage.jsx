@@ -566,10 +566,11 @@ const BookingManage = () => {
                             </form>
                             <div className="row">
                               <div className="col-12 comman_table_design px-0">
-                                <div className="table-responsive p-1">
+                                <div className="table-responsive p-0">
                                   <MDBDataTable
                                     bordered
-                                    className="mt-2"
+                                    displayEntries={false}
+                                    className="userData"
                                     hover
                                     data={allBook}
                                     noBottomColumns
@@ -670,10 +671,11 @@ const BookingManage = () => {
                             </form>
                             <div className="row">
                               <div className="col-12 comman_table_design px-0">
-                                <div className="table-responsive p-1">
+                                <div className="table-responsive ">
                                   <MDBDataTable
                                     bordered
-                                    className="mt-2"
+                                    displayEntries={false}
+                                    className="userData"
                                     hover
                                     data={completeBook}
                                     noBottomColumns
@@ -774,10 +776,11 @@ const BookingManage = () => {
                             </form>
                             <div className="row">
                               <div className="col-12 comman_table_design px-0">
-                                <div className="table-responsive p-1">
+                                <div className="table-responsive p-0">
                                   <MDBDataTable
                                     bordered
-                                    className="mt-2"
+                                    displayEntries={false}
+                                    className="userData"
                                     hover
                                     data={cancelledBook}
                                     noBottomColumns

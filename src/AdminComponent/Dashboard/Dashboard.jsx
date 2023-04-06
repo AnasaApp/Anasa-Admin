@@ -10,25 +10,100 @@ import {
 } from "../httpServices/dashHttpService";
 import AnimatedNumber from "react-animated-number/build/AnimatedNumber";
 import { Link } from "react-router-dom";
-import Swal from "sweetalert2";
+import { MDBDataTable } from "mdbreact";
+import moment from "moment";
 
 const Dashboard = () => {
   const [slide, setSlide] = useState("Dash");
   const [sideBar, setSideBar] = useState();
   const [recentOrders, setRecentOrders] = useState([]);
-  const [values, setValues] = useState({ from: "", to: "" });
   const initialValue = 0.0;
 
   useEffect(() => {
     getTotalData();
     getRecentOrders();
   }, []);
+  const [allBook, setAllBook] = useState({
+    columns: [
+      {
+        label: "S.NO.",
+        field: "sn",
+        sort: "asc",
+        width: 50,
+      },
+      {
+        label: "BOOKING ID",
+        field: "booking_id",
+        sort: "asc",
+        width: 100,
+      },
+
+      {
+        label: "BUYER NAME",
+        field: "name_buyer",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "VENDOR NAME",
+        field: "name_vendor",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "AMOUNT",
+        field: "number",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "SCHEDULED FOR",
+        field: "date",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "ACTION",
+        field: "action",
+        sort: "asc",
+        width: 100,
+      },
+    ],
+    rows: [],
+  });
 
   const getRecentOrders = async () => {
     const { data } = await RecentOrders();
-    setRecentOrders(data.results.bookings);
+    const newRows = [];
+    if (!data.error) {
+      let values = data?.results?.bookings;
+      console.log(values);
+      values?.map((list, index) => {
+        const returnData = {};
+        returnData.sn = index + 1 + ".";
+        returnData.booking_id = list?.bookingID;
+        returnData.name_buyer = list?.buyer?.full_name;
+        returnData.name_vendor = list?.vendor?.full_name;
+        returnData.number = list?.total;
+        returnData.date = moment(list?.event_date).format("L");
+        returnData.action = (
+          <>
+            <Link
+              className="comman_btn2 table_viewbtn"
+              to={`/Admin/Dashboard/Booking-Management/Booking-Details/${list?._id}`}
+              // state={{ id: list?._id }}
+            >
+              View
+            </Link>
+          </>
+        );
+        newRows.push(returnData);
+      });
+
+      setAllBook({ ...allBook, rows: newRows });
+    }
   };
-  console.log(recentOrders);
+
   const getTotalData = async () => {
     const dataBuyer = await totalBuyers();
     const dataEarning = await totalEarning();
@@ -42,23 +117,17 @@ const Dashboard = () => {
     localStorage.setItem("vendor", dataVendor?.data?.results.vendors);
     localStorage.setItem("orders", dataOrder?.data?.results.orders);
   };
+
   let buyers = localStorage.getItem("buyers");
   let earning = localStorage.getItem("earning");
   let vendors = localStorage.getItem("vendor");
   let orders = localStorage.getItem("orders");
 
-  const handleDate = (e) => {
-    const value = e.target.value;
-    setValues({
-      ...values,
-      [e.target.name]: value,
-    });
-  };
-
   const getBarClick = (val) => {
     console.log(val);
     setSideBar(val);
   };
+
   return (
     <div className={sideBar === "click" ? "expanded_main" : "admin_main"}>
       <Sidebar slide={slide} getBarClick={getBarClick} />
@@ -208,8 +277,17 @@ const Dashboard = () => {
 
                 <div className="row">
                   <div className="col-12 comman_table_design px-0">
-                    <div className="table-responsive">
-                      <table className="table mb-0">
+                    <div className="table-responsive p-0  ">
+                      <MDBDataTable
+                        bordered
+                        displayEntries={false}
+                        className="mt-0"
+                        hover
+                        data={allBook}
+                        noBottomColumns
+                        sortable
+                      />
+                      {/* <table className="table mb-0">
                         <thead>
                           <tr>
                             <th>S.No.</th>
@@ -252,7 +330,7 @@ const Dashboard = () => {
                             </tr>
                           </tbody>
                         )}
-                      </table>
+                      </table> */}
                     </div>
                   </div>
                 </div>

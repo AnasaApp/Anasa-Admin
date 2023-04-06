@@ -14,7 +14,6 @@ import moment from "moment";
 
 const BuyerManage = () => {
   const [slide, setSlide] = useState("BuyM");
-  const [buyers, setBuyers] = useState([]);
   const [sideBar, setSideBar] = useState();
   const getBarClick = (val) => {
     console.log(val);
@@ -78,8 +77,13 @@ const BuyerManage = () => {
     getAllBuyers();
   }, []);
 
-  const getAllBuyers = async () => {
-    const { data } = await getBuyers({ page: 1 });
+  const getAllBuyers = async (date) => {
+    let formData = {
+      from: date?.from,
+      to: date?.to,
+      page: 1,
+    };
+    const { data } = await getBuyers(formData);
     const newRows = [];
     if (!data.error) {
       let values = data?.results?.buyers;
@@ -142,13 +146,7 @@ const BuyerManage = () => {
     return `${data?.createdAt?.slice(0, 10)}`;
   };
   const onSubmit = async (data) => {
-    let formData = {
-      from: data?.from,
-      to: data?.to,
-      page: 1,
-    };
-    const res = await getBuyers(formData);
-    setBuyers(res.data.results?.buyers);
+    getAllBuyers(data);
   };
 
   var today = new Date().toISOString().split("T")[0];
@@ -208,11 +206,12 @@ const BuyerManage = () => {
                 </form>
                 <div className="row">
                   <div className="col-12 comman_table_design px-0">
-                    <div className="table-responsive p-2">
+                    <div className="table-responsive ">
                       <MDBDataTable
                         bordered
-                        className="mt-2"
+                        className="userData"
                         hover
+                        displayEntries={false}
                         data={users}
                         noBottomColumns
                         sortable

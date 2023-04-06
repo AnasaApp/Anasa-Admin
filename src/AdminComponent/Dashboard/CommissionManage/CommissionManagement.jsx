@@ -9,13 +9,15 @@ import {
   getViewCommission,
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
+import { MDBDataTable } from "mdbreact";
+import moment from "moment";
+import { Link } from "react-router-dom";
 
 const CommissionManagement = () => {
   const [slide, setSlide] = useState("ComM");
   const [sideBar, setSideBar] = useState();
   const [allCategories, setAllCategories] = useState();
   const [subCategory, setSubCategory] = useState();
-  const [allCommissions, setAllCommissions] = useState([]);
   const [commission, setCommission] = useState([]);
   const [Id, setID] = useState();
   const [formData, setFormData] = useState({
@@ -28,7 +30,42 @@ const CommissionManagement = () => {
     subCategory: "",
     commission: "",
   });
+  const [commissions, setCommissions] = useState({
+    columns: [
+      {
+        label: "S.NO.",
+        field: "sn",
+        sort: "asc",
+        width: 50,
+      },
+      {
+        label: "CATEGORY",
+        field: "cate_name",
+        sort: "asc",
+        width: 100,
+      },
 
+      {
+        label: "SUB-CATEGORY",
+        field: "sub_cate_name",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "COMMISSION-%",
+        field: "number",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "ACTION",
+        field: "action",
+        sort: "asc",
+        width: 100,
+      },
+    ],
+    rows: [],
+  });
   useEffect(() => {
     getAllCat();
     getCommissions();
@@ -40,7 +77,33 @@ const CommissionManagement = () => {
   };
   const getCommissions = async () => {
     const { data } = await AllCommision();
-    setAllCommissions(data?.results?.commissions);
+    const newRows = [];
+    if (!data.error) {
+      let values = data?.results?.commissions;
+      console.log(values);
+      values?.map((list, index) => {
+        const returnData = {};
+        returnData.sn = index + 1 + ".";
+        returnData.cate_name = list?.category?.name_en;
+        returnData.sub_cate_name = list?.subCategory?.name_en;
+        returnData.number = list?.commissionPrice;
+        returnData.action = (
+          <>
+            <Link
+              className="comman_btn table_viewbtn"
+              data-bs-toggle="modal"
+              data-bs-target="#staticBackdrop"
+              onClick={() => viewCommission(list?._id)}
+            >
+              View
+            </Link>
+          </>
+        );
+        newRows.push(returnData);
+      });
+
+      setCommissions({ ...commissions, rows: newRows });
+    }
   };
   const subCategories = async (id) => {
     const { data } = await getSubCategory({ categoryId: id });
@@ -190,10 +253,10 @@ const CommissionManagement = () => {
               <div className="col-12 mb-4 design_outter_comman border shadow">
                 <div className="row comman_header justify-content-between">
                   <div className="col-auto">
-                    <h2>Commission</h2>
+                    <h2>Commissions</h2>
                   </div>
                   <div className="col-3">
-                    <form className="form-design" action="">
+                    {/* <form className="form-design" action="">
                       <div className="form-group mb-0 position-relative icons_set">
                         <input
                           type="text"
@@ -204,13 +267,22 @@ const CommissionManagement = () => {
                         />
                         <i className="far fa-search" />
                       </div>
-                    </form>
+                    </form> */}
                   </div>
                 </div>
                 <div className="row">
                   <div className="col-12 comman_table_design px-0">
-                    <div className="table-responsive">
-                      <table className="table mb-0">
+                    <div className="table-responsive p-0">
+                      <MDBDataTable
+                        bordered
+                        displayEntries={false}
+                        className=""
+                        hover
+                        data={commissions}
+                        noBottomColumns
+                        sortable
+                      />
+                      {/* <table className="table mb-0">
                         <thead>
                           <tr>
                             <th>S.No.</th>
@@ -241,7 +313,7 @@ const CommissionManagement = () => {
                             </tr>
                           ))}
                         </tbody>
-                      </table>
+                      </table> */}
                     </div>
                   </div>
                 </div>
