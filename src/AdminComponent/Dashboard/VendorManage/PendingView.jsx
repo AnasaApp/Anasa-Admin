@@ -28,6 +28,7 @@ const PendingView = () => {
 
   const onSubmit = async (info) => {
     let id = location?.state?.id;
+
     const { data } = await RejectVender(id, {
       trade_licence_copy: info?.tradeLicenceCopy,
       signed_contract: info?.signedContract,
@@ -207,12 +208,21 @@ const PendingView = () => {
                                 }
                               ></i>
                             ) : null}
-                            <i
-                              className="fa fa-download mx-2"
-                              onClick={() => {
-                                fileDownload(vendor?.trade_licence_copy);
-                              }}
-                            />{" "}
+                            {vendor?.trade_licence_copy ? (
+                              <i
+                                className="fa fa-download mx-4 mt-2"
+                                onClick={() => {
+                                  fileDownload(vendor?.trade_licence_copy);
+                                }}
+                              />
+                            ) : (
+                              <i
+                                className="fa fa-upload mx-4 mt-2"
+                                onClick={() => {
+                                  fileDownload(vendor?.trade_licence_copy);
+                                }}
+                              />
+                            )}{" "}
                             {vendor?.trade_licence_copy}
                           </div>
                         </label>
@@ -231,12 +241,21 @@ const PendingView = () => {
                                 onClick={() => preview(vendor?.signed_contract)}
                               ></i>
                             ) : null}
-                            <i
-                              className="fa fa-download mx-2"
-                              onClick={() => {
-                                fileDownload(vendor?.signed_contract);
-                              }}
-                            />{" "}
+                            {vendor?.signed_contract ? (
+                              <i
+                                className="fa fa-download mx-4 mt-2"
+                                onClick={() => {
+                                  fileDownload(vendor?.signed_contract);
+                                }}
+                              />
+                            ) : (
+                              <i
+                                className="fa fa-upload mx-4 mt-2"
+                                onClick={() => {
+                                  fileDownload(vendor?.signed_contract);
+                                }}
+                              />
+                            )}{" "}
                             {vendor?.signed_contract}
                           </div>
                         </label>

@@ -494,7 +494,7 @@ const PromoManagement = () => {
                 </div>
                 <div className="row">
                   <div className="col-12 comman_table_design px-0">
-                    <div className="table-responsive p-0">
+                    <div className="table-responsive p-1">
                       <MDBDataTable
                         bordered
                         displayEntries={false}

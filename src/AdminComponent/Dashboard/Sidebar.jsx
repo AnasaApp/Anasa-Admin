@@ -115,6 +115,18 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
                 </li>
                 <li>
                   <Link
+                    className={SlideState === "PM" ? "active" : ""}
+                    to="/Admin/Dashboard/Payout-Management"
+                    onClick={() => {
+                      setSlideState("PM");
+                    }}
+                  >
+                    <i className="fas fa-repeat" />
+                    Payout Management
+                  </Link>
+                </li>
+                <li>
+                  <Link
                     className={SlideState === "ComM" ? "active" : ""}
                     to="/Admin/Dashboard/Commission-Management"
                     onClick={() => {

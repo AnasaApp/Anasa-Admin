@@ -7,12 +7,15 @@ import {
   AddCombo,
   AllCategory,
   AllOffers,
+  editOffer,
   getSubCategory,
   getViewCombo,
   getViewPromo,
   SearchUser,
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
+import { MDBDataTable } from "mdbreact";
+import moment from "moment";
 
 const MarketingOffers = () => {
   const [slide, setSlide] = useState("MO");
@@ -27,10 +30,11 @@ const MarketingOffers = () => {
   const [categoryData, setCategoryData] = useState();
   const [subCategoryData, setSubCategoryData] = useState();
   const [offers, setAllOffers] = useState([]);
-  const [comboId, setComboId] = useState();
+  const [offerId, setOfferId] = useState();
   const [categoryEditId, setCategoryEditId] = useState();
   const [subEditCategory, setSubEditCategory] = useState([]);
   const [subCategoryId, setSubCategoryId] = useState();
+  const [offerData, setOfferData] = useState();
   const {
     register,
     handleSubmit,
@@ -44,6 +48,61 @@ const MarketingOffers = () => {
     reset,
   } = useForm();
 
+  const [offersList, setOffersList] = useState({
+    columns: [
+      {
+        label: "S.NO.",
+        field: "sn",
+        sort: "asc",
+        width: 50,
+      },
+      {
+        label: "Category",
+        field: "category",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "Sub-Category",
+        field: "subCategory",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "Combo(En)",
+        field: "name_en",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "Combo(Ar)",
+        field: "name_ar",
+        sort: "asc",
+        width: 100,
+      },
+
+      {
+        label: "DISCOUNT-%",
+        field: "number",
+        sort: "asc",
+        width: 100,
+      },
+
+      {
+        label: "Users",
+        field: "userType",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "ACTION",
+        field: "action",
+        sort: "asc",
+        width: 100,
+      },
+    ],
+    rows: [],
+  });
   useEffect(() => {
     getAllCat();
     getAllOffers();
@@ -55,6 +114,58 @@ const MarketingOffers = () => {
 
   const getAllOffers = async () => {
     const { data } = await AllOffers();
+    const newRows = [];
+    if (!data.error) {
+      let values = data.results?.offer;
+      console.log(values);
+      values?.map((list, index) => {
+        const returnData = {};
+        returnData.sn = index + 1 + ".";
+        returnData.name_en = list?.name_en;
+        returnData.name_ar = list?.name_ar;
+        returnData.subCategory = list?.subCategory?.name_en;
+        returnData.category = list?.category?.name_en;
+        returnData.number = list?.discount;
+        returnData.userType = list?.userType;
+
+        // returnData.status = (
+        //   <div className="check_toggle">
+        //     <input
+        //       type="checkbox"
+        //       defaultChecked={list?.status}
+        //       name="checkv4"
+        //       id={list?._id}
+        //       className="d-none"
+        //       onClick={() => {
+        //         PromoCodeStatus(list?._id);
+        //       }}
+        //     />
+        //     <label
+        //       data-bs-toggle="modal"
+        //       data-bs-target="#staticBackdrop12"
+        //       htmlFor={list?._id}
+        //     />
+        //   </div>
+        // );
+
+        returnData.action = (
+          <>
+            <a
+              className="comman_btn table_viewbtn"
+              href="javascript:;"
+              data-bs-toggle="modal"
+              data-bs-target="#staticBackdrop"
+              onClick={() => handleView(list?._id)}
+            >
+              Edit
+            </a>
+          </>
+        );
+        newRows.push(returnData);
+      });
+
+      setOffersList({ ...offersList, rows: newRows });
+    }
     setAllOffers(data?.results?.offer);
   };
 
@@ -103,28 +214,48 @@ const MarketingOffers = () => {
     });
   };
 
-  const onEdit = (data) => {
+  const onEdit = async (data) => {
     console.log(data);
+    let formData = new FormData();
+    formData.append("name_en", data?.combo_en_edit);
+    formData.append("name_ar", data?.combo_ar_edit_ar);
+    formData.append("discount", data?.Edit_Discount);
+    formData.append("validFrom", data?.dateFrom);
+    formData.append("validTo", data?.dateTo);
+    await editOffer(offerId, formData).then((res) => {
+      if (!res.data.error) {
+        document.getElementById("closed").click();
+        getAllOffers();
+        Swal.fire({
+          title: "Offer Modified Successfully!",
+          icon: "success",
+          confirmButtonText: "Ok",
+          confirmButtonColor: "#e25829",
+        });
+      }
+    });
   };
+
   const onFileSelection = (e, key) => {
     setFiles({ ...files, [key]: e.target.files[0] });
   };
+
   const handleView = async (id) => {
-    setComboId(id);
+    setOfferId(id);
     const { data } = await getViewCombo(id);
-    let date = data?.results.promocode;
-    // setEditData(data?.results.promocode);
+    let date = data?.results.offer;
+    setOfferData(date);
     document.getElementById("from").defaultValue = date?.validFrom?.slice(
       0,
       10
     );
     document.getElementById("till").defaultValue = date?.validTo?.slice(0, 10);
     reset({
-      promo_code_en_edit: date.name_en,
-      promo_code_ar_edit: date?.name_ar,
-      EditDiscount: date?.discount,
-      validFrom: date?.validFrom?.slice(0, 10),
-      validTo: date?.validFrom?.slice(0, 10),
+      combo_en_edit: date.name_en,
+      combo_ar_edit_ar: date?.name_ar,
+      Edit_Discount: date?.discount,
+      dateFrom: date?.validFrom?.slice(0, 10),
+      dateTo: date?.validFrom?.slice(0, 10),
     });
   };
 
@@ -360,26 +491,20 @@ const MarketingOffers = () => {
                   <div className="col-auto">
                     <h2>Combo</h2>
                   </div>
-
-                  <div className="col-3">
-                    <form className="form-design" action="">
-                      <div className="form-group mb-0 position-relative icons_set">
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Search"
-                          name="name"
-                          id="name"
-                        />
-                        <i className="far fa-search" />
-                      </div>
-                    </form>
-                  </div>
                 </div>
                 <div className="row">
                   <div className="col-12 comman_table_design px-0">
                     <div className="table-responsive">
-                      <table className="table mb-0">
+                      <MDBDataTable
+                        bordered
+                        displayEntries={false}
+                        className=""
+                        hover
+                        data={offersList}
+                        noBottomColumns
+                        sortable
+                      />
+                      {/* <table className="table mb-0">
                         <thead>
                           <tr>
                             <th>S.No.</th>
@@ -419,7 +544,7 @@ const MarketingOffers = () => {
                             </tr>
                           ))}
                         </tbody>
-                      </table>
+                      </table> */}
                     </div>
                   </div>
                 </div>
@@ -449,6 +574,7 @@ const MarketingOffers = () => {
                 className="btn-close"
                 data-bs-dismiss="modal"
                 aria-label="Close"
+                id="closed"
                 onClick={() => {
                   document.getElementById("ResetS").click();
                   setSelectedUsers(null);
@@ -485,17 +611,17 @@ const MarketingOffers = () => {
                   <input
                     type="text"
                     className={classNames("form-control", {
-                      "is-invalid": errors2.combo_ar_edit,
+                      "is-invalid": errors2.combo_ar_edit_ar,
                     })}
-                    name="combo_ar_edit"
+                    name="combo_ar_edit_ar"
                     defaultValue=""
-                    {...register2("combo_ar_edit", {
+                    {...register2("combo_ar_edit_ar", {
                       required: "*Combo Name is required!",
                     })}
                   />
-                  {errors2.combo_ar_edit && (
+                  {errors2.combo_ar_edit_ar && (
                     <small className="errorText mx-1">
-                      {errors2.combo_ar_edit.message}
+                      {errors2.combo_ar_edit_ar.message}
                     </small>
                   )}
                 </div>
@@ -507,9 +633,7 @@ const MarketingOffers = () => {
                     name="category"
                     onChange={(e) => subCategoriesOnEdit(e.target.value)}
                   >
-                    <option selected="" value="">
-                      Select Category
-                    </option>
+                    <option selected="">{offerData?.category?.name_en}</option>
                     {allCategories?.map((item) => (
                       <option value={item?._id}>{item?.name_en}</option>
                     ))}
@@ -524,7 +648,9 @@ const MarketingOffers = () => {
                       setSubCategoryId(e.target.value);
                     }}
                   >
-                    <option selected="">Select Sub Category</option>
+                    <option selected="">
+                      {offerData?.subCategory?.name_en}
+                    </option>
                     {subEditCategory?.map((item) => (
                       <option value={item?._id}>{item?.name_en}</option>
                     ))}
@@ -571,27 +697,35 @@ const MarketingOffers = () => {
                 <div className="form-group col-4">
                   <label htmlFor="">Discount % </label>
                   <input
+                    type="number"
+                    className={classNames("form-control", {
+                      "is-invalid": errors2.Edit_Discount,
+                    })}
+                    {...register2("Edit_Discount", {
+                      required: "*Please Enter Discount",
+                    })}
+                    name="Edit_Discount"
+                  />
+                  {errors2.Edit_Discount && (
+                    <small className="errorText mx-1">
+                      {errors2.Edit_Discount.message}
+                    </small>
+                  )}
+                </div>
+
+                <div className="form-group col-12">
+                  <label htmlFor="">Selected Users - (ALL)</label>
+                  <input
                     type="text"
-                    className="form-control"
-                    defaultValue={20}
+                    disabled
+                    className={classNames("form-control", {
+                      "is-invalid": errors2.users,
+                    })}
+                    name="users"
                   />
                 </div>
 
-                <div className="form-group col-6">
-                  <label htmlFor="">Select Users</label>
-                  <select
-                    aria-label="Default select example"
-                    className="form-select"
-                    name="select_user"
-                    onChange={(e) => setUsertypes(e.target.value)}
-                  >
-                    <option selected="">Select Users</option>
-                    <option value="all">All</option>
-                    <option value="specific">Specific User</option>
-                  </select>
-                </div>
-
-                <div className="form-group col-6">
+                {/* <div className="form-group col-6">
                   <label htmlFor="">Search User</label>
                   <Select
                     defaultValue=""
@@ -604,9 +738,11 @@ const MarketingOffers = () => {
                     onInputChange={handleInputChange}
                     isDisabled={userTypes === "specific" ? false : true}
                   />
-                </div>
+                </div> */}
                 <div className="form-group mb-0 col-12 text-center mt-3">
-                  <button className="comman_btn">Save</button>
+                  <button className="comman_btn" type="submit">
+                    Save
+                  </button>
                 </div>
                 <div className="form-group mb-0 col-12 text-center mt-3">
                   <button

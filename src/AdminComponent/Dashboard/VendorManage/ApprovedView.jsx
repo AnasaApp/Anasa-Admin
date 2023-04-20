@@ -6,6 +6,7 @@ import {
   getVendorBooking,
   getVendorDetails,
   getVendorServices,
+  getVendorTransactions,
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
 
@@ -15,11 +16,13 @@ const ApprovedView = () => {
   const [sideBar, setSideBar] = useState();
   const [vendorBooking, setVendorBooking] = useState();
   const [values, setValues] = useState({ from: "", to: "" });
+  const [transaction, setTransaction] = useState();
   const navigate = useNavigate();
   let location = useLocation();
   useEffect(() => {
     getVendor();
     GetVendorBooking();
+    GetVendorTransactions();
   }, []);
   const handleDate = (e) => {
     const value = e.target.value;
@@ -39,6 +42,11 @@ const ApprovedView = () => {
     setVendorBooking(data?.results.bookings);
   };
 
+  const GetVendorTransactions = async () => {
+    let id = location?.state?.id;
+    const { data } = await getVendorTransactions(id);
+    setTransaction(data?.results.transaction);
+  };
   const onSearchBookings = async (e) => {
     if (values?.from && values?.to) {
       e.preventDefault();
@@ -61,9 +69,22 @@ const ApprovedView = () => {
       });
     }
   };
+
   const fileDownload = (url) => {
-    saveAs(url);
+    fetch(url)
+      .then((res) => res.blob())
+      .then((blob) => {
+        const blobURL = window.URL.createObjectURL(new Blob([blob]));
+        const fileName = url.split("/").pop();
+        const aTag = document.createElement("a");
+        aTag.href = blobURL;
+        aTag.setAttribute("download", fileName);
+        document.body.appendChild(aTag);
+        aTag.click();
+        aTag.remove();
+      });
   };
+
   const preview = (id) => {
     document.getElementById("preview_modal").click();
     document.getElementById("preview_images").src = id;
@@ -198,12 +219,21 @@ const ApprovedView = () => {
                                 }
                               ></i>
                             ) : null}
-                            <i
-                              className="fa fa-download mx-2"
-                              onClick={() => {
-                                fileDownload(vendor?.trade_licence_copy);
-                              }}
-                            />{" "}
+                            {vendor?.trade_licence_copy ? (
+                              <i
+                                className="fa fa-download mx-4 mt-2"
+                                onClick={() => {
+                                  fileDownload(vendor?.trade_licence_copy);
+                                }}
+                              />
+                            ) : (
+                              <i
+                                className="fa fa-upload mx-4 mt-2"
+                                onClick={() => {
+                                  fileDownload(vendor?.trade_licence_copy);
+                                }}
+                              />
+                            )}{" "}
                             {vendor?.trade_licence_copy}
                           </div>
                         </label>
@@ -222,12 +252,21 @@ const ApprovedView = () => {
                                 onClick={() => preview(vendor?.signed_contract)}
                               ></i>
                             ) : null}
-                            <i
-                              className="fa fa-download mx-4"
-                              onClick={() => {
-                                fileDownload(vendor?.signed_contract);
-                              }}
-                            />{" "}
+                            {vendor?.signed_contract ? (
+                              <i
+                                className="fa fa-download mx-4 mt-2"
+                                onClick={() => {
+                                  fileDownload(vendor?.signed_contract);
+                                }}
+                              />
+                            ) : (
+                              <i
+                                className="fa fa-upload mx-4 mt-2"
+                                onClick={() => {
+                                  fileDownload(vendor?.signed_contract);
+                                }}
+                              />
+                            )}{" "}
                             {vendor?.signed_contract}
                           </div>
                         </label>
@@ -329,12 +368,102 @@ const ApprovedView = () => {
                               <td>{index + 1}</td>
                               <td>{item?.bookingID}</td>
                               <td>
-                                <a
+                                <Link
                                   className="comman_btn2 table_viewbtn"
-                                  href="booking-details.html"
+                                  to={`/Admin/Dashboard/Booking-Management/Booking-Details/${item?._id}`}
+                                  // state={{ id: list?._id }}
                                 >
                                   View
-                                </a>
+                                </Link>
+                              </td>
+                              <td>{item?.total} /- </td>
+                              <td>{item?.createdAt?.slice(0, 10)}</td>
+                              <td>{item?.status}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-12 design_outter_comman recent_orders shadow mt-4">
+            <div className="row comman_header justify-content-between">
+              <div className="col-auto">
+                <h2>Transaction Details</h2>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-12">
+                {/* <form
+                  className="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"
+                  action=""
+                >
+                  <div className="form-group mb-0 col-5">
+                    <label htmlFor="">From</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      name="from"
+                      id="appFrom"
+                      value={values.from}
+                      onChange={handleDate}
+                    />
+                  </div>
+                  <div className="form-group mb-0 col-5">
+                    <label htmlFor="">To</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      name="to"
+                      id="appTo"
+                      value={values.to}
+                      onChange={handleDate}
+                    />
+                  </div>
+                  <div className="form-group mb-0 col-auto">
+                    <button className="comman_btn2" onClick={onSearchBookings}>
+                      Search
+                    </button>
+                    <button
+                      className="comman_btn2 d-none"
+                      type="reset"
+                      id="Resets"
+                    >
+                      Search
+                    </button>
+                  </div>
+                </form> */}
+                <div className="row">
+                  <div className="col-12 comman_table_design px-0">
+                    <div className="table-responsive">
+                      <table className="table mb-0">
+                        <thead>
+                          <tr>
+                            <th>S.No.</th>
+                            <th>Transaction Id</th>
+                            <th>Transacion Date</th>
+                            <th>Amount</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {vendorBooking?.map((item, index) => (
+                            <tr>
+                              <td>{index + 1}</td>
+                              <td>{item?.bookingID}</td>
+                              <td>
+                                <Link
+                                  className="comman_btn2 table_viewbtn"
+                                  to={`/Admin/Dashboard/Booking-Management/Booking-Details/${item?._id}`}
+                                  // state={{ id: list?._id }}
+                                >
+                                  View
+                                </Link>
                               </td>
                               <td>{item?.total} /- </td>
                               <td>{item?.createdAt?.slice(0, 10)}</td>

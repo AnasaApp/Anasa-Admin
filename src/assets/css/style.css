@@ -1177,3 +1177,14 @@ table.table td {
   right: 1%;
   max-width: 15rem;
 }
+.col-12.mb-4.design_outter_comman.border.shadow {
+  position: relative;
+  overflow: visible;
+}
+div.dataTables_wrapper div.dataTables_info,
+div.dataTables_wrapper div.dataTables_paginate {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  padding-left: 1rem !important;
+  font-weight: 400;
+}

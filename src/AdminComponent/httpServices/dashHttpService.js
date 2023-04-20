@@ -494,6 +494,33 @@ export async function getVendorBooking(id, formData) {
     return { error };
   }
 }
+export async function getVendorTransactions(id, formData) {
+  try {
+    const { data } = await appHttpService.get(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/vendorTransactions` +
+        "/" +
+        id,
+      {
+        formData,
+      }
+    );
+    console.log(data);
+
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Ok",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
 export async function getVendorServices(id, formData) {
   try {
     const { data } = await appHttpService.post(
@@ -548,7 +575,14 @@ export async function RejectVender(id, formData) {
       formData
     );
     console.log(data);
-
+    if (data.error) {
+      Swal.fire({
+        title: data.message,
+        icon: "error",
+        confirmButtonText: "Ok",
+        confirmButtonColor: "#e25829",
+      });
+    }
     return { data };
   } catch (error) {
     if (error.response) {
@@ -1095,7 +1129,36 @@ export async function AddCombo(formData) {
     return { error };
   }
 }
-
+export async function editOffer(id, formData) {
+  try {
+    const { data } = await appHttpService.post(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/editOffer` + "/" + id,
+      formData
+    );
+    console.log(data);
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
 export async function EditCommission(formData, id) {
   try {
     const { data } = await appHttpService.post(
@@ -1159,7 +1222,7 @@ export async function AllOffers() {
 
 export async function getViewCombo(id) {
   try {
-    const { data } = await appHttpService.post(
+    const { data } = await appHttpService.get(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/getOffer` + "/" + id
     );
     console.log(data);

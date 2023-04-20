@@ -1,21 +1,20 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import "../node_modules/@fortawesome/fontawesome-free/css/fontawesome.css"
-import "../node_modules/@fortawesome/fontawesome-free/css/fontawesome.min.css"
-import "../node_modules/@fortawesome/fontawesome-free/css/all.css"
-import "../node_modules/@fortawesome/fontawesome-free/css/brands.min.css"
-import "../node_modules/@fortawesome/fontawesome-svg-core/styles.css"
-import "../node_modules/@fortawesome/free-solid-svg-icons/faHandsHolding"
-import "../node_modules/@fortawesome/free-solid-svg-icons/faBars"
-
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import "../node_modules/@fortawesome/fontawesome-free/css/fontawesome.css";
+import "../node_modules/@fortawesome/fontawesome-free/css/fontawesome.min.css";
+import "../node_modules/@fortawesome/fontawesome-free/css/all.css";
+import "../node_modules/@fortawesome/fontawesome-free/css/brands.min.css";
+import "../node_modules/@fortawesome/fontawesome-svg-core/styles.css";
+import "../node_modules/@fortawesome/free-solid-svg-icons/faHandsHolding";
+import "../node_modules/@fortawesome/free-solid-svg-icons/faBars";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.js";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "mdbreact/dist/css/mdb.css";
-import reportWebVitals from './reportWebVitals';
+import reportWebVitals from "./reportWebVitals";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <App />

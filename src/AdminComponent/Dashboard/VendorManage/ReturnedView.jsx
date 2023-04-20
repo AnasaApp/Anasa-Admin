@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getVendorDetails } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
+import { saveAs } from "file-saver";
 
 const ReturnedView = () => {
   const [slide, setSlide] = useState("VM");
@@ -23,6 +24,13 @@ const ReturnedView = () => {
   const getBarClick = (val) => {
     console.log(val);
     setSideBar(val);
+  };
+  const fileDownload = (url) => {
+    saveAs(url);
+  };
+  const preview = (id) => {
+    document.getElementById("preview_modal").click();
+    document.getElementById("preview_images").src = id;
   };
   return (
     <div className={sideBar === "click" ? "expanded_main" : "admin_main"}>
@@ -138,17 +146,33 @@ const ReturnedView = () => {
                   </div>
                   <div className="col-md-6 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
-                      <span>Signed Contract:</span>
+                      <span>Trade License:</span>
                       <div className="col img_box_show">
-                        <input
-                          className="d-none"
-                          type="file"
-                          id="file1"
-                          name="file"
-                        />
                         <label htmlFor="file1">
                           <div className="licence_id">
-                            <i className="fa fa-download" />{" "}
+                            {vendor?.trade_licence_copy ? (
+                              <i
+                                class="fa fa-eye preview_icon"
+                                onClick={() =>
+                                  preview(vendor?.trade_licence_copy)
+                                }
+                              ></i>
+                            ) : null}
+                            {vendor?.trade_licence_copy ? (
+                              <i
+                                className="fa fa-download mx-4 mt-2"
+                                onClick={() => {
+                                  fileDownload(vendor?.trade_licence_copy);
+                                }}
+                              />
+                            ) : (
+                              <i
+                                className="fa fa-upload mx-4 mt-2"
+                                onClick={() => {
+                                  fileDownload(vendor?.trade_licence_copy);
+                                }}
+                              />
+                            )}{" "}
                             {vendor?.trade_licence_copy}
                           </div>
                         </label>
@@ -159,15 +183,29 @@ const ReturnedView = () => {
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Signed Contract:</span>
                       <div className="col img_box_show">
-                        <input
-                          className="d-none"
-                          type="file"
-                          id="file1"
-                          name="file"
-                        />
-                        <label htmlFor="file1">
+                        <label htmlFor="file1 ">
                           <div className="licence_id">
-                            <i className="fa fa-download" />{" "}
+                            {vendor?.signed_contract ? (
+                              <i
+                                class="fa fa-eye preview_icon"
+                                onClick={() => preview(vendor?.signed_contract)}
+                              ></i>
+                            ) : null}
+                            {vendor?.signed_contract ? (
+                              <i
+                                className="fa fa-download mx-4 mt-2"
+                                onClick={() => {
+                                  fileDownload(vendor?.signed_contract);
+                                }}
+                              />
+                            ) : (
+                              <i
+                                className="fa fa-upload mx-4 mt-2"
+                                onClick={() => {
+                                  fileDownload(vendor?.signed_contract);
+                                }}
+                              />
+                            )}{" "}
                             {vendor?.signed_contract}
                           </div>
                         </label>

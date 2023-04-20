@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import "../../assets/css/style.css";
-import OtpField from "react-otp-field";
 import { useLocation, useNavigate } from "react-router-dom";
 import { adminVerifyOtp } from "../httpServices/LoginHttpService";
 import OtpInput from "react-otp-input";
