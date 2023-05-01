@@ -3,12 +3,14 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { saveAs } from "file-saver";
 import {
+  downloadFiles,
   getVendorBooking,
   getVendorDetails,
   getVendorServices,
   getVendorTransactions,
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
+import moment from "moment";
 
 const ApprovedView = () => {
   const [slide, setSlide] = useState("VM");
@@ -57,7 +59,6 @@ const ApprovedView = () => {
         page: 1,
       });
       setVendorBooking(data?.results.vendor);
-
       setValues({ from: "", to: "" });
     } else {
       e.preventDefault();
@@ -70,25 +71,23 @@ const ApprovedView = () => {
     }
   };
 
-  const fileDownload = (url) => {
-    fetch(url)
-      .then((res) => res.blob())
-      .then((blob) => {
-        const blobURL = window.URL.createObjectURL(new Blob([blob]));
-        const fileName = url.split("/").pop();
-        const aTag = document.createElement("a");
-        aTag.href = blobURL;
-        aTag.setAttribute("download", fileName);
-        document.body.appendChild(aTag);
-        aTag.click();
-        aTag.remove();
-      });
-  };
+const fileDownload = async (url) => {
+  const { data } = await downloadFiles({ key: url });
+  if (!data.error) {
+    console.log(data);
+    // const linkSource = `data:${contentType};base64,${base64Data}`;
+    const downloadLink = document.createElement("a");
+    downloadLink.href = data.results.image;
+    downloadLink.download = "doc";
+    downloadLink.click();
+  }
+};
 
   const preview = (id) => {
     document.getElementById("preview_modal").click();
     document.getElementById("preview_images").src = id;
   };
+
   const getBarClick = (val) => {
     console.log(val);
     setSideBar(val);
@@ -452,21 +451,13 @@ const ApprovedView = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {vendorBooking?.map((item, index) => (
+                          {transaction?.map((item, index) => (
                             <tr>
                               <td>{index + 1}</td>
-                              <td>{item?.bookingID}</td>
-                              <td>
-                                <Link
-                                  className="comman_btn2 table_viewbtn"
-                                  to={`/Admin/Dashboard/Booking-Management/Booking-Details/${item?._id}`}
-                                  // state={{ id: list?._id }}
-                                >
-                                  View
-                                </Link>
-                              </td>
-                              <td>{item?.total} /- </td>
-                              <td>{item?.createdAt?.slice(0, 10)}</td>
+                              <td>{item?.transactionID}</td>
+                              <td>{moment(item?.createdAt).format("L")}</td>
+                              <td>{item?.deposit} /- </td>
+                              <td>{item?.type} /- </td>
                               <td>{item?.status}</td>
                             </tr>
                           ))}

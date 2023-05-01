@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { VendorTransactions } from "../../httpServices/dashHttpService";
+import {
+  BuyerTransactions,
+  VendorTransactions,
+} from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
 import moment from "moment";
 import { MDBDataTable } from "mdbreact";
@@ -9,7 +12,6 @@ const TransactionManagement = () => {
   const [slide, setSlide] = useState("TM");
   const [sideBar, setSideBar] = useState();
   const [values, setValues] = useState({ from: "", to: "" });
-  const [buyerTcs, setBuyerTcs] = useState([]);
 
   useEffect(() => {
     getVendorTransactions();
@@ -33,6 +35,50 @@ const TransactionManagement = () => {
       },
       {
         label: "VENDOR NAME",
+        field: "name_vendor",
+        sort: "asc",
+        width: 150,
+      },
+
+      {
+        label: "AMOUNT",
+        field: "amount",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "STATUS",
+        field: "status",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "ACTION",
+        field: "action",
+        sort: "asc",
+        width: 100,
+      },
+    ],
+    rows: [],
+  });
+
+  const [buyerTcs, setBuyerTcs] = useState({
+    columns: [
+      {
+        label: "S.NO.",
+        field: "sn",
+        sort: "asc",
+        width: 50,
+      },
+
+      {
+        label: "TRANSACTION DATE & TIME",
+        field: "date",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "BUYER NAME",
         field: "name_vendor",
         sort: "asc",
         width: 150,
@@ -91,10 +137,32 @@ const TransactionManagement = () => {
   };
 
   const getBuyerTransactions = async () => {
-    const { data } = await VendorTransactions({ page: 1 });
+    const { data } = await BuyerTransactions({ page: 1 });
+    const newRows = [];
     if (!data.error) {
-      // setVendorTcs(data?.results);
+      let values = data?.results.transactions;
+      values?.map((list, index) => {
+        const returnData = {};
+        returnData.sn = index + 1 + ".";
+        returnData.name_vendor = list?.vendor.full_name;
+        returnData.amount = list?.withdrawl || list?.deposit;
+        returnData.date = moment(list?.createdAt).format("L");
+        returnData.status = list?.status;
+        returnData.action = (
+          <>
+            <Link
+              to="/Admin/Dashboard/Vendor-Management/Approved"
+              state={{ id: list?.vendor?._id }}
+              className="comman_btn table_viewbtn mx-1"
+            >
+              View
+            </Link>
+          </>
+        );
+        newRows.push(returnData);
+      });
     }
+    setBuyerTcs({ ...buyerTcs, rows: newRows });
   };
 
   const handleDate = (e) => {
@@ -238,7 +306,7 @@ const TransactionManagement = () => {
                                     displayEntries={false}
                                     className=""
                                     hover
-                                    data={vendorTcs}
+                                    data={buyerTcs}
                                     noBottomColumns
                                     sortable
                                   />

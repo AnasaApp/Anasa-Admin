@@ -23,8 +23,11 @@ const MarketingOffers = () => {
   const [files, setFiles] = useState();
   const [userTypes, setUsertypes] = useState();
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const [selectedServices, setSelectedServices] = useState([]);
   const [searchKey, setSearchKey] = useState("");
+  const [searchKey2, setSearchKey2] = useState("");
   const [options, setOptions] = useState([]);
+  const [options2, setOptions2] = useState([]);
   const [allCategories, setAllCategories] = useState();
   const [subCategory, setSubCategory] = useState();
   const [categoryData, setCategoryData] = useState();
@@ -181,6 +184,18 @@ const MarketingOffers = () => {
       }
     });
   };
+  const createOptionsServices = async () => {
+    await SearchUser({ search: searchKey }).then((res) => {
+      if (!res.error) {
+        let data = res?.data.results?.buyers;
+        const optionList = data?.map((item, index) => ({
+          value: item?._id,
+          label: item?.full_name,
+        }));
+        setOptions(optionList);
+      }
+    });
+  };
 
   const onSubmit = async (data) => {
     console.log(data);
@@ -279,11 +294,18 @@ const MarketingOffers = () => {
       usersSelected: selected,
     });
   };
-
+  const handleChange2 = (selected) => {
+    setSelectedServices({
+      servicesSelected: selected,
+    });
+  };
   const handleInputChange = (inputValue) => {
     setSearchKey(inputValue);
   };
 
+  const handleInputChange2 = (inputValue) => {
+    setSearchKey2(inputValue);
+  };
   const getBarClick = (val) => {
     console.log(val);
     setSideBar(val);
@@ -307,7 +329,7 @@ const MarketingOffers = () => {
                   action=""
                   onSubmit={handleSubmit(onSubmit)}
                 >
-                  <div className="form-group col-6">
+                  <div className="form-group col-4">
                     <label htmlFor="">Combo Name (En)</label>
                     <input
                       type="text"
@@ -325,7 +347,7 @@ const MarketingOffers = () => {
                       </small>
                     )}
                   </div>
-                  <div className="form-group col-6">
+                  <div className="form-group col-4">
                     <label htmlFor="">Combo Name (Ar)</label>
                     <input
                       type="text"
@@ -359,6 +381,35 @@ const MarketingOffers = () => {
                     </select>
                   </div>
                   <div className="form-group col-4">
+                    <label htmlFor="">Select Vendor</label>
+                    <select
+                      className="form-select form-control"
+                      aria-label="Default select example"
+                      onChange={(e) => subCategories(e.target.value)}
+                    >
+                      <option selected="" value="">
+                        Select Vendor
+                      </option>
+                      {allCategories?.map((item) => (
+                        <option value={item?._id}>{item?.name_en}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group col-4">
+                    <label htmlFor="">Search Services</label>
+                    <Select
+                      defaultValue=""
+                      isMulti
+                      name="users"
+                      options={options2}
+                      className="basic-multi-select z-3"
+                      classNamePrefix="select"
+                      onChange={handleChange2}
+                      value={selectedServices?.servicesSelected}
+                      onInputChange={handleInputChange2}
+                    />
+                  </div>
+                  {/* <div className="form-group col-4">
                     <label htmlFor="">Select Sub Category</label>
                     <select
                       className="form-select form-control"
@@ -372,7 +423,7 @@ const MarketingOffers = () => {
                         <option value={item?._id}>{item?.name_en}</option>
                       ))}
                     </select>
-                  </div>
+                  </div> */}
                   <div className="form-group col-4 choose_file position-relative">
                     <span>Upload Image </span>{" "}
                     <label htmlFor="upload_video">
@@ -389,7 +440,7 @@ const MarketingOffers = () => {
                     />
                   </div>
                   <div className="form-group col-4">
-                    <label htmlFor="">Discount %</label>
+                    <label htmlFor="">Amount</label>
                     <input
                       type="number"
                       className={classNames("form-control", {

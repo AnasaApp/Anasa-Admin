@@ -113,7 +113,7 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
                     Transaction Management
                   </Link>
                 </li>
-                <li>
+                {/* <li>
                   <Link
                     className={SlideState === "PM" ? "active" : ""}
                     to="/Admin/Dashboard/Payout-Management"
@@ -124,7 +124,7 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
                     <i className="fas fa-repeat" />
                     Payout Management
                   </Link>
-                </li>
+                </li> */}
                 <li>
                   <Link
                     className={SlideState === "ComM" ? "active" : ""}
@@ -254,19 +254,21 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
                 <i className="fas fa-bell" />
                 <span>1</span>
               </Link>
-              <div className="dropdown Profile_dropdown">
+              <div className="dropdown">
                 <button
-                  className="btn btn-secondary"
+                  className="btn btn-secondary p-2"
                   type="button"
                   id="dropdownMenuButton1"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
                   <img
+                    width={40}
                     src={
-                      AdminData?.image
-                        ? AdminData?.image
-                        : require("../../assets/img/Nupload.jpg")
+                      // AdminData?.image
+                      //   ? AdminData?.image
+                      //   :
+                      require("../../assets/img/Nupload.jpg")
                     }
                     alt=""
                   />

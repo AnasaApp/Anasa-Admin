@@ -209,10 +209,9 @@ const PromoManagement = () => {
         "selectedUsers",
         JSON.stringify(selectedUsers.usersSelected?.map((item) => item?.value))
       );
-
     await AddPromoCode(formData).then((res) => {
-      // console.log(res);
-      if (!res.data.error) {
+      console.log(res);
+      if (!res.response.data.error) {
         Swal.fire({
           title: "Promo Code Added!",
           icon: "success",
@@ -222,6 +221,7 @@ const PromoManagement = () => {
       }
     });
   };
+
   const onEdit = async (data) => {
     let formData = new FormData();
     formData.append("name_en", data?.promo_code_en_edit);
@@ -276,10 +276,14 @@ const PromoManagement = () => {
   const onFileSelection = async (e) => {
     const formData = new FormData();
     formData.append("image", e.target.files[0]);
-    await ImageUpload(formData).then((res) => {
-      setFiles(res?.data.results?.obj);
-    });
+    const data = await ImageUpload(formData);
+    console.log(data.data?.results.obj);
+    setFiles(data.data.results?.obj);
+
+    // if () {
+    // }
   };
+
   console.log(files);
   const PromoCodeStatus = async (id) => {
     const { data } = await changePromocodeStatus(id);
@@ -295,9 +299,10 @@ const PromoManagement = () => {
   };
 
   var today = new Date().toISOString().split("T")[0];
-  document.getElementsByName("dateTo")[0]?.setAttribute("max", today);
+  document.getElementsByName("dateTo")[0]?.setAttribute("min", today);
   document.getElementsByName("dateFrom")[0]?.setAttribute("min", today);
-
+  document.getElementsByName("dateToEdit")[0]?.setAttribute("min", today);
+  document.getElementsByName("dateFromEdit")[0]?.setAttribute("min", today);
   const getBarClick = (val) => {
     console.log(val);
     setSideBar(val);
@@ -384,6 +389,10 @@ const PromoManagement = () => {
                       name="discount"
                       {...register("discount", {
                         required: "*Discount % is required!",
+                        maxLength: {
+                          value: 4,
+                          message: "Maximium 4 characters!",
+                        },
                       })}
                     />
                     {errors.discount && (
@@ -701,8 +710,8 @@ const PromoManagement = () => {
                     className={classNames("form-control", {
                       "is-invalid": errors2.dateFrom,
                     })}
-                    name="dateFrom"
-                    {...register2("dateFrom", {
+                    name="dateFromEdit"
+                    {...register2("dateFromEdit", {
                       required: "*Please Select a Date!",
                     })}
                   />
@@ -720,8 +729,8 @@ const PromoManagement = () => {
                     className={classNames("form-control", {
                       "is-invalid": errors2.dateTo,
                     })}
-                    name="dateTo"
-                    {...register2("dateTo", {
+                    name="dateToEdit"
+                    {...register2("dateToEdit", {
                       required: "*Please Select a Date!",
                     })}
                   />
@@ -735,7 +744,11 @@ const PromoManagement = () => {
                   <button className="comman_btn" type="submit">
                     Save
                   </button>
-                  <button className="comman_btn" type="reset" id="resetModal">
+                  <button
+                    className="comman_btn d-none"
+                    type="reset"
+                    id="resetModal"
+                  >
                     reset
                   </button>
                 </div>

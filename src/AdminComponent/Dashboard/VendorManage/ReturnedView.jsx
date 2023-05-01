@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getVendorDetails } from "../../httpServices/dashHttpService";
+import {
+  downloadFiles,
+  getVendorDetails,
+} from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
 import { saveAs } from "file-saver";
 
@@ -25,8 +28,16 @@ const ReturnedView = () => {
     console.log(val);
     setSideBar(val);
   };
-  const fileDownload = (url) => {
-    saveAs(url);
+  const fileDownload = async (url) => {
+    const { data } = await downloadFiles({ key: url });
+    if (!data.error) {
+      console.log(data);
+      // const linkSource = `data:${contentType};base64,${base64Data}`;
+      const downloadLink = document.createElement("a");
+      downloadLink.href = data.results.image;
+      downloadLink.download = "doc";
+      downloadLink.click();
+    }
   };
   const preview = (id) => {
     document.getElementById("preview_modal").click();

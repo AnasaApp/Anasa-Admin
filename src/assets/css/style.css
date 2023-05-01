@@ -280,6 +280,11 @@ input::-webkit-inner-spin-button {
     box-sizing: border-box;
     padding: 3rem 2rem;
 } */
+.Profile_dropdown img {
+  z-index: 999 !important;
+  
+}
+
 .Profile_dropdown .dropdown-menu {
   transform: unset !important;
   top: 78px !important;

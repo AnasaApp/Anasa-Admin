@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { saveAs } from "file-saver";
 import {
   ApproveVender,
+  downloadFiles,
   getVendorDetails,
   RejectVender,
 } from "../../httpServices/dashHttpService";
@@ -71,8 +72,16 @@ const PendingView = () => {
       });
     }
   };
-  const fileDownload = (url) => {
-    saveAs(url);
+  const fileDownload = async (url) => {
+    const { data } = await downloadFiles({ key: url });
+    if (!data.error) {
+      console.log(data);
+      // const linkSource = `data:${contentType};base64,${base64Data}`;
+      const downloadLink = document.createElement("a");
+      downloadLink.href = data.results.image;
+      downloadLink.download = "doc";
+      downloadLink.click();
+    }
   };
   const preview = (id) => {
     document.getElementById("preview_modal").click();

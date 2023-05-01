@@ -494,9 +494,32 @@ export async function getVendorBooking(id, formData) {
     return { error };
   }
 }
+export async function downloadFiles(formData) {
+  try {
+    const { data } = await appHttpService.post(
+      `${process.env.REACT_APP_APIENDPOINT}api/vendor/saveImage`,
+        formData
+    );
+    console.log(data);
+
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Ok",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
 export async function getVendorTransactions(id, formData) {
   try {
-    const { data } = await appHttpService.get(
+    const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/vendorTransactions` +
         "/" +
         id,
@@ -1427,6 +1450,37 @@ export async function VendorTransactions(formData) {
   try {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/getTransactions`,
+      formData
+    );
+    console.log(data);
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Ok",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Ok",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
+
+export async function BuyerTransactions(formData) {
+  try {
+    const { data } = await appHttpService.post(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/buyerTransaction`,
       formData
     );
     console.log(data);
