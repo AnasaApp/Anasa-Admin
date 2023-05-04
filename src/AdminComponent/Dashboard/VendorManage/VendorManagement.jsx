@@ -9,7 +9,7 @@ import {
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
 import { MDBDataTable } from "mdbreact";
-import moment from "moment";
+import moment from "moment";    
 const VendorManagement = () => {
   const [slide, setSlide] = useState("VM");
   const navigate = useNavigate();

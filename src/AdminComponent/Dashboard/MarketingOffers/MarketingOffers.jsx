@@ -7,11 +7,14 @@ import {
   AddCombo,
   AllCategory,
   AllOffers,
+  AllVendors,
   editOffer,
   getSubCategory,
+  GetVendorByCate,
   getViewCombo,
   getViewPromo,
   SearchUser,
+  SearchVendorServices,
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
 import { MDBDataTable } from "mdbreact";
@@ -38,6 +41,8 @@ const MarketingOffers = () => {
   const [subEditCategory, setSubEditCategory] = useState([]);
   const [subCategoryId, setSubCategoryId] = useState();
   const [offerData, setOfferData] = useState();
+  const [vendors, setVendors] = useState([]);
+  const [selectVendor, setSelectVendor] = useState();
   const {
     register,
     handleSubmit,
@@ -59,24 +64,28 @@ const MarketingOffers = () => {
         sort: "asc",
         width: 50,
       },
+
       {
         label: "Category",
         field: "category",
         sort: "asc",
         width: 100,
       },
+
       {
-        label: "Sub-Category",
-        field: "subCategory",
+        label: "Vendor",
+        field: "vendor",
         sort: "asc",
         width: 100,
       },
+
       {
         label: "Combo(En)",
         field: "name_en",
         sort: "asc",
         width: 100,
       },
+
       {
         label: "Combo(Ar)",
         field: "name_ar",
@@ -85,7 +94,7 @@ const MarketingOffers = () => {
       },
 
       {
-        label: "DISCOUNT-%",
+        label: "Amount",
         field: "number",
         sort: "asc",
         width: 100,
@@ -126,31 +135,10 @@ const MarketingOffers = () => {
         returnData.sn = index + 1 + ".";
         returnData.name_en = list?.name_en;
         returnData.name_ar = list?.name_ar;
-        returnData.subCategory = list?.subCategory?.name_en;
         returnData.category = list?.category?.name_en;
+        returnData.vendor = list?.vendor?.full_name;
         returnData.number = list?.discount;
         returnData.userType = list?.userType;
-
-        // returnData.status = (
-        //   <div className="check_toggle">
-        //     <input
-        //       type="checkbox"
-        //       defaultChecked={list?.status}
-        //       name="checkv4"
-        //       id={list?._id}
-        //       className="d-none"
-        //       onClick={() => {
-        //         PromoCodeStatus(list?._id);
-        //       }}
-        //     />
-        //     <label
-        //       data-bs-toggle="modal"
-        //       data-bs-target="#staticBackdrop12"
-        //       htmlFor={list?._id}
-        //     />
-        //   </div>
-        // );
-
         returnData.action = (
           <>
             <a
@@ -184,15 +172,30 @@ const MarketingOffers = () => {
       }
     });
   };
-  const createOptionsServices = async () => {
-    await SearchUser({ search: searchKey }).then((res) => {
-      if (!res.error) {
-        let data = res?.data.results?.buyers;
-        const optionList = data?.map((item, index) => ({
-          value: item?._id,
-          label: item?.full_name,
-        }));
-        setOptions(optionList);
+  const createOptionsServices = async (id) => {
+    setSelectVendor(id);
+    setSelectedServices({ selectedServices: [] });
+    if (id) {
+      await SearchVendorServices(id).then((res) => {
+        if (!res.error) {
+          let data = res?.data.results.services;
+          console.log(data);
+          const optionList = data?.map((item, index) => ({
+            value: item?._id,
+            label: item?.name_en,
+          }));
+          setOptions2(optionList);
+        }
+      });
+    }
+  };
+  const VendorsList = async (id) => {
+    setCategoryData(id);
+    await GetVendorByCate(id).then((res) => {
+      if (!res.data.error) {
+        let data = res.data.results.vendors;
+        console.log(data);
+        setVendors(data);
       }
     });
   };
@@ -207,20 +210,27 @@ const MarketingOffers = () => {
     formData.append("validTo", data?.dateTo);
     formData.append("userType", userTypes);
     formData.append("category", categoryData);
-    formData.append("subCategory", subCategoryData);
+    formData.append("vendor", selectVendor);
+    formData.append(
+      "services",
+      selectedServices.servicesSelected?.map((item) => item?.value)
+    );
     formData.append("image", files?.upload_video);
     userTypes === "specific" &&
       formData.append(
         "selectedUsers",
         JSON.stringify(selectedUsers.usersSelected?.map((item) => item?.value))
       );
+
     await AddCombo(formData).then((res) => {
       // console.log(res);
       if (!res.error) {
+        getAllOffers();
         document.getElementById("Reset").click();
+        setSelectedServices({ selectedServices: [] });
         setSelectedUsers({ usersSelected: [] });
         Swal.fire({
-          title: "Combo Added!",
+          title: "New Combo Added!",
           icon: "success",
           confirmButtonText: "Ok",
           confirmButtonColor: "#e25829",
@@ -231,13 +241,13 @@ const MarketingOffers = () => {
 
   const onEdit = async (data) => {
     console.log(data);
-    let formData = new FormData();
-    formData.append("name_en", data?.combo_en_edit);
-    formData.append("name_ar", data?.combo_ar_edit_ar);
-    formData.append("discount", data?.Edit_Discount);
-    formData.append("validFrom", data?.dateFrom);
-    formData.append("validTo", data?.dateTo);
-    await editOffer(offerId, formData).then((res) => {
+    await editOffer(offerId, {
+      name_ar: data?.combo_ar_edit_ar,
+      name_en: data?.combo_en_edit,
+      discount: data?.Edit_Discount,
+      validFrom: data?.dateFrom,
+      validTo: data?.dateTo,
+    }).then((res) => {
       if (!res.data.error) {
         document.getElementById("closed").click();
         getAllOffers();
@@ -278,17 +288,7 @@ const MarketingOffers = () => {
     const { data } = await AllCategory();
     setAllCategories(data?.results?.categories);
   };
-  const subCategories = async (id) => {
-    const { data } = await getSubCategory({ categoryId: id });
-    setSubCategory(data?.results?.subCategories);
-    setCategoryData(id);
-  };
 
-  const subCategoriesOnEdit = async (id) => {
-    const { data } = await getSubCategory({ categoryId: id });
-    setSubEditCategory(data?.results?.subCategories);
-    setCategoryEditId(id);
-  };
   const handleChange = (selected) => {
     setSelectedUsers({
       usersSelected: selected,
@@ -370,7 +370,7 @@ const MarketingOffers = () => {
                     <select
                       className="form-select form-control"
                       aria-label="Default select example"
-                      onChange={(e) => subCategories(e.target.value)}
+                      onChange={(e) => VendorsList(e.target.value)}
                     >
                       <option selected="" value="">
                         Select Category
@@ -385,13 +385,13 @@ const MarketingOffers = () => {
                     <select
                       className="form-select form-control"
                       aria-label="Default select example"
-                      onChange={(e) => subCategories(e.target.value)}
+                      onChange={(e) => createOptionsServices(e.target.value)}
                     >
                       <option selected="" value="">
                         Select Vendor
                       </option>
-                      {allCategories?.map((item) => (
-                        <option value={item?._id}>{item?.name_en}</option>
+                      {vendors?.map((item) => (
+                        <option value={item?._id}>{item?.full_name}</option>
                       ))}
                     </select>
                   </div>
@@ -676,37 +676,49 @@ const MarketingOffers = () => {
                     </small>
                   )}
                 </div>
-                <div className="form-group col-6">
+                {/* <div className="form-group col-4">
                   <label htmlFor="">Select Category</label>
                   <select
                     aria-label="Default select example"
                     className="form-select form-control"
                     name="category"
-                    onChange={(e) => subCategoriesOnEdit(e.target.value)}
+                    onChange={(e) => VendorsList(e.target.value)}
                   >
                     <option selected="">{offerData?.category?.name_en}</option>
                     {allCategories?.map((item) => (
                       <option value={item?._id}>{item?.name_en}</option>
                     ))}
                   </select>
-                </div>
-                <div className="form-group col-6">
-                  <label htmlFor="">Select Sub Category </label>
+                </div> */}
+                {/* <div className="form-group col-4">
+                  <label htmlFor="">Select Vendor</label>
                   <select
                     className="form-select form-control"
                     aria-label="Default select example"
-                    onChange={(e) => {
-                      setSubCategoryId(e.target.value);
-                    }}
+                    onChange={(e) => createOptionsServices(e.target.value)}
                   >
-                    <option selected="">
-                      {offerData?.subCategory?.name_en}
+                    <option selected="" value="">
+                      Select Vendor
                     </option>
-                    {subEditCategory?.map((item) => (
-                      <option value={item?._id}>{item?.name_en}</option>
+                    {vendors?.map((item) => (
+                      <option value={item?._id}>{item?.full_name}</option>
                     ))}
                   </select>
                 </div>
+                <div className="form-group col-4">
+                  <label htmlFor="">Search Services</label>
+                  <Select
+                    defaultValue=""
+                    isMulti
+                    name="users" 
+                    options={options2}
+                    className="basic-multi-select z-3"
+                    classNamePrefix="select"
+                    onChange={handleChange2}
+                    value={selectedServices?.servicesSelected}
+                    onInputChange={handleInputChange2}
+                  />
+                </div> */}
                 <div className="form-group col-4">
                   <label htmlFor="">Valid From</label>
                   <input
@@ -764,7 +776,7 @@ const MarketingOffers = () => {
                   )}
                 </div>
 
-                <div className="form-group col-12">
+                {/* <div className="form-group col-12">
                   <label htmlFor="">Selected Users - (ALL)</label>
                   <input
                     type="text"
@@ -774,7 +786,7 @@ const MarketingOffers = () => {
                     })}
                     name="users"
                   />
-                </div>
+                </div> */}
 
                 {/* <div className="form-group col-6">
                   <label htmlFor="">Search User</label>

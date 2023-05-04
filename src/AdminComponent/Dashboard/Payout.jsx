@@ -1,47 +1,136 @@
 import React, { useEffect, useState } from "react";
+import {
+  AllVendors,
+  editOffer,
+  GetVendorWallet,
+} from "../httpServices/dashHttpService";
 import Sidebar from "./Sidebar";
+import moment from "moment";
+import { Link } from "react-router-dom";
+import { MDBDataTable } from "mdbreact";
+import classNames from "classnames";
+import { useForm } from "react-hook-form";
+import Swal from "sweetalert2";
 
 const Payout = () => {
   const [slide, setSlide] = useState("PM");
   const [sideBar, setSideBar] = useState();
   const [values, setValues] = useState({ from: "", to: "" });
-
+  const [vendorId, setVendorId] = useState();
+  const [wallet, setWallet] = useState();
+  const [value, setValue] = useState();
   useEffect(() => {
-    getVendorTransactions();
+    getVendors();
   }, []);
 
-  const getVendorTransactions = async () => {
-    // const { data } = await VendorTransactions({ page: 1 });
-  };
+  const {
+    register: register2,
+    handleSubmit: handleSubmit2,
+    formState: { errors: errors2 },
+    reset,
+  } = useForm();
 
-  const handleDate = (e) => {
-    const value = e.target.value;
-    setValues({
-      ...values,
-      [e.target.name]: value,
+  const [approved, setApproved] = useState({
+    columns: [
+      {
+        label: "S.NO.",
+        field: "sn",
+        sort: "asc",
+        maxWidth: 50,
+      },
+      {
+        label: "FULL NAME",
+        field: "name",
+        sort: "asc",
+        width: 150,
+      },
+
+      {
+        label: "EMAIL ADDRESS",
+        field: "email",
+        sort: "asc",
+        width: 150,
+      },
+      {
+        label: "PHONE NUMBER",
+        field: "number",
+        sort: "asc",
+        width: 100,
+      },
+
+      {
+        label: "ADDED ON",
+        field: "date",
+        sort: "asc",
+        width: 100,
+      },
+
+      {
+        label: "ACTION",
+        field: "action",
+        sort: "asc",
+        width: 100,
+      },
+    ],
+    rows: [],
+  });
+
+  const manageVendor = async (id) => {
+    setVendorId(id);
+    const { data } = await GetVendorWallet(id);
+    if (!data.error) {
+      console.log(data);
+      setWallet(data?.results.wallet);
+    }
+  };
+  const getVendors = async () => {
+    const { data } = await AllVendors({
+      status: "APPROVED",
     });
-  };
+    const newRows = [];
+    if (!data.error) {
+      let values = data?.results?.vendors;
+      console.log(values);
+      values?.map((list, index) => {
+        const returnData = {};
+        returnData.sn = index + 1 + ".";
+        returnData.name = list?.full_name;
+        returnData.email = list?.email;
+        returnData.number = list?.phone_number;
+        returnData.date = moment(list?.createdAt).format("L");
 
-  const onSearch = async (e) => {
-    // if (values?.from && values?.to) {
-    //   e.preventDefault();
-    //   await AllBookings({
-    //     from: values?.from,
-    //     to: values?.to,
-    //     page: 1,
-    //   }).then((res) => {
-    //     setAllBookings(res?.data?.results?.bookings);
-    //   });
-    //   setValues({ from: "", to: "" });
-    // } else {
-    //   e.preventDefault();
-    //   Swal.fire({
-    //     title: "Please select a Date range!",
-    //     icon: "warning",
-    //     button: "ok",
-    //     confirmButtonColor: "#e25829",
-    //   });
-    // }
+        returnData.action = (
+          <>
+            <Link
+              className="comman_btn2 table_viewbtn"
+              data-bs-toggle="modal"
+              data-bs-target="#staticBackdrop224"
+              onClick={() => manageVendor(list?._id)}
+            >
+              Manage Payout
+            </Link>
+          </>
+        );
+        newRows.push(returnData);
+      });
+
+      setApproved({ ...approved, rows: newRows });
+    }
+  };
+  const onEdit = async (data) => {
+    console.log(data);
+    await editOffer(vendorId, {}).then((res) => {
+      if (!res.data.error) {
+        document.getElementById("closedEdit").click();
+        getVendors();
+        Swal.fire({
+          title: "Updated Successfully!",
+          icon: "success",
+          confirmButtonText: "Okay",
+          confirmButtonColor: "#e25829",
+        });
+      }
+    });
   };
   const getBarClick = (val) => {
     console.log(val);
@@ -71,167 +160,20 @@ const Payout = () => {
                                 <h2>Payout Management</h2>
                               </div>
                             </div>
-                            <form
-                              className="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"
-                              action=""
-                            >
-                              <div className="form-group mb-0 col-5">
-                                <label htmlFor="">From</label>
-                                <input
-                                  type="date"
-                                  className="form-control"
-                                  name="from"
-                                  id="appFrom"
-                                  value={values.from}
-                                  onChange={handleDate}
-                                />
-                              </div>
-                              <div className="form-group mb-0 col-5">
-                                <label htmlFor="">To</label>
-                                <input
-                                  type="date"
-                                  className="form-control"
-                                  name="to"
-                                  id="appTo"
-                                  value={values.to}
-                                  onChange={handleDate}
-                                />
-                              </div>
-                              <div className="form-group mb-0 col-auto">
-                                <button
-                                  className="comman_btn2"
-                                  onClick={onSearch}
-                                >
-                                  Search
-                                </button>
-                                <button
-                                  className="comman_btn2 d-none"
-                                  type="reset"
-                                  id="Resets"
-                                >
-                                  Search
-                                </button>
-                              </div>
-                            </form>
+
                             <div className="row">
                               <div className="col-12 comman_table_design px-0">
                                 <div className="table-responsive">
-                                  <table className="table mb-0">
-                                    <thead>
-                                      <tr>
-                                        <th>S.No.</th>
-                                        <th>Customer name</th>
-                                        <th>Transaction Date &amp; Time</th>
-                                        <th>Vendor Name</th>
-                                        <th>Amount</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      <tr>
-                                        <td>No results..</td>
-                                        <td>No results..</td>
-                                        <td>
-                                          No results..
-                                          <br />
-                                        </td>
-                                        <td>No results..</td>
-                                        <td>No results..</td>
-                                        <td>No results..</td>
-                                        <td>
-                                          <a
-                                            className="comman_btn table_viewbtn"
-                                            // href="buyers-details.html"
-                                          >
-                                            View
-                                          </a>
-                                        </td>
-                                      </tr>
-                                    </tbody>
-                                  </table>
+                                  <MDBDataTable
+                                    bordered
+                                    displayEntries={false}
+                                    className="userData2"
+                                    hover
+                                    data={approved}
+                                    noBottomColumns
+                                    sortable
+                                  />
                                 </div>
-                              </div>
-                            </div>
-                            <div className="row Total_amt mx-0 py-3">
-                              <div className="col-6">
-                                <strong>Total Amount: </strong>
-                              </div>
-                              <div className="col-6 text-end">
-                                <span>0.00</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div
-                        className="tab-pane fade"
-                        id="profile"
-                        role="tabpanel"
-                        aria-labelledby="profile-tab"
-                      >
-                        <div className="row p-4 mx-0">
-                          <div className="col-12 inner_design_comman border">
-                            <div className="row comman_header justify-content-between">
-                              <div className="col-auto">
-                                <h2>Transaction Management</h2>
-                              </div>
-                            </div>
-                            <form
-                              className="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"
-                              action=""
-                            >
-                              <div className="form-group mb-0 col-5">
-                                <label htmlFor="">From</label>
-                                <input type="date" className="form-control" />
-                              </div>
-                              <div className="form-group mb-0 col-5">
-                                <label htmlFor="">To</label>
-                                <input type="date" className="form-control" />
-                              </div>
-                              <div className="form-group mb-0 col-auto">
-                                <button className="comman_btn2">Search</button>
-                              </div>
-                            </form>
-                            <div className="row">
-                              <div className="col-12 comman_table_design px-0">
-                                <div className="table-responsive">
-                                  <table className="table mb-0">
-                                    <thead>
-                                      <tr>
-                                        <th>S.No.</th>
-                                        <th>Transaction Date &amp; Time</th>
-                                        <th>Vendor Name</th>
-                                        <th>Amount</th>
-                                        <th>Commission</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      <tr>
-                                        <td>No results..</td>
-                                        <td>No results..</td>
-                                        <td>
-                                          No results..
-                                          <br />
-                                        </td>
-                                        <td>No results..</td>
-                                        <td>No results..</td>
-                                        <td>No results..</td>
-                                        <td>No actions..</td>
-                                      </tr>
-                                    </tbody>
-                                  </table>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="row Total_amt mx-0 py-3">
-                              <div className="col-6">
-                                <strong>Total Amount: </strong>
-                              </div>
-                              <div className="col-6 text-end">
-                                <span>0.00 SAR</span>
                               </div>
                             </div>
                           </div>
@@ -241,6 +183,108 @@ const Payout = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="modal fade comman_modal"
+        id="staticBackdrop224"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabIndex={-1}
+        aria-labelledby="staticBackdropLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content border-0">
+            <div className="modal-header">
+              <h5 className="modal-title" id="staticBackdropLabel">
+                Vendor's Wallet
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                id="closedEdit"
+                onClick={() => {
+                  document.getElementById("ResetSSS").click();
+                }}
+              />
+            </div>
+            <div className="modal-body">
+              <form
+                className="form-design px-3 py-2 help-support-form row  justify-content-center"
+                action=""
+                onSubmit={handleSubmit2(onEdit)}
+              >
+                <div className="form-group col-6">
+                  <label htmlFor="">Total Amount (En)</label>
+                  <input
+                    type="text"
+                    className={classNames("form-control", {
+                      "is-invalid": errors2.combo_en_edit,
+                    })}
+                    name="amount"
+                    defaultValue={wallet?.totalAmount}
+                    disabled
+                  />
+                </div>
+                <div className="form-group col-6">
+                  <label htmlFor="">Pending Amount (En)</label>
+                  <input
+                    type="text"
+                    className={classNames("form-control", {
+                      "is-invalid": errors2.combo_en_edit,
+                    })}
+                    name="amount"
+                    defaultValue={wallet?.pendingAmount}
+                    disabled
+                  />
+                </div>
+                <div className="form-group col-6">
+                  <label htmlFor="">Withdrawl Amount</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    name="combo_ar_edit_ar"
+                    value={value}
+                    onChange={(e) => {
+                      setValue(e.target.value);
+                      if (e.target.value > wallet?.totalAmount) {
+                        Swal.fire({
+                          title: "Warning!",
+                          text: "Withdrawl Amount Should be less than Total Amount",
+                          icon: "warning",
+                          confirmButtonText: "Okay",
+                        });
+                        setValue(wallet?.totalAmount);
+                      }
+                    }}
+                  />
+                  {errors2.combo_ar_edit_ar && (
+                    <small className="errorText mx-1">
+                      {errors2.combo_ar_edit_ar.message}
+                    </small>
+                  )}
+                </div>
+
+                <div className="form-group mb-0 col-12 text-center mt-3">
+                  <button className="comman_btn" type="submit">
+                    Withdraw
+                  </button>
+                </div>
+                <div className="form-group mb-0 col-12 text-center mt-3">
+                  <button
+                    className="comman_btn d-none"
+                    type="reset"
+                    id="ResetSSS"
+                  >
+                    Reset
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>

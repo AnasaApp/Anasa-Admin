@@ -181,9 +181,9 @@ const PromoManagement = () => {
               >
                 Edit
               </a>
-              <a className="comman_btn2 table_viewbtn" onClick={DeleteCode}>
+              {/* <a className="comman_btn2 table_viewbtn" onClick={DeleteCode}>
                 Delete
-              </a>
+              </a> */}
             </>
           );
           newRows.push(returnData);
@@ -207,15 +207,20 @@ const PromoManagement = () => {
     userTypes === "specific" &&
       formData.append(
         "selectedUsers",
-        JSON.stringify(selectedUsers.usersSelected?.map((item) => item?.value))
+        selectedUsers.usersSelected?.map((item) => item?.value)
       );
+    console.log(
+      selectedUsers.usersSelected?.map((item) => item?.value),
+      "jjoihiuhiuhouhou "
+    );
     await AddPromoCode(formData).then((res) => {
       console.log(res);
-      if (!res.response.data.error) {
+      GetPromocodes();
+      if (!res.data.error) {
         Swal.fire({
           title: "Promo Code Added!",
           icon: "success",
-          confirmButtonText: "Ok",
+          confirmButtonText: "Okay",
           confirmButtonColor: "#e25829",
         });
       }

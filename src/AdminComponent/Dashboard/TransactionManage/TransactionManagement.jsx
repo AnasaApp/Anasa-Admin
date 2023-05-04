@@ -2,17 +2,21 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   BuyerTransactions,
+  UpdateTransactions,
   VendorTransactions,
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
 import moment from "moment";
 import { MDBDataTable } from "mdbreact";
+import Swal from "sweetalert2";
 
 const TransactionManagement = () => {
   const [slide, setSlide] = useState("TM");
   const [sideBar, setSideBar] = useState();
   const [values, setValues] = useState({ from: "", to: "" });
-
+  const [trans, setTrans] = useState([]);
+  const [status, setStatus] = useState();
+  const [vendorId, setVendorId] = useState();
   useEffect(() => {
     getVendorTransactions();
     getBuyerTransactions();
@@ -128,6 +132,20 @@ const TransactionManagement = () => {
             >
               View
             </Link>
+            <Link
+              data-bs-toggle="modal"
+              data-bs-target="#staticBackdrop44"
+              className="comman_btn table_viewbtn mx-1"
+              onClick={() => {
+                setVendorId(list?._id);
+                setTrans({
+                  status: list?.status,
+                  amount: list?.deposit || list?.withdrawl,
+                });
+              }}
+            >
+              Manage
+            </Link>
           </>
         );
         newRows.push(returnData);
@@ -157,6 +175,19 @@ const TransactionManagement = () => {
             >
               View
             </Link>
+            <Link
+              data-bs-toggle="modal"
+              data-bs-target="#staticBackdrop44"
+              onClick={() => {
+                setTrans({
+                  status: list?.status,
+                  amount: list?.deposit || list?.withdrawl,
+                });
+              }}
+              className="comman_btn table_viewbtn mx-1"
+            >
+              Manage
+            </Link>
           </>
         );
         newRows.push(returnData);
@@ -172,6 +203,7 @@ const TransactionManagement = () => {
       [e.target.name]: value,
     });
   };
+  console.log(trans);
 
   const onSearch = async (e) => {
     // if (values?.from && values?.to) {
@@ -193,6 +225,20 @@ const TransactionManagement = () => {
     //     confirmButtonColor: "#e25829",
     //   });
     // }
+  };
+
+  const UpdateTransaction = async (e) => {
+    e.preventDefault();
+    const { data } = await UpdateTransactions(vendorId, { status: status });
+    if (!data.error) {
+      document.getElementById("transClose").click();
+      getVendorTransactions();
+      Swal.fire({
+        title: "Updated Successfully!",
+        icon: "success",
+        confirmButtonText: "Okay",
+      });
+    }
   };
   const getBarClick = (val) => {
     console.log(val);
@@ -444,6 +490,68 @@ const TransactionManagement = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="modal fade comman_modal"
+        id="staticBackdrop44"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabIndex={-1}
+        aria-labelledby="staticBackdropLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content border-0">
+            <div className="modal-header">
+              <h5 className="modal-title" id="staticBackdropLabel">
+                Manage Transaction
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                id="transClose"
+              />
+            </div>
+            <div className="modal-body">
+              <form
+                className="form-design px-3 py-2 help-support-form row align-items-end justify-content-center"
+                action=""
+              >
+                <div className="form-group col-6">
+                  <label htmlFor="">Amount</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    defaultValue={trans.amount}
+                    disabled
+                  />
+                </div>
+                <div className="form-group col-6">
+                  <label htmlFor="">Mark as</label>
+                  <select
+                    className="form-select form-control"
+                    aria-label="Default select example"
+                    name="category"
+                    onChange={(e) => setStatus(e.target.value)}
+                  >
+                    <option selected="">{trans.status}</option>
+                    <option value="Paid">Completed</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Cancelled">Cancelled</option>
+                    <option value="Refund">Refund</option>
+                  </select>
+                </div>
+                <div className="form-group mb-0 col-auto mt-3">
+                  <button className="comman_btn" onClick={UpdateTransaction}>
+                    Confirm
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>

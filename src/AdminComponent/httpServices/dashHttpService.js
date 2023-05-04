@@ -12,7 +12,7 @@ export async function updateProfile(formData) {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -24,7 +24,7 @@ export async function updateProfile(formData) {
         title: error?.response?.data.message,
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -47,7 +47,7 @@ export async function getBuyers(formData) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -69,7 +69,7 @@ export async function getBuyersDetails(id) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -91,7 +91,7 @@ export async function changeBuyerStatus(id) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -112,7 +112,7 @@ export async function getBuyerBookings(id) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -134,7 +134,7 @@ export async function getBuyerBookingDetails(id) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -156,7 +156,7 @@ export async function getBuyerSupport(id) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -174,7 +174,7 @@ export async function AddCategory(formData) {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -186,7 +186,7 @@ export async function AddCategory(formData) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -203,7 +203,7 @@ export async function AllCategory() {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -215,7 +215,7 @@ export async function AllCategory() {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -237,7 +237,7 @@ export async function getViewCategory(id) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -260,7 +260,7 @@ export async function getSubCategory(formData) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -284,7 +284,7 @@ export async function getViewSubCategory(id) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -303,7 +303,7 @@ export async function AddSubCategory(formData) {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -315,7 +315,7 @@ export async function AddSubCategory(formData) {
         title: error?.response?.data.message,
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -332,7 +332,7 @@ export async function AllSubCategory() {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -344,7 +344,7 @@ export async function AllSubCategory() {
         title: "Error!",
         text: error?.response?.data.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -362,7 +362,7 @@ export async function editCategoryData(id, formData) {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -375,7 +375,7 @@ export async function editCategoryData(id, formData) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -393,7 +393,7 @@ export async function editSubCategoryData(id, formData) {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -405,7 +405,7 @@ export async function editSubCategoryData(id, formData) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -423,7 +423,7 @@ export async function AllVendors(formData) {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -435,7 +435,70 @@ export async function AllVendors(formData) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
+export async function GetVendorByCate(id) {
+  try {
+    const { data } = await appHttpService.post(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/vendorsByCategory`,
+      {
+        categoryId: id,
+      }
+    );
+    console.log(data);
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
+export async function GetVendorWallet(id) {
+  try {
+    const { data } = await appHttpService.post(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/vendorWalletInfo` +
+        "/" +
+        id
+    );
+    console.log(data);
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -460,7 +523,7 @@ export async function getVendorDetails(id, formData) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -487,7 +550,7 @@ export async function getVendorBooking(id, formData) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -498,7 +561,7 @@ export async function downloadFiles(formData) {
   try {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/vendor/saveImage`,
-        formData
+      formData
     );
     console.log(data);
 
@@ -510,7 +573,7 @@ export async function downloadFiles(formData) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -537,7 +600,7 @@ export async function getVendorTransactions(id, formData) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -562,7 +625,7 @@ export async function getVendorServices(id, formData) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -584,7 +647,7 @@ export async function ApproveVender(id) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -602,7 +665,7 @@ export async function RejectVender(id, formData) {
       Swal.fire({
         title: data.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -614,7 +677,7 @@ export async function RejectVender(id, formData) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -632,7 +695,7 @@ export async function AddVendor(formData) {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -644,7 +707,7 @@ export async function AddVendor(formData) {
         title: error?.response?.data.message,
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -662,7 +725,7 @@ export async function AllBookings(formData) {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -674,7 +737,7 @@ export async function AllBookings(formData) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -692,7 +755,7 @@ export async function CompletedBookings(formData) {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -704,7 +767,7 @@ export async function CompletedBookings(formData) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -722,7 +785,7 @@ export async function CancelledBookings(formData) {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -734,7 +797,7 @@ export async function CancelledBookings(formData) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -756,7 +819,7 @@ export async function changeVendorStatus(id) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -774,7 +837,7 @@ export async function SearchUser(formData) {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -786,7 +849,36 @@ export async function SearchUser(formData) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
+export async function SearchVendorServices(id) {
+  try {
+    const { data } = await appHttpService.post(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/vendorServices` + "/" + id
+    );
+    console.log(data);
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -804,7 +896,7 @@ export async function AddPromoCode(formData) {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -816,7 +908,7 @@ export async function AddPromoCode(formData) {
         title: error?.response?.data.message,
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -833,7 +925,7 @@ export async function AllPromocodes() {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -845,7 +937,7 @@ export async function AllPromocodes() {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -863,7 +955,7 @@ export async function DeletePromoCode(formData) {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -875,7 +967,7 @@ export async function DeletePromoCode(formData) {
         title: error?.response?.data.message,
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -894,7 +986,7 @@ export async function AddAddvertise(formData) {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -906,7 +998,7 @@ export async function AddAddvertise(formData) {
         title: error?.response?.data.message,
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -923,7 +1015,7 @@ export async function AllAdvertisement() {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -935,7 +1027,7 @@ export async function AllAdvertisement() {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -957,7 +1049,7 @@ export async function getViewPromo(id) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -975,7 +1067,7 @@ export async function editPromocode(id, formData) {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -987,7 +1079,7 @@ export async function editPromocode(id, formData) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1009,7 +1101,7 @@ export async function changePromocodeStatus(id) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1033,7 +1125,7 @@ export async function SearchVendor(formData) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1051,7 +1143,7 @@ export async function addCommission(formData) {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1063,7 +1155,7 @@ export async function addCommission(formData) {
         title: error?.response?.data.message,
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1080,7 +1172,7 @@ export async function AllCommision() {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1092,7 +1184,7 @@ export async function AllCommision() {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1114,7 +1206,7 @@ export async function getViewCommission(id) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1133,7 +1225,7 @@ export async function AddCombo(formData) {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1145,7 +1237,7 @@ export async function AddCombo(formData) {
         title: error?.response?.data.message,
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1193,7 +1285,7 @@ export async function EditCommission(formData, id) {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1205,7 +1297,7 @@ export async function EditCommission(formData, id) {
         title: error?.response?.data.message,
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1223,7 +1315,7 @@ export async function AllOffers() {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1235,7 +1327,7 @@ export async function AllOffers() {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1258,7 +1350,7 @@ export async function getViewCombo(id) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1276,7 +1368,7 @@ export async function AboutUs() {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1288,7 +1380,7 @@ export async function AboutUs() {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1305,7 +1397,7 @@ export async function TermCondition() {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1317,7 +1409,7 @@ export async function TermCondition() {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1334,7 +1426,7 @@ export async function PrivacyPolicy() {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1346,7 +1438,7 @@ export async function PrivacyPolicy() {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1364,7 +1456,7 @@ export async function EditAbout(formData, id) {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1376,7 +1468,7 @@ export async function EditAbout(formData, id) {
         title: error?.response?.data.message,
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1395,7 +1487,7 @@ export async function EditTerms(formData, id) {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1407,7 +1499,7 @@ export async function EditTerms(formData, id) {
         title: error?.response?.data.message,
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1427,7 +1519,7 @@ export async function EditPrivacy(formData, id) {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1439,7 +1531,7 @@ export async function EditPrivacy(formData, id) {
         title: error?.response?.data.message,
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1457,7 +1549,7 @@ export async function VendorTransactions(formData) {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1469,7 +1561,7 @@ export async function VendorTransactions(formData) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1488,7 +1580,7 @@ export async function BuyerTransactions(formData) {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1500,14 +1592,45 @@ export async function BuyerTransactions(formData) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
     return { error };
   }
 }
-
+export async function UpdateTransactions(id, formData) {
+  try {
+    const { data } = await appHttpService.post(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/updateTransaction` +
+        "/" +
+        id,
+      formData
+    );
+    console.log(data);
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
 export async function totalEarning() {
   try {
     const { data } = await appHttpService.get(
@@ -1518,7 +1641,7 @@ export async function totalEarning() {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1530,7 +1653,7 @@ export async function totalEarning() {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1547,7 +1670,7 @@ export async function totalBuyers() {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1559,7 +1682,7 @@ export async function totalBuyers() {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1577,7 +1700,7 @@ export async function totalOrders() {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1589,7 +1712,7 @@ export async function totalOrders() {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1607,7 +1730,7 @@ export async function totalVendors() {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1619,7 +1742,7 @@ export async function totalVendors() {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1637,7 +1760,7 @@ export async function RecentOrders() {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1649,7 +1772,7 @@ export async function RecentOrders() {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1668,7 +1791,7 @@ export async function SupportList(formData) {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1680,7 +1803,7 @@ export async function SupportList(formData) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1703,7 +1826,7 @@ export async function getViewBuyerSupport(id) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1721,7 +1844,7 @@ export async function VendorsCount() {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1733,7 +1856,7 @@ export async function VendorsCount() {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1751,7 +1874,7 @@ export async function BookingsCount() {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1763,7 +1886,7 @@ export async function BookingsCount() {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1782,7 +1905,7 @@ export async function SendMessageBuy(formData, id) {
       Swal.fire({
         title: data?.message,
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1794,7 +1917,7 @@ export async function SendMessageBuy(formData, id) {
         title: error?.response?.data.message,
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1817,7 +1940,7 @@ export async function changeBuyerTicketStatus(id) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -1841,7 +1964,7 @@ export async function ImageUpload(formData) {
         title: "Error!",
         text: "",
         icon: "error",
-        confirmButtonText: "Ok",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }

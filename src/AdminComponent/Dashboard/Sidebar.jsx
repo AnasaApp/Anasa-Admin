@@ -113,7 +113,7 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
                     Transaction Management
                   </Link>
                 </li>
-                {/* <li>
+                <li>
                   <Link
                     className={SlideState === "PM" ? "active" : ""}
                     to="/Admin/Dashboard/Payout-Management"
@@ -124,7 +124,7 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
                     <i className="fas fa-repeat" />
                     Payout Management
                   </Link>
-                </li> */}
+                </li>
                 <li>
                   <Link
                     className={SlideState === "ComM" ? "active" : ""}
