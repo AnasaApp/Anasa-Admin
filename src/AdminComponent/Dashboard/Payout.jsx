@@ -132,6 +132,7 @@ const Payout = () => {
       }
     });
   };
+
   const getBarClick = (val) => {
     console.log(val);
     setSideBar(val);

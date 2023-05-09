@@ -6,11 +6,11 @@ import {
   AddAddvertise,
   AllAdvertisement,
   AllCategory,
+  DeleteAddvertise,
   SearchVendor,
 } from "../../httpServices/dashHttpService";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
-import { CategoryRounded } from "@mui/icons-material";
 
 const AdvertiseManagement = () => {
   const [slide, setSlide] = useState("ADM");
@@ -18,6 +18,7 @@ const AdvertiseManagement = () => {
   const [selectedCate, setSelectedCate] = useState([]);
   const [type, setType] = useState("TV");
   const [allAdds, setAllAdds] = useState([]);
+  const [allAddsCate, setAllAddsCate] = useState([]);
   const [sideBar, setSideBar] = useState();
   const [options, setOptions] = useState([]);
   const [optionsCate, setOptionsCate] = useState([]);
@@ -41,6 +42,7 @@ const AdvertiseManagement = () => {
 
   useEffect(() => {
     GetAllAdds();
+    GetAddscate();
     getAllCat();
   }, []);
 
@@ -76,6 +78,19 @@ const AdvertiseManagement = () => {
     });
   };
 
+  const DeleteAdd = async (id) => {
+    const { data } = await DeleteAddvertise(id);
+    if (!data.error) {
+      GetAllAdds();
+      GetAddscate();
+      Swal.fire({
+        title: "Addvertisement Deleted!",
+        icon: "success",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+  };
   const handleChange = (selected) => {
     setSelectedUsers({
       usersSelected: selected,
@@ -95,8 +110,13 @@ const AdvertiseManagement = () => {
     setSearchKey2(inputValue);
   };
   const GetAllAdds = async () => {
-    await AllAdvertisement().then((res) => {
+    await AllAdvertisement({ type: "vendor" }).then((res) => {
       setAllAdds(res?.data.results.advertisements);
+    });
+  };
+  const GetAddscate = async () => {
+    await AllAdvertisement({ type: "category" }).then((res) => {
+      setAllAddsCate(res?.data.results.advertisements);
     });
   };
 
@@ -109,6 +129,8 @@ const AdvertiseManagement = () => {
     }).then((res) => {
       if (!res.data.error) {
         GetAllAdds();
+        GetAddscate();
+        type === "TC" && document.getElementById("profile-tab").click();
         Swal.fire({
           title: "Advertise Added!",
           icon: "success",
@@ -210,53 +232,178 @@ const AdvertiseManagement = () => {
                   </div>
                 </div>
                 <div className="row">
-                  <div className="col-12 comman_table_design px-0">
-                    <div className="table-responsive">
-                      <table className="table mb-0">
-                        <thead>
-                          <tr>
-                            <th>S.No.</th>
-                            <th>Advertisment Type</th>
-                            <th>Vendors</th>
-                            <th>Categories</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {allAdds?.map((item, ind) => (
-                            <tr>
-                              <td>{ind + 1}</td>
-                              <td>{item?.type}</td>
-                              <td>
-                                {item?.vendor?.length
-                                  ? item?.vendor?.map((val) => (
-                                      <li>
-                                        {val?.account_holder_name
-                                          ? val?.account_holder_name
-                                          : "No results"}
-                                      </li>
-                                    ))
-                                  : "No Results"}
-                              </td>
-                              <td>
-                                {item?.category?.length
-                                  ? item?.category?.map((val) => (
-                                      <li>{val?.name_en}</li>
-                                    ))
-                                  : "No Results"}
-                              </td>
-                              <td>
-                                <a
-                                  className="comman_btn2 table_viewbtn"
-                                  href="javascript:;"
-                                >
-                                  Delete
-                                </a>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                  <div className="col-12 px-0">
+                    <ul
+                      className="nav nav-tabs comman_tabs"
+                      id="myTab"
+                      role="tablist"
+                    >
+                      <li className="nav-item" role="presentation">
+                        <button
+                          className="nav-link active"
+                          id="home-tab"
+                          data-bs-toggle="tab"
+                          data-bs-target="#home"
+                          type="button"
+                          role="tab"
+                          aria-controls="home"
+                          aria-selected="true"
+                        >
+                          Top Vendors
+                        </button>
+                      </li>
+                      <li className="nav-item" role="presentation">
+                        <button
+                          className="nav-link"
+                          id="profile-tab"
+                          data-bs-toggle="tab"
+                          data-bs-target="#profile"
+                          type="button"
+                          role="tab"
+                          aria-controls="profile"
+                          aria-selected="false"
+                        >
+                          Top Categories
+                        </button>
+                      </li>
+                    </ul>
+                    <div className="tab-content" id="myTabContent">
+                      <div
+                        className="tab-pane fade show active"
+                        id="home"
+                        role="tabpanel"
+                        aria-labelledby="home-tab"
+                      >
+                        <div className="row p-4 mx-0">
+                          <div className="col-12 inner_design_comman border">
+                            <div className="row comman_header justify-content-between">
+                              <div className="col-auto">
+                                <h2>Advertise Management</h2>
+                              </div>
+                            </div>
+
+                            <div className="row">
+                              <div className="col-12 comman_table_design px-0">
+                                <div className="table-responsive">
+                                  <table className="table mb-0">
+                                    <thead>
+                                      <tr>
+                                        <th>S.No.</th>
+                                        <th>Vendors</th>
+                                        <th>Email</th>
+                                        <th>Action</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {allAdds?.map((item, ind) => (
+                                        <tr>
+                                          <td>{ind + 1}</td>
+                                          <td>
+                                            {item?.vendor?.length
+                                              ? item?.vendor?.map((val) => (
+                                                  <li>
+                                                    {val?.account_holder_name
+                                                      ? val?.account_holder_name
+                                                      : "No results"}
+                                                  </li>
+                                                ))
+                                              : "No Results"}
+                                          </td>
+                                          <td>
+                                            {item?.vendor?.map((val) => (
+                                              <li>
+                                                {val?.email
+                                                  ? val?.email
+                                                  : "No results"}
+                                              </li>
+                                            ))}
+                                          </td>
+                                          <td>
+                                            <a
+                                              className="comman_btn2 table_viewbtn"
+                                              href="javascript:;"
+                                              onClick={() =>
+                                                DeleteAdd(item?._id)
+                                              }
+                                            >
+                                              Delete
+                                            </a>
+                                          </td>
+                                        </tr>
+                                      ))}
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        className="tab-pane fade"
+                        id="profile"
+                        role="tabpanel"
+                        aria-labelledby="profile-tab"
+                      >
+                        <div className="row p-4 mx-0">
+                          <div className="col-12 inner_design_comman border">
+                            <div className="row comman_header justify-content-between">
+                              <div className="col-auto">
+                                <h2>Advertise Management</h2>
+                              </div>
+                            </div>
+
+                            <div className="row">
+                              <div className="col-12 comman_table_design px-0">
+                                <div className="table-responsive">
+                                  <table className="table mb-0">
+                                    <thead>
+                                      <tr>
+                                        <th>S.No.</th>
+                                        <th>Categories(en)</th>
+                                        <th>Categories(ar)</th>
+                                        <th>Action</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {allAddsCate?.map((item, ind) => (
+                                        <tr>
+                                          <td>{ind + 1}</td>
+
+                                          <td>
+                                            {item?.category?.length
+                                              ? item?.category?.map((val) => (
+                                                  <li>{val?.name_en}</li>
+                                                ))
+                                              : "No Results"}
+                                          </td>
+                                          <td>
+                                            {item?.category?.length
+                                              ? item?.category?.map((val) => (
+                                                  <li>{val?.name_ar}</li>
+                                                ))
+                                              : "No Results"}
+                                          </td>
+                                          <td>
+                                            <a
+                                              className="comman_btn2 table_viewbtn"
+                                              onClick={() =>
+                                                DeleteAdd(item?._id)
+                                              }
+                                            >
+                                              Delete
+                                            </a>
+                                          </td>
+                                        </tr>
+                                      ))}
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

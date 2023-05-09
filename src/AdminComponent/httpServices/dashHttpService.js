@@ -1005,10 +1005,43 @@ export async function AddAddvertise(formData) {
     return { error };
   }
 }
-export async function AllAdvertisement() {
+
+export async function DeleteAddvertise(id) {
   try {
     const { data } = await appHttpService.get(
-      `${process.env.REACT_APP_APIENDPOINT}api/admin/getAllAdvertisement`
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/deleteAdvertisement` +
+        "/" +
+        id
+    );
+    console.log(data);
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      console.log(error?.response?.data);
+      Swal.fire({
+        title: error?.response?.data.message,
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
+export async function AllAdvertisement(formData) {
+  try {
+    const { data } = await appHttpService.post(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/getAllAdvertisement`,
+      formData
     );
     console.log(data);
     if (data?.error) {

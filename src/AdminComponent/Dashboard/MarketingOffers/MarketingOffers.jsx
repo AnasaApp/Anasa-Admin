@@ -13,6 +13,7 @@ import {
   GetVendorByCate,
   getViewCombo,
   getViewPromo,
+  ImageUpload,
   SearchUser,
   SearchVendorServices,
 } from "../../httpServices/dashHttpService";
@@ -172,9 +173,10 @@ const MarketingOffers = () => {
       }
     });
   };
+
   const createOptionsServices = async (id) => {
     setSelectVendor(id);
-    setSelectedServices({ selectedServices: [] });
+    setSelectedServices([]);
     if (id) {
       await SearchVendorServices(id).then((res) => {
         if (!res.error) {
@@ -189,6 +191,7 @@ const MarketingOffers = () => {
       });
     }
   };
+
   const VendorsList = async (id) => {
     setCategoryData(id);
     await GetVendorByCate(id).then((res) => {
@@ -199,31 +202,23 @@ const MarketingOffers = () => {
       }
     });
   };
-
+  console.log(files?.upload_video);
   const onSubmit = async (data) => {
-    console.log(data);
-    let formData = new FormData();
-    formData.append("name_en", data?.combo_en);
-    formData.append("name_ar", data?.combo_ar);
-    formData.append("discount", data?.discount);
-    formData.append("validFrom", data?.dateFrom);
-    formData.append("validTo", data?.dateTo);
-    formData.append("userType", userTypes);
-    formData.append("category", categoryData);
-    formData.append("vendor", selectVendor);
-    formData.append(
-      "services",
-      selectedServices.servicesSelected?.map((item) => item?.value)
-    );
-    formData.append("image", files?.upload_video);
-    userTypes === "specific" &&
-      formData.append(
-        "selectedUsers",
-        JSON.stringify(selectedUsers.usersSelected?.map((item) => item?.value))
-      );
-
-    await AddCombo(formData).then((res) => {
-      // console.log(res);
+    await AddCombo({
+      name_en: data?.combo_en,
+      name_ar: data?.combo_ar,
+      discount: data?.discount,
+      validFrom: data?.dateFrom,
+      validTo: data?.dateTo,
+      userType: userTypes,
+      category: categoryData,
+      vendor: selectVendor,
+      image: files,
+      services: selectedServices.servicesSelected?.map((item) => item?.value),
+      selectedUsers:
+        userTypes === "specific" &&
+        selectedUsers.usersSelected?.map((item) => item?.value),
+    }).then((res) => {
       if (!res.error) {
         getAllOffers();
         document.getElementById("Reset").click();
@@ -261,8 +256,13 @@ const MarketingOffers = () => {
     });
   };
 
-  const onFileSelection = (e, key) => {
-    setFiles({ ...files, [key]: e.target.files[0] });
+  const onFileSelection = async (e, key) => {
+    // setFiles({ ...files, [key]: e.target.files[0] });
+    const formData = new FormData();
+    formData.append("image", e.target.files[0]);
+    const data = await ImageUpload(formData);
+    console.log(data.data?.results.obj);
+    setFiles(data.data.results?.obj[0]);
   };
 
   const handleView = async (id) => {

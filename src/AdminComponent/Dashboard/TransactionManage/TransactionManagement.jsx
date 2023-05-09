@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   BuyerTransactions,
+  editOffer,
+  GetVendorWallet,
   UpdateTransactions,
   VendorTransactions,
 } from "../../httpServices/dashHttpService";
@@ -9,6 +11,8 @@ import Sidebar from "../Sidebar";
 import moment from "moment";
 import { MDBDataTable } from "mdbreact";
 import Swal from "sweetalert2";
+import { useForm } from "react-hook-form";
+import classNames from "classnames";
 
 const TransactionManagement = () => {
   const [slide, setSlide] = useState("TM");
@@ -17,6 +21,16 @@ const TransactionManagement = () => {
   const [trans, setTrans] = useState([]);
   const [status, setStatus] = useState();
   const [vendorId, setVendorId] = useState();
+  const [wallet, setWallet] = useState();
+  const [value, setValue] = useState();
+
+  const {
+    register: register2,
+    handleSubmit: handleSubmit2,
+    formState: { errors: errors2 },
+    reset,
+  } = useForm();
+
   useEffect(() => {
     getVendorTransactions();
     getBuyerTransactions();
@@ -138,6 +152,7 @@ const TransactionManagement = () => {
               className="comman_btn table_viewbtn mx-1"
               onClick={() => {
                 setVendorId(list?._id);
+                manageVendor(list?._id);
                 setTrans({
                   status: list?.status,
                   amount: list?.deposit || list?.withdrawl,
@@ -227,17 +242,41 @@ const TransactionManagement = () => {
     // }
   };
 
-  const UpdateTransaction = async (e) => {
+  const onUpdate = async (e) => {
     e.preventDefault();
-    const { data } = await UpdateTransactions(vendorId, { status: status });
+    const { data } = await UpdateTransactions(vendorId, {
+      status: e.target.value,
+    });
     if (!data.error) {
-      document.getElementById("transClose").click();
       getVendorTransactions();
       Swal.fire({
-        title: "Updated Successfully!",
+        title: "Status Updated Successfully!",
         icon: "success",
         confirmButtonText: "Okay",
       });
+    }
+  };
+  const onEdit = async (data) => {
+    console.log(data);
+    await editOffer(vendorId, {}).then((res) => {
+      if (!res.data.error) {
+        document.getElementById("transClose").click();
+        getVendorTransactions();
+        Swal.fire({
+          title: "Updated Successfully!",
+          icon: "success",
+          confirmButtonText: "Okay",
+          confirmButtonColor: "#e25829",
+        });
+      }
+    });
+  };
+
+  const manageVendor = async (id) => {
+    const { data } = await GetVendorWallet(id);
+    if (!data.error) {
+      console.log(data);
+      setWallet(data?.results.wallet);
     }
   };
   const getBarClick = (val) => {
@@ -521,9 +560,35 @@ const TransactionManagement = () => {
               <form
                 className="form-design px-3 py-2 help-support-form row align-items-end justify-content-center"
                 action=""
+                onSubmit={handleSubmit2(onEdit)}
               >
                 <div className="form-group col-6">
-                  <label htmlFor="">Amount</label>
+                  <label htmlFor="">Total Amount (En)</label>
+                  <input
+                    type="text"
+                    className={classNames("form-control", {
+                      "is-invalid": errors2.combo_en_edit,
+                    })}
+                    name="amount"
+                    defaultValue={wallet?.totalAmount}
+                    disabled
+                  />
+                </div>
+                <div className="form-group col-6">
+                  <label htmlFor="">Pending Amount (En)</label>
+                  <input
+                    type="text"
+                    className={classNames("form-control", {
+                      "is-invalid": errors2.combo_en_edit,
+                    })}
+                    name="amount"
+                    defaultValue={wallet?.pendingAmount}
+                    disabled
+                  />
+                </div>
+
+                <div className="form-group col-6">
+                  <label htmlFor="">Request Amount</label>
                   <input
                     type="text"
                     className="form-control"
@@ -537,7 +602,7 @@ const TransactionManagement = () => {
                     className="form-select form-control"
                     aria-label="Default select example"
                     name="category"
-                    onChange={(e) => setStatus(e.target.value)}
+                    onChange={(e) => onUpdate(e)}
                   >
                     <option selected="">{trans.status}</option>
                     <option value="Paid">Completed</option>
@@ -546,8 +611,34 @@ const TransactionManagement = () => {
                     <option value="Refund">Refund</option>
                   </select>
                 </div>
-                <div className="form-group mb-0 col-auto mt-3">
-                  <button className="comman_btn" onClick={UpdateTransaction}>
+                <div className="form-group col-6">
+                  <label htmlFor="">Withdrawl Amount</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    name="combo_ar_edit_ar"
+                    value={value}
+                    onChange={(e) => {
+                      setValue(e.target.value);
+                      if (e.target.value > wallet?.totalAmount) {
+                        Swal.fire({
+                          title: "Warning!",
+                          text: "Withdrawl Amount Should be less than Total Amount",
+                          icon: "warning",
+                          confirmButtonText: "Okay",
+                        });
+                        setValue(wallet?.totalAmount);
+                      }
+                    }}
+                  />
+                  {errors2.combo_ar_edit_ar && (
+                    <small className="errorText mx-1">
+                      {errors2.combo_ar_edit_ar.message}
+                    </small>
+                  )}
+                </div>
+                <div className="form-group mb-0 col-auto ">
+                  <button className="comman_btn" type="submit">
                     Confirm
                   </button>
                 </div>

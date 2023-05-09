@@ -196,25 +196,19 @@ const PromoManagement = () => {
   };
 
   const onSubmit = async (data) => {
-    let formData = new FormData();
-    formData.append("name_en", data?.promo_code_en);
-    formData.append("name_ar", data?.promo_code_ar);
-    formData.append("discount", data?.discount);
-    formData.append("validFrom", data?.dateFrom);
-    formData.append("validTo", data?.dateTo);
-    formData.append("userType", userTypes);
-    formData.append("image", files);
-    userTypes === "specific" &&
-      formData.append(
-        "selectedUsers",
-        selectedUsers.usersSelected?.map((item) => item?.value)
-      );
-    console.log(
-      selectedUsers.usersSelected?.map((item) => item?.value),
-      "jjoihiuhiuhouhou "
-    );
-    await AddPromoCode(formData).then((res) => {
-      console.log(res);
+    await AddPromoCode({
+      name_en: data?.promo_code_en,
+      name_ar: data?.promo_code_ar,
+      discount: data?.discount,
+      validFrom: data?.dateFrom,
+      validTo: data?.dateTo,
+      userType: userTypes,
+      image: files[0],
+      selectedUsers:
+        userTypes === "specific" &&
+        selectedUsers.usersSelected?.map((item) => item?.value),
+    }).then((res) => {
+      document.getElementById("ResetPromo").click();
       GetPromocodes();
       if (!res.data.error) {
         Swal.fire({
@@ -284,9 +278,6 @@ const PromoManagement = () => {
     const data = await ImageUpload(formData);
     console.log(data.data?.results.obj);
     setFiles(data.data.results?.obj);
-
-    // if () {
-    // }
   };
 
   console.log(files);
@@ -479,6 +470,7 @@ const PromoManagement = () => {
                     <button
                       className="comman_btn d-none"
                       type="reset"
+                      id="ResetPromo"
                       onClick={() => setSelectedUsers({ usersSelected: [] })}
                     >
                       Reset
