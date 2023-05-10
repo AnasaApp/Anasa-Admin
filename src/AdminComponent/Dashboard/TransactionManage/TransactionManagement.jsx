@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import {
   BuyerTransactions,
   editOffer,
+  editWallet,
   GetVendorWallet,
   UpdateTransactions,
   VendorTransactions,
@@ -258,10 +259,11 @@ const TransactionManagement = () => {
   };
   const onEdit = async (data) => {
     console.log(data);
-    await editOffer(vendorId, {}).then((res) => {
+    await editWallet({ amount: value, vendorId: vendorId }).then((res) => {
       if (!res.data.error) {
         document.getElementById("transClose").click();
         getVendorTransactions();
+        setValue("");
         Swal.fire({
           title: "Updated Successfully!",
           icon: "success",
@@ -555,6 +557,7 @@ const TransactionManagement = () => {
                 data-bs-dismiss="modal"
                 aria-label="Close"
                 id="transClose"
+                onClick={() => setValue("")}
               />
             </div>
             <div className="modal-body">

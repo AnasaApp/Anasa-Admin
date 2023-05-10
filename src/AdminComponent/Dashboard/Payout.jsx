@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   AllVendors,
   editOffer,
+  editWallet,
   GetVendorWallet,
 } from "../httpServices/dashHttpService";
 import Sidebar from "./Sidebar";
@@ -119,10 +120,11 @@ const Payout = () => {
   };
   const onEdit = async (data) => {
     console.log(data);
-    await editOffer(vendorId, {}).then((res) => {
+    await editWallet({ amount: value, vendorId: vendorId }).then((res) => {
       if (!res.data.error) {
         document.getElementById("closedEdit").click();
         getVendors();
+        setValue("");
         Swal.fire({
           title: "Updated Successfully!",
           icon: "success",
@@ -211,6 +213,7 @@ const Payout = () => {
                 id="closedEdit"
                 onClick={() => {
                   document.getElementById("ResetSSS").click();
+                  setValue("");
                 }}
               />
             </div>
