@@ -434,7 +434,7 @@ const PromoManagement = () => {
                     )}
                   </div>
 
-                  <div className="form-group mb-0 col Select">
+                  {/* <div className="form-group mb-0 col Select">
                     <label htmlFor="">Select Users</label>
                     <select
                       aria-label="Default select example"
@@ -462,8 +462,8 @@ const PromoManagement = () => {
                       onInputChange={handleInputChange}
                       isDisabled={userTypes === "specific" ? false : true}
                     />
-                  </div>
-                  <div className="form-group mb-0 mt-4 col-auto">
+                  </div> */}
+                  <div className="form-group mb-0 mt-4 col-12 text-center">
                     <button className="comman_btn" type="submit">
                       Save
                     </button>

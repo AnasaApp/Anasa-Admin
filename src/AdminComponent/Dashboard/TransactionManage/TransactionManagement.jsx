@@ -152,7 +152,7 @@ const TransactionManagement = () => {
               className="comman_btn table_viewbtn mx-1"
               onClick={() => {
                 setVendorId(list?._id);
-                manageVendor(list?._id);
+                manageVendor(list?.vendor?._id);
                 setTrans({
                   status: list?.status,
                   amount: list?.deposit || list?.withdrawl,
@@ -279,6 +279,7 @@ const TransactionManagement = () => {
       setWallet(data?.results.wallet);
     }
   };
+
   const getBarClick = (val) => {
     console.log(val);
     setSideBar(val);

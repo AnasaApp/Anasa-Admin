@@ -176,10 +176,10 @@ const MarketingOffers = () => {
 
   const createOptionsServices = async (id) => {
     setSelectVendor(id);
-    setSelectedServices([]);
     if (id) {
       await SearchVendorServices(id).then((res) => {
         if (!res.error) {
+          setSelectedServices({ servicesSelected: [] });
           let data = res?.data.results.services;
           console.log(data);
           const optionList = data?.map((item, index) => ({
@@ -215,15 +215,11 @@ const MarketingOffers = () => {
       vendor: selectVendor,
       image: files,
       services: selectedServices.servicesSelected?.map((item) => item?.value),
-      selectedUsers:
-        userTypes === "specific" &&
-        selectedUsers.usersSelected?.map((item) => item?.value),
     }).then((res) => {
       if (!res.error) {
+        setSelectedServices({ servicesSelected: [] });
         getAllOffers();
         document.getElementById("Reset").click();
-        setSelectedServices({ selectedServices: [] });
-        setSelectedUsers({ usersSelected: [] });
         Swal.fire({
           title: "New Combo Added!",
           icon: "success",
@@ -494,7 +490,7 @@ const MarketingOffers = () => {
                     )}
                   </div>
 
-                  <div className="form-group col-5">
+                  {/* <div className="form-group col-5">
                     <label htmlFor="">Select Users</label>
                     <select
                       aria-label="Default select example"
@@ -522,8 +518,8 @@ const MarketingOffers = () => {
                       onInputChange={handleInputChange}
                       isDisabled={userTypes === "specific" ? false : true}
                     />
-                  </div>
-                  <div className="form-group mb-0 mt-4 col-auto">
+                  </div> */}
+                  <div className="form-group mb-0 mt-4 col-12 text-center">
                     <button className="comman_btn" type="submit">
                       Save
                     </button>

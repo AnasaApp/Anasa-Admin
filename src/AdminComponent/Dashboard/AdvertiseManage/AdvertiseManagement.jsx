@@ -124,7 +124,8 @@ const AdvertiseManagement = () => {
     e.preventDefault();
     await AddAddvertise({
       vendor: selectedUsers?.usersSelected?.map((item) => item?.value),
-      category: selectedCate?.cateSelected?.map((item) => item?.value),
+      category:
+        type === "TC" && selectedCate?.cateSelected?.map((item) => item?.value),
       type: type === "TC" ? "category" : "vendor",
     }).then((res) => {
       if (!res.data.error) {
