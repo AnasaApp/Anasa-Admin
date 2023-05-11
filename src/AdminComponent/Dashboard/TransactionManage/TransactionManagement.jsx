@@ -126,7 +126,11 @@ const TransactionManagement = () => {
   });
 
   const getVendorTransactions = async () => {
-    const { data } = await VendorTransactions({ page: 1 });
+    const { data } = await VendorTransactions({
+      page: 1,
+      from: values?.from,
+      to: values?.to,
+    });
     const newRows = [];
     if (!data.error) {
       let values = data?.results.transactions;
@@ -222,25 +226,19 @@ const TransactionManagement = () => {
   console.log(trans);
 
   const onSearch = async (e) => {
-    // if (values?.from && values?.to) {
-    //   e.preventDefault();
-    //   await AllBookings({
-    //     from: values?.from,
-    //     to: values?.to,
-    //     page: 1,
-    //   }).then((res) => {
-    //     setAllBookings(res?.data?.results?.bookings);
-    //   });
-    //   setValues({ from: "", to: "" });
-    // } else {
-    //   e.preventDefault();
-    //   Swal.fire({
-    //     title: "Please select a Date range!",
-    //     icon: "warning",
-    //     button: "ok",
-    //     confirmButtonColor: "#e25829",
-    //   });
-    // }
+    if (values?.from && values?.to) {
+      e.preventDefault();
+      getVendorTransactions();
+      setValues({ from: "", to: "" });
+    } else {
+      e.preventDefault();
+      Swal.fire({
+        title: "Please select a Date range!",
+        icon: "warning",
+        button: "ok",
+        confirmButtonColor: "#e25829",
+      });
+    }
   };
 
   const onUpdate = async (e) => {
@@ -257,6 +255,7 @@ const TransactionManagement = () => {
       });
     }
   };
+
   const onEdit = async (data) => {
     console.log(data);
     await editWallet({ amount: value, vendorId: vendorId }).then((res) => {
@@ -382,7 +381,7 @@ const TransactionManagement = () => {
                                   type="reset"
                                   id="Resets"
                                 >
-                                  Search
+                                  Reset
                                 </button>
                               </div>
                             </form>
@@ -465,14 +464,40 @@ const TransactionManagement = () => {
                             >
                               <div className="form-group mb-0 col-5">
                                 <label htmlFor="">From</label>
-                                <input type="date" className="form-control" />
+                                <input
+                                  type="date"
+                                  className="form-control"
+                                  name="from"
+                                  id="appFrom"
+                                  value={values.from}
+                                  onChange={handleDate}
+                                />
                               </div>
                               <div className="form-group mb-0 col-5">
                                 <label htmlFor="">To</label>
-                                <input type="date" className="form-control" />
+                                <input
+                                  type="date"
+                                  className="form-control"
+                                  name="to"
+                                  id="appTo"
+                                  value={values.to}
+                                  onChange={handleDate}
+                                />
                               </div>
                               <div className="form-group mb-0 col-auto">
-                                <button className="comman_btn2">Search</button>
+                                <button
+                                  className="comman_btn2"
+                                  onClick={onSearch}
+                                >
+                                  Search
+                                </button>
+                                <button
+                                  className="comman_btn2 d-none"
+                                  type="reset"
+                                  id="Resets"
+                                >
+                                  Reset
+                                </button>
                               </div>
                             </form>
                             <div className="row">

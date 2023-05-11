@@ -181,10 +181,90 @@ h2 {
   border-right: 10px solid #4f73af;
   transition: 0.1s all;
 }
+@media screen and (max-width: 768px) {
+  body,
+  html {
+    font-family: "Poppins" !important;
+    overflow: hidden !important;
+    background: #eef3ff !important;
+    min-height: auto !important;
+    top: 0 !important;
+    padding: auto !important;
+  }
+  h1 {
+    font-size: 10px !important;
+  }
+  h2,
+  th,
+  tr {
+    font-size: 14px !important;
+  }
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-size: 10px !important;
+  }
+  p {
+    font-weight: 200 !important;
+  }
+
+  a {
+    color: #e25829;
+    text-decoration: none !important;
+    transition: 0.5s all;
+    font-size: smaller !important;
+  }
+
+  a:hover {
+    color: #000000;
+    text-decoration: none !important;
+  }
+
+  html,
+  body {
+    scroll-behavior: smooth;
+  }
+
+  .siderbar_section {
+    width: 30%;
+    transition: 0.3s ease-in-out;
+    opacity: 85% !important;
+    background-image: url(../img/verification_bg.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    border-right: 10px solid #4f73af;
+    transition: 0.1s all;
+  }
+
+  .admin_main {
+    margin-left: 0%;
+    transition: 0.1s all;
+  }
+  .sidebar_logo img {
+    max-width: 60px !important;
+    margin: 0 auto;
+  }
+  .sidebar_menus ul li a {
+    color: #fff;
+    display: flex;
+    font-size: 11px !important;
+    padding: 12px 15px !important;
+    border-radius: 15px 0 0 15px;
+    position: relative;
+    align-items: flex-start;
+  }
+}
+.sidebar_btn_resp {
+  font-size: 22px;
+  color: #fff !important;
+  position: relative;
+  left: 90%;
+}
 .vaccine_category {
   margin: 0 20px;
-}
-.hide_sidebar {
 }
 
 .siderbar_section::after {
@@ -282,7 +362,6 @@ input::-webkit-inner-spin-button {
 } */
 .Profile_dropdown img {
   z-index: 999 !important;
-  
 }
 
 .Profile_dropdown .dropdown-menu {

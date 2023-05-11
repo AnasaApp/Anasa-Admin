@@ -5,10 +5,13 @@ import Swal from "sweetalert2";
 const Sidebar = ({ slide, getBarClick, getBar }) => {
   const navigate = useNavigate();
   const [SlideState, setSlideState] = useState("");
-  const [sideBar, setSideBar] = useState(true);
+  const width = window.innerWidth;
+  const [sideBar, setSideBar] = useState(width < 768 ? false : true);
+
   useEffect(() => {
     setSlideState(slide);
   }, []);
+
   let token = localStorage.getItem("token-admin");
   let AdminData = JSON.parse(localStorage.getItem("token-admin-data"));
 
@@ -24,6 +27,8 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
       navigate("/Admin/Login");
     });
   }
+  console.log(width);
+
   const Logout = () => {
     localStorage.removeItem("token-admin");
     navigate("/Admin/Login");
@@ -34,6 +39,19 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
       <div>
         <div className={sideBar ? "siderbar_section" : " d-none"}>
           <div className="siderbar_inner">
+            {width < 768 ? (
+              <a
+                className="sidebar_btn_resp"
+                onClick={() => {
+                  setSideBar(!sideBar);
+                  getBarClick("close");
+                }}
+              >
+                <i class="fa fa-close "></i>
+              </a>
+            ) : (
+              ""
+            )}
             <div className="sidebar_logo">
               <a href="javscript:;">
                 <img src={require("../../assets/img/logo.png")} alt="Logo" />{" "}
@@ -47,6 +65,9 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
                     to="/Admin/Dashboard"
                     onClick={() => {
                       setSlideState("Dash");
+                      if (width < 768) {
+                        setSideBar(!sideBar);
+                      }
                     }}
                   >
                     <i className="fas fa-home" />
@@ -223,29 +244,56 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
       <div className="admin_main_inner">
         <div className="admin_header shadow">
           <div className="row align-items-center mx-0 justify-content-between w-100">
-            <div className="col-auto ">
-              {sideBar ? (
-                <a
-                  className="sidebar_btn"
-                  onClick={() => {
-                    setSideBar(!sideBar);
-                    getBarClick("click");
-                  }}
-                >
-                  <i class="fa fa-bars "></i>
-                </a>
-              ) : (
-                <a
-                  className="sidebar_btn"
-                  onClick={() => {
-                    setSideBar(!sideBar);
-                    getBarClick("close");
-                  }}
-                >
-                  <i class="fa fa-close "></i>
-                </a>
-              )}
-            </div>
+            {width < 768 ? (
+              <div className="col-auto ">
+                {sideBar ? (
+                  <a
+                    className="sidebar_btn"
+                    onClick={() => {
+                      setSideBar(!sideBar);
+                      getBarClick("close");
+                    }}
+                  >
+                    <i class="fa fa-close "></i>
+                  </a>
+                ) : (
+                  <a
+                    className="sidebar_btn"
+                    onClick={() => {
+                      setSideBar(!sideBar);
+                      getBarClick("click");
+                    }}
+                  >
+                    <i class="fa fa-bars "></i>
+                  </a>
+                )}
+              </div>
+            ) : (
+              <div className="col-auto ">
+                {sideBar ? (
+                  <a
+                    className="sidebar_btn"
+                    onClick={() => {
+                      setSideBar(!sideBar);
+                      getBarClick("click");
+                    }}
+                  >
+                    <i class="fa fa-bars "></i>
+                  </a>
+                ) : (
+                  <a
+                    className="sidebar_btn"
+                    onClick={() => {
+                      setSideBar(!sideBar);
+                      getBarClick("close");
+                    }}
+                  >
+                    <i class="fa fa-close "></i>
+                  </a>
+                )}
+              </div>
+            )}
+
             <div className="col-auto d-flex align-items-center">
               <Link
                 className="notification_icon"
