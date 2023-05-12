@@ -247,7 +247,7 @@ const SubCategories = ({ cate }) => {
                 </small>
               )}
             </div>
-            <div className="form-group mb-0 col">
+            <div className="form-group mb-0 col-6 ">
               <label htmlFor="">Sub Category Name (Ar)</label>
               <input
                 type="text"
@@ -280,7 +280,7 @@ const SubCategories = ({ cate }) => {
                 </small>
               )}
             </div>
-            <div className="form-group mb-0 col choose_file position-relative">
+            <div className="form-group mb-0 col-auto choose_file position-relative">
               <span>Sub Category Image </span>{" "}
               <label htmlFor="upload_video">
                 <i className="fa fa-camera me-1" />

@@ -591,7 +591,7 @@ const VendorManagement = () => {
                                 className="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"
                                 action=""
                               >
-                                <div className="form-group mb-0 col-5">
+                                <div className="form-group mb-0 col-5 col-sm-auto">
                                   <label htmlFor="">From</label>
                                   <input
                                     type="date"
@@ -602,7 +602,7 @@ const VendorManagement = () => {
                                     onChange={handleDate}
                                   />
                                 </div>
-                                <div className="form-group mb-0 col-5">
+                                <div className="form-group mb-0 col-5 col-sm-auto">
                                   <label htmlFor="">To</label>
                                   <input
                                     type="date"
@@ -641,79 +641,7 @@ const VendorManagement = () => {
                                       noBottomColumns
                                       sortable
                                     />
-                                    {/* <table className="table mb-0">
-                                      <thead>
-                                        <tr>
-                                          <th>S.No.</th>
-                                          <th>Full Name</th>
-                                          <th>Email Id</th>
-                                          <th>Registration Date</th>
-                                          <th>Status</th>
-                                          <th>Action</th>
-                                        </tr>
-                                      </thead>
-                                      {AppVendors?.length ? (
-                                        <tbody>
-                                          {(AppVendors || [])?.map(
-                                            (item, index) => (
-                                              <tr>
-                                                <td>{index + 1}.</td>
-                                                <td>{item?.full_name}</td>
-                                                <td>{item?.email}</td>
-                                                <td>
-                                                  {item?.createdAt?.slice(
-                                                    0,
-                                                    10
-                                                  )}
-                                                </td>
-                                                <td>
-                                                  <form className="table_btns d-flex align-items-center">
-                                                    <div className="check_toggle">
-                                                      {" "}
-                                                      <input
-                                                        type="checkbox"
-                                                        defaultChecked={
-                                                          item?.active_status
-                                                        }
-                                                        name="check1"
-                                                        id={index}
-                                                        className="d-none"
-                                                        onClick={() => {
-                                                          VendorStatus(
-                                                            item?._id
-                                                          );
-                                                        }}
-                                                      />{" "}
-                                                      <label htmlFor={index} />{" "}
-                                                    </div>
-                                                  </form>
-                                                </td>
-                                                <td>
-                                                  <Link
-                                                    className="comman_btn2 table_viewbtn"
-                                                    to="/Admin/Dashboard/Vendor-Management/Approved"
-                                                    state={{ id: item?._id }}
-                                                  >
-                                                    View
-                                                  </Link>
-                                                </td>
-                                              </tr>
-                                            )
-                                          )}
-                                        </tbody>
-                                      ) : (
-                                        <tbody className="justify-content-center">
-                                          <tr className="text-center p-3">
-                                            <td>NO RESULTS</td>
-                                            <td>NO RESULTS</td>
-                                            <td>NO RESULTS</td>
-                                            <td>NO RESULTS</td>
-                                            <td>NO RESULTS</td>
-                                            <td>NO RESULTS</td>
-                                          </tr>
-                                        </tbody>
-                                      )}
-                                    </table> */}
+                                 
                                   </div>
                                 </div>
                               </div>
@@ -732,7 +660,7 @@ const VendorManagement = () => {
                                 className="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"
                                 action=""
                               >
-                                <div className="form-group mb-0 col-5">
+                                <div className="form-group mb-0 col-5 col-sm-auto">
                                   <label htmlFor="">From</label>
                                   <input
                                     type="date"
@@ -743,7 +671,7 @@ const VendorManagement = () => {
                                     onChange={handleDate}
                                   />
                                 </div>
-                                <div className="form-group mb-0 col-5">
+                                <div className="form-group mb-0 col-5 col-sm-auto">
                                   <label htmlFor="">To</label>
                                   <input
                                     type="date"
@@ -783,59 +711,7 @@ const VendorManagement = () => {
                                       sortable
                                     />
 
-                                    {/* <table className="table mb-0">
-                                      <thead>
-                                        <tr>
-                                          <th>S.No.</th>
-                                          <th>Full Name</th>
-                                          <th>Shop Name</th>
-                                          <th>Email Id</th>
-                                          <th>Registration Date</th>
-                                          <th>Action</th>
-                                        </tr>
-                                      </thead>
-                                      {penVendors?.length ? (
-                                        <tbody>
-                                          {(penVendors || [])?.map(
-                                            (item, index) => (
-                                              <tr>
-                                                <td>{index + 1}.</td>
-                                                <td>{item?.full_name}</td>
-                                                <td>{item?.shop_name}</td>
-                                                <td>{item?.email}</td>
-                                                <td>
-                                                  {item?.createdAt?.slice(
-                                                    0,
-                                                    10
-                                                  )}
-                                                </td>
-
-                                                <td>
-                                                  <Link
-                                                    className="comman_btn2 table_viewbtn"
-                                                    to="/Admin/Dashboard/Vendor-Management/Pending"
-                                                    state={{ id: item?._id }}
-                                                  >
-                                                    View
-                                                  </Link>
-                                                </td>
-                                              </tr>
-                                            )
-                                          )}
-                                        </tbody>
-                                      ) : (
-                                        <tbody className="justify-content-center">
-                                          <tr className="text-center p-3">
-                                            <td>NO RESULTS</td>
-                                            <td>NO RESULTS</td>
-                                            <td>NO RESULTS</td>
-                                            <td>NO RESULTS</td>
-                                            <td>NO RESULTS</td>
-                                            <td>NO RESULTS</td>
-                                          </tr>
-                                        </tbody>
-                                      )}
-                                    </table> */}
+                                 
                                   </div>
                                 </div>
                               </div>
@@ -854,7 +730,7 @@ const VendorManagement = () => {
                                 className="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"
                                 action=""
                               >
-                                <div className="form-group mb-0 col-5">
+                                <div className="form-group mb-0 col-5 col-sm-auto">
                                   <label htmlFor="">From</label>
                                   <input
                                     type="date"
@@ -865,7 +741,7 @@ const VendorManagement = () => {
                                     onChange={handleDate}
                                   />
                                 </div>
-                                <div className="form-group mb-0 col-5">
+                                <div className="form-group mb-0 col-5 col-sm-auto">
                                   <label htmlFor="">To</label>
                                   <input
                                     type="date"

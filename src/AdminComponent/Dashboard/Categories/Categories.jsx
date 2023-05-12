@@ -302,7 +302,7 @@ const Categories = () => {
                                   </small>
                                 )}
                               </div>
-                              <div className="form-group mb-0 col choose_file position-relative">
+                              <div className="form-group mb-0 col-auto choose_file position-relative">
                                 <span>Category Image </span>{" "}
                                 <label htmlFor="upload_video">
                                   <i className="fa fa-camera me-1" />

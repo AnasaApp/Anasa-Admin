@@ -6,7 +6,7 @@ import { adminForgotPass } from "../httpServices/LoginHttpService";
 import { useNavigate } from "react-router-dom";
 
 const AdminForgotPass = () => {
-  let navigate = useNavigate()
+  let navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -16,7 +16,7 @@ const AdminForgotPass = () => {
   const onSubmit = async (data) => {
     const res = await adminForgotPass(data);
     if (!res?.data.error) {
-      navigate("/Admin/OTP-verify" , {state:{email:data}});
+      navigate("/Admin/OTP-verify", { state: { email: data } });
     }
   };
 
@@ -25,7 +25,7 @@ const AdminForgotPass = () => {
       <section className="login_page">
         <div className="container-fluid px-0">
           <div className="row justify-content-start">
-            <div className="col-4">
+            <div className="col-lg-4 col-sm-12 col-auto">
               <div className="login_page_form shadow">
                 <div className="row">
                   <div className="col-12 formheader mb-4">

@@ -195,7 +195,7 @@ const BookingManage = () => {
         returnData.name_buyer = list?.buyer?.full_name;
         returnData.name_vendor = list?.vendor?.full_name;
         returnData.number = list?.total;
-        returnData.date = moment(list?.event_date).format("L");
+        returnData.date = moment(list?.event_start_date).format("MM/DD/YYYY");
         returnData.action = (
           <>
             <Link
@@ -227,7 +227,7 @@ const BookingManage = () => {
         returnData.name_vendor = list?.vendor?.full_name;
         returnData.number = list?.total;
         returnData.payout = "5000";
-        returnData.date = moment(list?.event_date).format("L");
+        returnData.date = moment(list?.event_start_date).format("L");
         returnData.action = (
           <>
             <Link
@@ -258,7 +258,7 @@ const BookingManage = () => {
         returnData.name_buyer = list?.buyer?.full_name;
         returnData.name_vendor = list?.vendor?.full_name;
         returnData.number = list?.total;
-        returnData.date = moment(list?.event_date).format("L");
+        returnData.date = moment(list?.event_start_date).format("L");
         returnData.action = (
           <>
             <Link
@@ -303,7 +303,7 @@ const BookingManage = () => {
             returnData.name_buyer = list?.buyer?.full_name;
             returnData.name_vendor = list?.vendor?.full_name;
             returnData.number = list?.total;
-            returnData.date = moment(list?.event_date).format("L");
+            returnData.date = moment(list?.event_start_date).format("L");
             returnData.action = (
               <>
                 <Link
@@ -352,7 +352,7 @@ const BookingManage = () => {
             returnData.name_vendor = list?.vendor?.full_name;
             returnData.number = list?.total;
             returnData.payout = "5000";
-            returnData.date = moment(list?.event_date).format("L");
+            returnData.date = moment(list?.event_start_date).format("L");
             returnData.action = (
               <>
                 <Link
@@ -401,7 +401,7 @@ const BookingManage = () => {
             returnData.name_buyer = list?.buyer?.full_name;
             returnData.name_vendor = list?.vendor?.full_name;
             returnData.number = list?.total;
-            returnData.date = moment(list?.event_date).format("L");
+            returnData.date = moment(list?.event_start_date).format("L");
             returnData.action = (
               <>
                 <Link
@@ -526,7 +526,7 @@ const BookingManage = () => {
                               className="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"
                               action=""
                             >
-                              <div className="form-group mb-0 col-5">
+                              <div className="form-group mb-0 col-5 col-sm-auto">
                                 <label htmlFor="">From</label>
                                 <input
                                   type="date"
@@ -537,7 +537,7 @@ const BookingManage = () => {
                                   onChange={handleDate}
                                 />
                               </div>
-                              <div className="form-group mb-0 col-5">
+                              <div className="form-group mb-0 col-5 col-sm-auto">
                                 <label htmlFor="">To</label>
                                 <input
                                   type="date"
@@ -576,43 +576,6 @@ const BookingManage = () => {
                                     noBottomColumns
                                     sortable
                                   />
-                                  {/* <table className="table mb-0">
-                                    <thead>
-                                      <tr>
-                                        <th>S.No.</th>
-                                        <th>Booking ID</th>
-                                        <th>Customer Name</th>
-                                        <th>Vendor Name</th>
-                                        <th>Booking Amount</th>
-                                        <th>Scheduled for</th>
-                                        <th>Action</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      {(allBookings || [])?.map(
-                                        (item, index) => (
-                                          <tr>
-                                            <td>{index + 1}</td>
-                                            <td>{item?.bookingID}</td>
-                                            <td>{item?.buyer?.full_name}</td>
-                                            <td>{item?.vendor?.full_name}</td>
-                                            <td>{item?.total}</td>
-                                            <td>
-                                              {item?.event_date?.slice(0, 10)}
-                                            </td>
-                                            <td>
-                                              <Link
-                                                className="comman_btn2 table_viewbtn"
-                                                to={`/Admin/Dashboard/Booking-Management/Booking-Details/${item?._id}`}
-                                              >
-                                                View
-                                              </Link>
-                                            </td>
-                                          </tr>
-                                        )
-                                      )}
-                                    </tbody>
-                                  </table> */}
                                 </div>
                               </div>
                             </div>
@@ -631,7 +594,7 @@ const BookingManage = () => {
                               className="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"
                               action=""
                             >
-                              <div className="form-group mb-0 col-5">
+                              <div className="form-group mb-0 col-5 col-sm-auto">
                                 <label htmlFor="">From</label>
                                 <input
                                   type="date"
@@ -642,7 +605,7 @@ const BookingManage = () => {
                                   onChange={handleDate}
                                 />
                               </div>
-                              <div className="form-group mb-0 col-5">
+                              <div className="form-group mb-0 col-5 col-sm-auto">
                                 <label htmlFor="">To</label>
                                 <input
                                   type="date"
@@ -681,43 +644,6 @@ const BookingManage = () => {
                                     noBottomColumns
                                     sortable
                                   />
-                                  {/* <table className="table mb-0">
-                                    <thead>
-                                      <tr>
-                                        <th>S.No.</th>
-                                        <th>Booking ID</th>
-                                        <th>Customer Name</th>
-                                        <th>Vendor Name</th>
-                                        <th>Booking Amount</th>
-                                        <th>Scheduled for</th>
-                                        <th>Action</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      {(completedBookings || [])?.map(
-                                        (item, index) => (
-                                          <tr>
-                                            <td>{index + 1}</td>
-                                            <td>{item?.bookingID}</td>
-                                            <td>{item?.buyer?.full_name}</td>
-                                            <td>{item?.vendor?.full_name}</td>
-                                            <td>{item?.total}</td>
-                                            <td>
-                                              {item?.event_date?.slice(0, 10)}
-                                            </td>
-                                            <td>
-                                              <Link
-                                                className="comman_btn2 table_viewbtn"
-                                                to={`/Admin/Dashboard/Booking-Management/Booking-Details/${item?._id}`}
-                                              >
-                                                View
-                                              </Link>
-                                            </td>
-                                          </tr>
-                                        )
-                                      )}
-                                    </tbody>
-                                  </table> */}
                                 </div>
                               </div>
                             </div>
@@ -736,7 +662,7 @@ const BookingManage = () => {
                               className="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"
                               action=""
                             >
-                              <div className="form-group mb-0 col-5">
+                              <div className="form-group mb-0 col-5 col-sm-auto">
                                 <label htmlFor="">From</label>
                                 <input
                                   type="date"
@@ -747,7 +673,7 @@ const BookingManage = () => {
                                   onChange={handleDate}
                                 />
                               </div>
-                              <div className="form-group mb-0 col-5">
+                              <div className="form-group mb-0 col-5 col-sm-auto">
                                 <label htmlFor="">To</label>
                                 <input
                                   type="date"

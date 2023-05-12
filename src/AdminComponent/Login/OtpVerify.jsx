@@ -37,7 +37,7 @@ const OtpVerify = () => {
       <section className="login_page">
         <div className="container-fluid px-0">
           <div className="row justify-content-start">
-            <div className="col-4">
+            <div className="col-lg-4 col-sm-12 col-auto">
               <div className="login_page_form shadow">
                 <div className="row">
                   <div className="col-12 formheader mb-4">

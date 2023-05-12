@@ -35,6 +35,7 @@ import EditProfile from "./AdminComponent/Dashboard/EditProfile";
 import UpdatePassword from "./AdminComponent/Dashboard/UpdatePassword";
 import BookingDetails from "./AdminComponent/Dashboard/bookingManage/BookingDetails";
 import Payout from "./AdminComponent/Dashboard/Payout";
+import ServicesManage from "./AdminComponent/Dashboard/ServicesManage/Services";
 
 function App() {
   const queryClient = new QueryClient();
@@ -127,6 +128,10 @@ function App() {
             <Route
               path="/Admin/Dashboard/Marketing-Offers"
               element={<MarketingOffers />}
+            />
+            <Route
+              path="/Admin/Dashboard/Services-Management"
+              element={<ServicesManage />}
             />
             <Route
               path="/Admin/Dashboard/Notifications-Management"

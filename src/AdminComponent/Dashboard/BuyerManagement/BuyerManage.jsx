@@ -170,7 +170,7 @@ const BuyerManage = () => {
                   action=""
                   onSubmit={handleSubmit(onSubmit)}
                 >
-                  <div className="form-group mb-0 col-5">
+                  <div className="form-group mb-0 col-5 col-sm-auto">
                     <label htmlFor="">From</label>
                     <input
                       type="date"
@@ -184,7 +184,7 @@ const BuyerManage = () => {
                       })}
                     />
                   </div>
-                  <div className="form-group mb-0 col-5">
+                  <div className="form-group mb-0 col-5 col-sm-auto">
                     <label htmlFor="">To</label>
                     <input
                       type="date"
