@@ -1006,12 +1006,11 @@ export async function AddAddvertise(formData) {
   }
 }
 
-export async function DeleteAddvertise(id) {
+export async function DeleteAddvertise(formData) {
   try {
-    const { data } = await appHttpService.get(
-      `${process.env.REACT_APP_APIENDPOINT}api/admin/deleteAdvertisement` +
-        "/" +
-        id
+    const { data } = await appHttpService.post(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/deleteAdvertisement`,
+      formData
     );
     console.log(data);
     if (data?.error) {

@@ -78,8 +78,11 @@ const AdvertiseManagement = () => {
     });
   };
 
-  const DeleteAdd = async (id) => {
-    const { data } = await DeleteAddvertise(id);
+  const DeleteAdd = async (id, typ) => {
+    const { data } = await DeleteAddvertise({
+      type: typ,
+      Id: id,
+    });
     if (!data.error) {
       GetAllAdds();
       GetAddscate();
@@ -125,10 +128,18 @@ const AdvertiseManagement = () => {
     await AddAddvertise({
       vendor: selectedUsers?.usersSelected?.map((item) => item?.value),
       category:
-        type === "TC" && selectedCate?.cateSelected?.map((item) => item?.value),
+        type === "TC"
+          ? selectedCate?.cateSelected?.map((item) => item?.value)
+          : null,
       type: type === "TC" ? "category" : "vendor",
     }).then((res) => {
       if (!res.data.error) {
+        setSelectedUsers({
+          usersSelected: [],
+        });
+        setSelectedCate({
+          cateSelected: [],
+        });
         GetAllAdds();
         GetAddscate();
         type === "TC" && document.getElementById("profile-tab").click();
@@ -140,6 +151,19 @@ const AdvertiseManagement = () => {
         });
       }
     });
+  };
+
+  const onSearch = async (e) => {
+    let search = e.target.value;
+    if (search !== "") {
+      let newArr = allAdds[0]?.vendor.filter((itm) =>
+        itm.full_name.toLowerCase().includes(search?.toLowerCase())
+      );
+      console.log(newArr);
+      setAllAdds(newArr);
+    } else {
+      GetAllAdds();
+    }
   };
 
   const getBarClick = (val) => {
@@ -189,6 +213,7 @@ const AdvertiseManagement = () => {
                       classNamePrefix="select"
                       onChange={handleChangeCate}
                       onInputChange={handleInputChangeCate}
+                      value={selectedCate?.cateSelected}
                     />
                   </div>
 
@@ -203,6 +228,7 @@ const AdvertiseManagement = () => {
                       classNamePrefix="select"
                       onChange={handleChange}
                       onInputChange={handleInputChange}
+                      value={selectedUsers?.usersSelected}
                     />
                   </div>
                   <div className="form-group mb-0 col-auto mt-4">
@@ -218,7 +244,7 @@ const AdvertiseManagement = () => {
                     <h2>Advertisment Management</h2>
                   </div>
                   <div className="col-3">
-                    <form className="form-design" action="">
+                    {/* <form className="form-design" action="">
                       <div className="form-group mb-0 position-relative icons_set">
                         <input
                           type="text"
@@ -226,10 +252,13 @@ const AdvertiseManagement = () => {
                           placeholder="Search"
                           name="name"
                           id="name"
+                          onChange={(e) => {
+                            onSearch(e);
+                          }}
                         />
                         <i className="far fa-search" />
                       </div>
-                    </form>
+                    </form> */}
                   </div>
                 </div>
                 <div className="row">
@@ -296,35 +325,29 @@ const AdvertiseManagement = () => {
                                       </tr>
                                     </thead>
                                     <tbody>
-                                      {allAdds?.map((item, ind) => (
+                                      {allAdds[0]?.vendor?.map((item, ind) => (
                                         <tr>
-                                          <td>{ind + 1}</td>
+                                          <td>{ind + 1}.</td>
                                           <td>
-                                            {item?.vendor?.length
-                                              ? item?.vendor?.map((val) => (
-                                                  <li>
-                                                    {val?.account_holder_name
-                                                      ? val?.account_holder_name
-                                                      : "No results"}
-                                                  </li>
-                                                ))
-                                              : "No Results"}
+                                            <li>
+                                              {item?.full_name
+                                                ? item?.full_name
+                                                : "No results"}
+                                            </li>
                                           </td>
                                           <td>
-                                            {item?.vendor?.map((val) => (
-                                              <li>
-                                                {val?.email
-                                                  ? val?.email
-                                                  : "No results"}
-                                              </li>
-                                            ))}
+                                            <li>
+                                              {item?.email
+                                                ? item?.email
+                                                : "No results"}
+                                            </li>
                                           </td>
                                           <td>
                                             <a
                                               className="comman_btn2 table_viewbtn"
                                               href="javascript:;"
                                               onClick={() =>
-                                                DeleteAdd(item?._id)
+                                                DeleteAdd(item?._id, "vendor")
                                               }
                                             >
                                               Delete
@@ -367,36 +390,32 @@ const AdvertiseManagement = () => {
                                       </tr>
                                     </thead>
                                     <tbody>
-                                      {allAddsCate?.map((item, ind) => (
-                                        <tr>
-                                          <td>{ind + 1}</td>
-
-                                          <td>
-                                            {item?.category?.length
-                                              ? item?.category?.map((val) => (
-                                                  <li>{val?.name_en}</li>
-                                                ))
-                                              : "No Results"}
-                                          </td>
-                                          <td>
-                                            {item?.category?.length
-                                              ? item?.category?.map((val) => (
-                                                  <li>{val?.name_ar}</li>
-                                                ))
-                                              : "No Results"}
-                                          </td>
-                                          <td>
-                                            <a
-                                              className="comman_btn2 table_viewbtn"
-                                              onClick={() =>
-                                                DeleteAdd(item?._id)
-                                              }
-                                            >
-                                              Delete
-                                            </a>
-                                          </td>
-                                        </tr>
-                                      ))}
+                                      {allAddsCate[0]?.category?.map(
+                                        (item, ind) => (
+                                          <tr>
+                                            <td>{ind + 1}</td>
+                                            <td>
+                                              <li>{item?.name_en}</li>
+                                            </td>
+                                            <td>
+                                              <li>{item?.name_ar}</li>
+                                            </td>
+                                            <td>
+                                              <a
+                                                className="comman_btn2 table_viewbtn"
+                                                onClick={() =>
+                                                  DeleteAdd(
+                                                    item?._id,
+                                                    "category"
+                                                  )
+                                                }
+                                              >
+                                                Delete
+                                              </a>
+                                            </td>
+                                          </tr>
+                                        )
+                                      )}
                                     </tbody>
                                   </table>
                                 </div>
