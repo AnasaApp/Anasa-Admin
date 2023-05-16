@@ -197,13 +197,13 @@ const BookingDetails = () => {
                                   </div>
                                   <div className="col-6">
                                     <span className="booking_head">
-                                      {booking?.event_date?.slice(0, 10)} at{" "}
-                                      {booking?.event_time}
+                                      {booking?.event_start_date?.slice(0, 10)}{" "}
+                                      at {booking?.event_start_time}
                                     </span>
                                   </div>
                                 </div>
                               </div>
-                              <div className="col-6 py-1">
+                              {/* <div className="col-6 py-1">
                                 <div className="row mx-0">
                                   <div className="col-6">
                                     <strong className="booking_head">
@@ -216,7 +216,7 @@ const BookingDetails = () => {
                                     </span>
                                   </div>
                                 </div>
-                              </div>
+                              </div> */}
 
                               <div className="col-6 py-1">
                                 <div className="row mx-0">

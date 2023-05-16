@@ -9,7 +9,7 @@ import {
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
 import { MDBDataTable } from "mdbreact";
-import moment from "moment";    
+import moment from "moment";
 const VendorManagement = () => {
   const [slide, setSlide] = useState("VM");
   const navigate = useNavigate();
@@ -591,7 +591,7 @@ const VendorManagement = () => {
                                 className="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"
                                 action=""
                               >
-                                <div className="form-group mb-0 col-5 col-sm-auto">
+                                <div className="form-group mb-0 col-5 col-lg-5 col-sm-auto">
                                   <label htmlFor="">From</label>
                                   <input
                                     type="date"
@@ -602,7 +602,7 @@ const VendorManagement = () => {
                                     onChange={handleDate}
                                   />
                                 </div>
-                                <div className="form-group mb-0 col-5 col-sm-auto">
+                                <div className="form-group mb-0 col-5 col-lg-5 col-sm-auto">
                                   <label htmlFor="">To</label>
                                   <input
                                     type="date"
@@ -641,7 +641,6 @@ const VendorManagement = () => {
                                       noBottomColumns
                                       sortable
                                     />
-                                 
                                   </div>
                                 </div>
                               </div>
@@ -660,7 +659,7 @@ const VendorManagement = () => {
                                 className="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"
                                 action=""
                               >
-                                <div className="form-group mb-0 col-5 col-sm-auto">
+                                <div className="form-group mb-0 col-5 col-lg-5 col-sm-auto">
                                   <label htmlFor="">From</label>
                                   <input
                                     type="date"
@@ -671,7 +670,7 @@ const VendorManagement = () => {
                                     onChange={handleDate}
                                   />
                                 </div>
-                                <div className="form-group mb-0 col-5 col-sm-auto">
+                                <div className="form-group mb-0 col-5 col-lg-5 col-sm-auto">
                                   <label htmlFor="">To</label>
                                   <input
                                     type="date"
@@ -710,8 +709,6 @@ const VendorManagement = () => {
                                       noBottomColumns
                                       sortable
                                     />
-
-                                 
                                   </div>
                                 </div>
                               </div>
@@ -730,7 +727,7 @@ const VendorManagement = () => {
                                 className="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"
                                 action=""
                               >
-                                <div className="form-group mb-0 col-5 col-sm-auto">
+                                <div className="form-group mb-0 col-5 col-lg-5 col-sm-auto">
                                   <label htmlFor="">From</label>
                                   <input
                                     type="date"
@@ -741,7 +738,7 @@ const VendorManagement = () => {
                                     onChange={handleDate}
                                   />
                                 </div>
-                                <div className="form-group mb-0 col-5 col-sm-auto">
+                                <div className="form-group mb-0 col-5 col-lg-5 col-sm-auto">
                                   <label htmlFor="">To</label>
                                   <input
                                     type="date"
@@ -780,58 +777,7 @@ const VendorManagement = () => {
                                       noBottomColumns
                                       sortable
                                     />
-                                    {/* <table className="table mb-0">
-                                      <thead>
-                                        <tr>
-                                          <th>S.No.</th>
-                                          <th>Full Name</th>
-                                          <th>Shop Name</th>
-                                          <th>Email Id</th>
-                                          <th>Registration Date</th>
-                                          <th>Action</th>
-                                        </tr>
-                                      </thead>
-                                      {retVendors?.length ? (
-                                        <tbody>
-                                          {(retVendors || [])?.map(
-                                            (item, index) => (
-                                              <tr>
-                                                <td>{index + 1}.</td>
-                                                <td>{item?.full_name}</td>
-                                                <td>{item?.shop_name}</td>
-                                                <td>{item?.email}</td>
-                                                <td>
-                                                  {item?.createdAt?.slice(
-                                                    0,
-                                                    10
-                                                  )}
-                                                </td>
-                                                <td>
-                                                  <Link
-                                                    className="comman_btn2 table_viewbtn"
-                                                    to="/Admin/Dashboard/Vendor-Management/Returned"
-                                                    state={{ id: item?._id }}
-                                                  >
-                                                    View
-                                                  </Link>
-                                                </td>
-                                              </tr>
-                                            )
-                                          )}
-                                        </tbody>
-                                      ) : (
-                                        <tbody className="justify-content-center">
-                                          <tr className="text-center p-3">
-                                            <td>NO RESULTS</td>
-                                            <td>NO RESULTS</td>
-                                            <td>NO RESULTS</td>
-                                            <td>NO RESULTS</td>
-                                            <td>NO RESULTS</td>
-                                            <td>NO RESULTS</td>
-                                          </tr>
-                                        </tbody>
-                                      )}
-                                    </table> */}
+                          
                                   </div>
                                 </div>
                               </div>

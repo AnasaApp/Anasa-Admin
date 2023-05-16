@@ -142,7 +142,7 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
                       setSlideState("SM");
                     }}
                   >
-                    <i className="fas fa-repeat" />
+                    <i class="fa-solid fa-layer-group"></i>
                     Services Management
                   </Link>
                 </li>
@@ -154,8 +154,20 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
                       setSlideState("PM");
                     }}
                   >
-                    <i className="fas fa-repeat" />
+                    <i class="fa-solid fa-sack-dollar"></i>
                     Payout Management
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    className={SlideState === "EM" ? "active" : ""}
+                    to="/Admin/Dashboard/Event-Management"
+                    onClick={() => {
+                      setSlideState("EM");
+                    }}
+                  >
+                    <i class="fas fa-calendar"></i>
+                    Event Planning Management
                   </Link>
                 </li>
                 <li>

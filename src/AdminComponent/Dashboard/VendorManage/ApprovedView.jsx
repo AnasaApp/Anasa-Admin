@@ -50,15 +50,16 @@ const ApprovedView = () => {
     setTransaction(data?.results.transaction);
   };
   const onSearchBookings = async (e) => {
+    let id = location?.state?.id;
     if (values?.from && values?.to) {
       e.preventDefault();
-      const { data } = await getVendorBooking({
+      const { data } = await getVendorBooking(id, {
         from: values?.from,
         to: values?.to,
         status: "APPROVED",
         page: 1,
       });
-      setVendorBooking(data?.results.vendor);
+      setVendorBooking(data?.results.bookings);
       setValues({ from: "", to: "" });
     } else {
       e.preventDefault();
@@ -71,17 +72,17 @@ const ApprovedView = () => {
     }
   };
 
-const fileDownload = async (url) => {
-  const { data } = await downloadFiles({ key: url });
-  if (!data.error) {
-    console.log(data);
-    // const linkSource = `data:${contentType};base64,${base64Data}`;
-    const downloadLink = document.createElement("a");
-    downloadLink.href = data.results.image;
-    downloadLink.download = "doc";
-    downloadLink.click();
-  }
-};
+  const fileDownload = async (url) => {
+    const { data } = await downloadFiles({ key: url });
+    if (!data.error) {
+      console.log(data);
+      // const linkSource = `data:${contentType};base64,${base64Data}`;
+      const downloadLink = document.createElement("a");
+      downloadLink.href = data.results.image;
+      downloadLink.download = "doc";
+      downloadLink.click();
+    }
+  };
 
   const preview = (id) => {
     document.getElementById("preview_modal").click();
@@ -272,6 +273,7 @@ const fileDownload = async (url) => {
                       </div>
                     </div>
                   </div>
+
                   <div className="col-md-6 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <div className="col">
@@ -283,7 +285,8 @@ const fileDownload = async (url) => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
+
+                  {/* <div className="col-md-6 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <div className="col">
                         <Link
@@ -294,7 +297,7 @@ const fileDownload = async (url) => {
                         </Link>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

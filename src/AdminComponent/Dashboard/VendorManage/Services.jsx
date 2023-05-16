@@ -155,18 +155,7 @@ const Services = () => {
                               </div>
                             </div>
                           </div>
-                          <div className="col-6 py-1">
-                            <div className="row mx-0">
-                              <div className="col-6">
-                                <strong className="booking_head">
-                                  Customization Deatils :
-                                </strong>
-                              </div>
-                              <div className="col-6">
-                                <span className="booking_head">Name</span>
-                              </div>
-                            </div>
-                          </div>
+
                           <div className="col-6 py-2">
                             <div className="row mx-0">
                               <div className="col-6">
@@ -193,6 +182,7 @@ const Services = () => {
                               </div>
                             </div>
                           </div>
+
                           <div className="col-6 py-1">
                             <div className="row mx-0">
                               <div className="col-6">
@@ -207,6 +197,7 @@ const Services = () => {
                               </div>
                             </div>
                           </div>
+
                           <div className="col-6 py-1">
                             <div className="row mx-0">
                               <div className="col-6">

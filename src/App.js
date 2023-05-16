@@ -36,6 +36,7 @@ import UpdatePassword from "./AdminComponent/Dashboard/UpdatePassword";
 import BookingDetails from "./AdminComponent/Dashboard/bookingManage/BookingDetails";
 import Payout from "./AdminComponent/Dashboard/Payout";
 import ServicesManage from "./AdminComponent/Dashboard/ServicesManage/Services";
+import EventManagement from "./AdminComponent/Dashboard/EventManage/EventManagement";
 
 function App() {
   const queryClient = new QueryClient();
@@ -46,6 +47,7 @@ function App() {
         <Router>
           <Routes>
             <Route path="/Admin/Login" element={<AdminLogin />} />
+            <Route path="*" element={<AdminLogin />} />
             <Route
               path="/Admin/Forgot-password"
               element={<AdminForgotPass />}
@@ -120,6 +122,10 @@ function App() {
             <Route
               path="/Admin/Dashboard/Promo-Management"
               element={<PromoManagement />}
+            />
+            <Route
+              path="/Admin/Dashboard/Event-Management"
+              element={<EventManagement />}
             />
             <Route
               path="/Admin/Dashboard/Adds-Management"

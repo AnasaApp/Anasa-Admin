@@ -193,6 +193,30 @@ export async function AddCategory(formData) {
     return { error };
   }
 }
+
+export async function getServices() {
+  try {
+    const { data } = await appHttpService.post(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/getAllServices`
+    );
+    console.log(data);
+
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
+
 export async function AllCategory() {
   try {
     const { data } = await appHttpService.post(

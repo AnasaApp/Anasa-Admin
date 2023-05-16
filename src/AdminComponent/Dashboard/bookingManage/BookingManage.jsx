@@ -526,7 +526,7 @@ const BookingManage = () => {
                               className="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"
                               action=""
                             >
-                              <div className="form-group mb-0 col-5 col-sm-auto">
+                              <div className="form-group mb-0 col-5 col-lg-5 col-sm-auto">
                                 <label htmlFor="">From</label>
                                 <input
                                   type="date"
@@ -537,7 +537,7 @@ const BookingManage = () => {
                                   onChange={handleDate}
                                 />
                               </div>
-                              <div className="form-group mb-0 col-5 col-sm-auto">
+                              <div className="form-group mb-0 col-5 col-lg-5 col-sm-auto">
                                 <label htmlFor="">To</label>
                                 <input
                                   type="date"
@@ -594,7 +594,7 @@ const BookingManage = () => {
                               className="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"
                               action=""
                             >
-                              <div className="form-group mb-0 col-5 col-sm-auto">
+                              <div className="form-group mb-0 col-5 col-lg-5 col-sm-auto">
                                 <label htmlFor="">From</label>
                                 <input
                                   type="date"
@@ -605,7 +605,7 @@ const BookingManage = () => {
                                   onChange={handleDate}
                                 />
                               </div>
-                              <div className="form-group mb-0 col-5 col-sm-auto">
+                              <div className="form-group mb-0 col-5 col-lg-5 col-sm-auto">
                                 <label htmlFor="">To</label>
                                 <input
                                   type="date"
@@ -662,7 +662,7 @@ const BookingManage = () => {
                               className="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"
                               action=""
                             >
-                              <div className="form-group mb-0 col-5 col-sm-auto">
+                              <div className="form-group mb-0 col-5 col-lg-5 col-sm-auto">
                                 <label htmlFor="">From</label>
                                 <input
                                   type="date"
@@ -673,7 +673,7 @@ const BookingManage = () => {
                                   onChange={handleDate}
                                 />
                               </div>
-                              <div className="form-group mb-0 col-5 col-sm-auto">
+                              <div className="form-group mb-0 col-5 col-lg-5 col-sm-auto">
                                 <label htmlFor="">To</label>
                                 <input
                                   type="date"
@@ -712,41 +712,6 @@ const BookingManage = () => {
                                     noBottomColumns
                                     sortable
                                   />
-                                  {/* <table className="table mb-0">
-                                    <thead>
-                                      <tr>
-                                        <th>S.No.</th>
-                                        <th>Booking ID</th>
-                                        <th>Customer Name</th>
-                                        <th>Vendor Name</th>
-                                        <th>Booking Amount</th>
-                                        <th>Scheduled for</th>
-                                        <th>Action</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      {(cancelledBookings || [])?.map(
-                                        (item, index) => (
-                                          <tr>
-                                            <td>{index + 1}</td>
-                                            <td>{item?.bookingID}</td>
-                                            <td>{item?.buyer?.full_name}</td>
-                                            <td>{item?.vendor?.full_name}</td>
-                                            <td>{item?.total}</td>
-                                            <td>{item?.event_date}</td>
-                                            <td>
-                                              <Link
-                                                className="comman_btn2 table_viewbtn"
-                                                to={`/Admin/Dashboard/Booking-Management/Booking-Details/${item?._id}`}
-                                              >
-                                                View
-                                              </Link>
-                                            </td>
-                                          </tr>
-                                        )
-                                      )}
-                                    </tbody>
-                                  </table> */}
                                 </div>
                               </div>
                             </div>
