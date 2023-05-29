@@ -53,7 +53,7 @@ const ApprovedView = () => {
     let id = location?.state?.id;
     if (values?.from && values?.to) {
       e.preventDefault();
-      const { data } = await getVendorBooking(id, {
+      const { data } = await getVendorBooking("6450a0763dc28045aa7da0db ", {
         from: values?.from,
         to: values?.to,
         status: "APPROVED",
@@ -157,14 +157,14 @@ const ApprovedView = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
+                  {/* <div className="col-md-4 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Shop Address:</span>
                       <div className="col">
                         <strong>{vendor?.shop_address}</strong>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                   <div className="col-md-4 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Building Name:</span>
@@ -173,7 +173,7 @@ const ApprovedView = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Locality:</span>
                       <div className="col">
@@ -181,7 +181,7 @@ const ApprovedView = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>City:</span>
                       <div className="col">
@@ -189,7 +189,7 @@ const ApprovedView = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Country:</span>
                       <div className="col">
@@ -197,7 +197,7 @@ const ApprovedView = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Serviceable Radius:</span>
                       <div className="col">

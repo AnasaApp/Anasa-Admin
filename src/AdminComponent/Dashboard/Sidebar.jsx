@@ -167,7 +167,7 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
                     }}
                   >
                     <i class="fas fa-calendar"></i>
-                    Event Planning Management
+                    Event-Plan Management
                   </Link>
                 </li>
                 <li>

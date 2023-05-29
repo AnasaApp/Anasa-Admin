@@ -155,14 +155,7 @@ const PendingView = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
-                    <div className="row view-inner-box border mx-0 w-100">
-                      <span>Shop Address:</span>
-                      <div className="col">
-                        <strong>{vendor?.shop_address}</strong>
-                      </div>
-                    </div>
-                  </div>
+
                   <div className="col-md-4 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Building Name:</span>
@@ -171,7 +164,7 @@ const PendingView = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Locality:</span>
                       <div className="col">
@@ -179,7 +172,7 @@ const PendingView = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>City:</span>
                       <div className="col">
@@ -187,7 +180,7 @@ const PendingView = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Country:</span>
                       <div className="col">
@@ -195,7 +188,7 @@ const PendingView = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Serviceable Radius:</span>
                       <div className="col">

@@ -115,9 +115,7 @@ const ServicesManage = () => {
               data-bs-toggle="modal"
               data-bs-target="#staticBackdrop447"
               className="comman_btn2 table_viewbtn"
-              onClick={() =>
-                handleView(list?.name_en, list?.name_ar, list?.price)
-              }
+              onClick={() => handleView(list)}
             >
               View
             </Link>
@@ -139,10 +137,10 @@ const ServicesManage = () => {
     formData.append("validTo", data?.dateTo);
   };
 
-  const handleView = async (nameEn, nameAr, price) => {
-    setNewData({ name_en: nameEn, name_ar: nameAr, price: price });
+  const handleView = async (data) => {
+    setNewData(data);
   };
-
+  console.log(newData);
   return (
     <div>
       <div className={sideBar === "click" ? "expanded_main" : "admin_main"}>
@@ -179,6 +177,7 @@ const ServicesManage = () => {
                                       hover
                                       data={services}
                                       noBottomColumns
+                                      selectable={true}
                                       sortable
                                     />
                                   </div>
@@ -227,80 +226,85 @@ const ServicesManage = () => {
                 <form
                   className="form-design px-3 py-2 help-support-form row  justify-content-center"
                   action=""
-                  onSubmit={handleSubmit2(onEdit)}
                 >
                   <div className="form-group col-6">
                     <label htmlFor="">Service Name(En)</label>
                     <input
                       type="text"
-                      // defaultValue={
-                      //   editedCategories?.name_en ? editedCategories?.name_en : ""
-                      // }
-                      className={classNames("form-control", {
-                        "is-invalid": errors2.serviceName_en,
-                      })}
+                      className="form-control"
                       name="serviceName_en"
                       defaultValue={newData?.name_en}
-                      {...register2("serviceName_en", {
-                        required: "*Service name is required!",
-                      })}
+                      disabled
                     />
-                    {errors2.serviceName_en && (
-                      <small className="errorText mx-1">
-                        {errors2.serviceName_en.message}
-                      </small>
-                    )}
                   </div>
+
                   <div className="form-group col-6">
                     <label htmlFor="">Service Name(Ar)</label>
                     <input
                       type="text"
+                      className="form-control"
+                      name="serviceName_en"
                       defaultValue={newData?.name_ar}
-                      className={classNames("form-control", {
-                        "is-invalid": errors2.serviceName_ar,
-                      })}
-                      name="serviceName_ar"
-                      {...register2("serviceName_ar", {
-                        required: "*Service name is required!",
-                      })}
+                      disabled
                     />
-                    {errors2.serviceName_ar && (
-                      <small className="errorText mx-1">
-                        {errors2.serviceName_ar.message}
-                      </small>
-                    )}
+                  </div>
+
+                  <div className="form-group col-12">
+                    <label htmlFor="">Description(En)</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="serviceName_en"
+                      defaultValue={newData?.description_en}
+                      disabled
+                    />
                   </div>
                   <div className="form-group col-6">
                     <label htmlFor="">Price</label>
                     <input
                       type="text"
+                      className="form-control"
+                      name="serviceName_en"
                       defaultValue={newData?.price}
-                      className={classNames("form-control", {
-                        "is-invalid": errors2.price,
-                      })}
-                      name="price"
-                      {...register2("price", {
-                        required: "*Please Enter Discount!",
-                      })}
+                      disabled
                     />
-                    {errors2.price && (
-                      <small className="errorText mx-1">
-                        {errors2.price.message}
-                      </small>
-                    )}
                   </div>
-                  <div className="form-group mb-0 col-6 mt-4">
-                    <button className="comman_btn mt-1" type="submit">
-                      Save
-                    </button>
-                    <button
-                      className="comman_btn d-none"
-                      type="reset"
-                      id="resetModal45"
-                    >
-                      reset
-                    </button>
+                  <div className="form-group col-6">
+                    <label htmlFor="">Vendor Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="serviceName_en"
+                      defaultValue={newData?.vendor?.full_name}
+                      disabled
+                    />
                   </div>
+                  {newData?.packages?.map((item) => (
+                    <div>
+                      <h3 className="fs-5 fw-bold  ">Packages</h3>
+
+                      <div className="form-group col-6">
+                        <label htmlFor="">Price</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="serviceName_en"
+                          defaultValue={newData?.price}
+                          disabled
+                        />
+                      </div>
+                      <div className="form-group col-6">
+                        <label htmlFor="">Vendor Name</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="serviceName_en"
+                          defaultValue={newData?.vendor?.full_name}
+                          disabled
+                        />
+                      </div>
+                    </div>
+                  ))}
                 </form>
               </div>
             </div>

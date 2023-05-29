@@ -777,7 +777,6 @@ const VendorManagement = () => {
                                       noBottomColumns
                                       sortable
                                     />
-                          
                                   </div>
                                 </div>
                               </div>

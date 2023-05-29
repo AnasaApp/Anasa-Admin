@@ -150,7 +150,7 @@ const Services = () => {
                               </div>
                               <div className="col-6">
                                 <span className="booking_head">
-                                  Category name
+                                  {item?.category?.name_en}
                                 </span>
                               </div>
                             </div>
@@ -165,7 +165,7 @@ const Services = () => {
                               </div>
                               <div className="col-6">
                                 <span className="booking_head">
-                                  Sub Category Name
+                                  {item?.subCategory?.name_en}
                                 </span>
                               </div>
                             </div>

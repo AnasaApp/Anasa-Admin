@@ -307,6 +307,7 @@ const MarketingOffers = () => {
     setSideBar(val);
   };
   return (
+    
     <div className={sideBar === "click" ? "expanded_main" : "admin_main"}>
       <Sidebar slide={slide} getBarClick={getBarClick} />
       <div className="admin_panel_data height_adjust">
@@ -343,6 +344,7 @@ const MarketingOffers = () => {
                       </small>
                     )}
                   </div>
+
                   <div className="form-group col-4">
                     <label htmlFor="">Combo Name (Ar)</label>
                     <input
@@ -361,6 +363,7 @@ const MarketingOffers = () => {
                       </small>
                     )}
                   </div>
+
                   <div className="form-group col-4">
                     <label htmlFor="">Select Category</label>
                     <select
@@ -376,6 +379,7 @@ const MarketingOffers = () => {
                       ))}
                     </select>
                   </div>
+
                   <div className="form-group col-4">
                     <label htmlFor="">Select Vendor</label>
                     <select
@@ -391,6 +395,7 @@ const MarketingOffers = () => {
                       ))}
                     </select>
                   </div>
+
                   <div className="form-group col-4">
                     <label htmlFor="">Search Services</label>
                     <Select
@@ -405,21 +410,7 @@ const MarketingOffers = () => {
                       onInputChange={handleInputChange2}
                     />
                   </div>
-                  {/* <div className="form-group col-4">
-                    <label htmlFor="">Select Sub Category</label>
-                    <select
-                      className="form-select form-control"
-                      aria-label="Default select example"
-                      onChange={(e) => {
-                        setSubCategoryData(e.target.value);
-                      }}
-                    >
-                      <option selected="">Select Sub Category</option>
-                      {subCategory?.map((item) => (
-                        <option value={item?._id}>{item?.name_en}</option>
-                      ))}
-                    </select>
-                  </div> */}
+
                   <div className="form-group col-4 choose_file position-relative">
                     <span>Upload Image </span>{" "}
                     <label htmlFor="upload_video">

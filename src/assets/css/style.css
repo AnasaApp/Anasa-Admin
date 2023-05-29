@@ -209,10 +209,9 @@ h2 {
   p {
     font-weight: 200 !important;
   }
-  .login_page_form{
-
+  .login_page_form {
   }
-  
+
   a {
     color: #e25829;
     text-decoration: none !important;
@@ -1274,4 +1273,9 @@ div.dataTables_wrapper div.dataTables_paginate {
   padding-bottom: 1rem;
   padding-left: 1rem !important;
   font-weight: 400;
+}
+.add_more {
+  position: relative;
+  top: -70px;
+  left: 40%;
 }

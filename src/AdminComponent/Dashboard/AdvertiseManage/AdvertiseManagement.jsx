@@ -56,8 +56,8 @@ const AdvertiseManagement = () => {
       if (!res.error) {
         let data = res?.data.results?.vendor;
         const optionList = data?.map((item, index) => ({
-          value: item?._id,
-          label: item?.full_name,
+          value: item?._id._id,
+          label: item?._id.full_name,
         }));
         setOptions(optionList);
       }
