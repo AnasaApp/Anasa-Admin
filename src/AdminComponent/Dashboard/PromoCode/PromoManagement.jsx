@@ -352,6 +352,10 @@ const PromoManagement = () => {
                       name="promo_code_ar"
                       {...register("promo_code_ar", {
                         required: "*Promo code is required!",
+                        pattern: {
+                          value: /^[\u0621-\u064A\u0660-\u0669 ]+$/,
+                          message: "Only Arabic Characters are allowed!",
+                        },
                       })}
                     />
                     {errors.promo_code_ar && (

@@ -259,10 +259,10 @@ const SubCategories = ({ cate }) => {
                 name="sub_category_ar"
                 {...register("sub_category_ar", {
                   required: "Sub Category(ar) Name is required!",
-                  // pattern: {
-                  //   value: /^[\u0621-\u064A\u0660-\u0669 ]+$/,
-                  //   message: "Special Character not allowed!",
-                  // },
+                  pattern: {
+                    value: /^[\u0621-\u064A\u0660-\u0669 ]+$/,
+                    message: "Only Arabic Characters are allowed!",
+                  },
                   maxLength: {
                     value: 30,
                     message: "Max length is 30 characters!",

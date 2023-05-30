@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Sidebar from "../Sidebar";
-import { useForm } from "react-hook-form";
+// import { useForm } from "react-hook-form";
 import Select from "react-select";
 import {
   AddAddvertise,
@@ -25,12 +25,6 @@ const AdvertiseManagement = () => {
   const [searchKey, setSearchKey] = useState("");
   const [searchKey2, setSearchKey2] = useState("");
   const [allCategories, setAllCategories] = useState([]);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
 
   useEffect(() => {
     createOptions();

@@ -307,7 +307,6 @@ const MarketingOffers = () => {
     setSideBar(val);
   };
   return (
-    
     <div className={sideBar === "click" ? "expanded_main" : "admin_main"}>
       <Sidebar slide={slide} getBarClick={getBarClick} />
       <div className="admin_panel_data height_adjust">
@@ -355,6 +354,10 @@ const MarketingOffers = () => {
                       name="combo_ar"
                       {...register("combo_ar", {
                         required: "*Combo Name is required!",
+                        pattern: {
+                          value: /^[\u0621-\u064A\u0660-\u0669 ]+$/,
+                          message: "Only Arabic Characters are allowed!",
+                        },
                       })}
                     />
                     {errors.combo_ar && (
@@ -655,6 +658,10 @@ const MarketingOffers = () => {
                     defaultValue=""
                     {...register2("combo_ar_edit_ar", {
                       required: "*Combo Name is required!",
+                      pattern: {
+                        value: /^[\u0621-\u064A\u0660-\u0669 ]+$/,
+                        message: "Only Arabic Characters are allowed!",
+                      },
                     })}
                   />
                   {errors2.combo_ar_edit_ar && (
