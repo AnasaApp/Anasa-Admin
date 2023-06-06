@@ -647,6 +647,7 @@ const MarketingOffers = () => {
                     </small>
                   )}
                 </div>
+
                 <div className="form-group col-6">
                   <label htmlFor="">Combo Name (Ar)</label>
                   <input

@@ -390,8 +390,8 @@ const PromoManagement = () => {
                       {...register("discount", {
                         required: "*Discount % is required!",
                         maxLength: {
-                          value: 4,
-                          message: "Maximium 4 characters!",
+                          value: 3,
+                          message: "Maximium 3 characters!",
                         },
                       })}
                     />

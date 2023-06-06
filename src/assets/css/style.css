@@ -329,6 +329,12 @@ h2 {
 .showPassCheck {
   accent-color: #e25829 !important;
 }
+.showPassCheck2 {
+  width: 0.8rem !important;
+  height: 0.8rem;
+  accent-color: #e25829 !important;
+  border-radius: 80% !important;
+}
 .otp-field {
   display: flex;
   align-items: center;

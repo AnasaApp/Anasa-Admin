@@ -5,14 +5,17 @@ import classNames from "classnames";
 import { useForm } from "react-hook-form";
 import { Button } from "rsuite";
 import { adminLogin } from "../httpServices/LoginHttpService";
+import { useState } from "react";
 
 const AdminLogin = () => {
+  const [rememberCheck, setRememberCheck] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
+  let AdminData = JSON.parse(localStorage.getItem("AdminSave"));
   function togglePassword() {
     var x = document.getElementById("password-Input");
     if (x.type === "password") {
@@ -21,10 +24,14 @@ const AdminLogin = () => {
       x.type = "password";
     }
   }
-  const onSubmit = async (data) => {
-    console.log(data);
-    const res = await adminLogin(data);
+  const rememberMe = (data) => {
+    localStorage.setItem("AdminSave", JSON.stringify(data));
+  };
+  console.log(AdminData);
 
+  const onSubmit = async (data) => {
+    rememberCheck && rememberMe(data);
+    const res = await adminLogin(data);
     if (!res?.data?.error) {
       navigate("/Admin/Dashboard");
     }
@@ -60,6 +67,7 @@ const AdminLogin = () => {
                           id="Email"
                           placeholder="user@gmail.com"
                           name="email"
+                          defaultValue={AdminData?.email}
                           {...register("email", {
                             required: "Please Enter Your Email",
                             pattern: {
@@ -85,6 +93,7 @@ const AdminLogin = () => {
                           id="password-Input"
                           placeholder="Password"
                           name="password"
+                          defaultValue={AdminData?.password}
                           {...register("password", {
                             required: "Please Enter Your Password",
                             // pattern: {
@@ -94,21 +103,36 @@ const AdminLogin = () => {
                             // },
                           })}
                         />
-                        <input
-                          type="checkbox"
-                          onClick={togglePassword}
-                          className="showPassCheck"
-                        />
-                        <small className=" showPass">Show Password</small>
-                        <br />
+                        <div className="mt-2 mb-1 text-center">
+                          <input
+                            type="checkbox"
+                            onClick={togglePassword}
+                            className="showPassCheck"
+                          />
+                          <small className="showPass">Show Password</small>
+                        </div>
+
                         {errors.password && (
                           <small className="errorText ">
                             {errors.password?.message}
                           </small>
                         )}
                       </div>
+                      <div className=" mb-1 text-start">
+                        <input
+                          type="checkbox"
+                          // onClick={togglePassword}
+                          className="showPassCheck2"
+                          id="remember"
+                          onChange={() => setRememberCheck(!rememberCheck)}
+                        />
+                        <small className="showPass fw-bold">Remember me</small>
+                      </div>
                       <div className="form-group col-12">
-                        <Link className="for_got" to="/Admin/Forgot-password">
+                        <Link
+                          className="for_got mt-0"
+                          to="/Admin/Forgot-password"
+                        >
                           Forgot Password?
                         </Link>
                       </div>
