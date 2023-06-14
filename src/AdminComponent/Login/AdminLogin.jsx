@@ -31,10 +31,12 @@ const AdminLogin = () => {
 
   const onSubmit = async (data) => {
     rememberCheck && rememberMe(data);
-    const res = await adminLogin(data);
-    if (!res?.data?.error) {
-      navigate("/Admin/Dashboard");
-    }
+    const { res } = await adminLogin(data);
+    console.log(res);
+    // if (!res?.data) {
+    //   localStorage.setItem("token-admin", res.data?.token);
+    //   navigate("/Admin/Dashboard");
+    // }
   };
 
   return (
