@@ -229,6 +229,7 @@ const CommissionManagement = () => {
                     <input
                       type="number"
                       className="form-control"
+                      maxLength={3}
                       onChange={(e) => {
                         let newData = { ...formData };
                         newData.commission = e.target.value;

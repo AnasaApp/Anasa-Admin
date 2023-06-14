@@ -16,6 +16,7 @@ import {
   ImageUpload,
   SearchUser,
   SearchVendorServices,
+  VendorServices,
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
 import { MDBDataTable } from "mdbreact";
@@ -44,6 +45,13 @@ const MarketingOffers = () => {
   const [offerData, setOfferData] = useState();
   const [vendors, setVendors] = useState([]);
   const [selectVendor, setSelectVendor] = useState();
+  const [formValues, setFormValues] = useState([
+    {
+      category: "",
+      vendor: "",
+      service: "",
+    },
+  ]);
   const {
     register,
     handleSubmit,
@@ -177,32 +185,40 @@ const MarketingOffers = () => {
   const createOptionsServices = async (id) => {
     setSelectVendor(id);
     if (id) {
-      await SearchVendorServices(id).then((res) => {
+      await VendorServices(id).then((res) => {
         if (!res.error) {
           setSelectedServices({ servicesSelected: [] });
           let data = res?.data.results.services;
-          console.log(data);
-          const optionList = data?.map((item, index) => ({
-            value: item?._id,
-            label: item?.name_en,
-          }));
-          setOptions2(optionList);
+          const optionList = data
+            ?.filter((itm, idx) => itm.vendor === id)
+            .map((item, index) => {
+              return item;
+            });
+          let packs = [...options2];
+          packs.push(optionList[0]);
+          console.log(packs, "jkj");
+          setOptions2(packs);
         }
       });
     }
   };
 
-  const VendorsList = async (id) => {
+  const VendorsList = async (id, ind) => {
     setCategoryData(id);
     await GetVendorByCate(id).then((res) => {
       if (!res.data.error) {
         let data = res.data.results.vendors;
-        console.log(data);
-        setVendors(data);
+        const optionList = data?.map((item, index) => {
+          return item;
+        });
+        let packs = [...vendors];
+        packs[ind] = optionList;
+        setVendors(packs);
       }
     });
   };
-  console.log(files?.upload_video);
+  console.log(formValues, "f");
+
   const onSubmit = async (data) => {
     await AddCombo({
       name_en: data?.combo_en,
@@ -210,20 +226,33 @@ const MarketingOffers = () => {
       discount: data?.discount,
       validFrom: data?.dateFrom,
       validTo: data?.dateTo,
-      userType: userTypes,
-      category: categoryData,
-      vendor: selectVendor,
       image: files,
-      services: selectedServices.servicesSelected?.map((item) => item?.value),
+      type: formValues,
     }).then((res) => {
       if (!res.error) {
+        console.log(res);
         setSelectedServices({ servicesSelected: [] });
         getAllOffers();
+        setFormValues([
+          {
+            category: "",
+            vendor: "",
+            service: "",
+          },
+        ]);
         document.getElementById("Reset").click();
         Swal.fire({
           title: "New Combo Added!",
           icon: "success",
-          confirmButtonText: "Ok",
+          confirmButtonText: "Okay",
+          confirmButtonColor: "#e25829",
+        });
+      }
+      if (res?.data.error) {
+        Swal.fire({
+          title: res?.data.message,
+          icon: "error",
+          confirmButtonText: "Okay",
           confirmButtonColor: "#e25829",
         });
       }
@@ -285,23 +314,27 @@ const MarketingOffers = () => {
     setAllCategories(data?.results?.categories);
   };
 
-  const handleChange = (selected) => {
-    setSelectedUsers({
-      usersSelected: selected,
-    });
-  };
-  const handleChange2 = (selected) => {
-    setSelectedServices({
-      servicesSelected: selected,
-    });
-  };
-  const handleInputChange = (inputValue) => {
-    setSearchKey(inputValue);
+  let handleChange = (i, e) => {
+    let newFormValues = [...formValues];
+    newFormValues[i][e.target.name] = e.target.value;
+    setFormValues(newFormValues);
   };
 
-  const handleInputChange2 = (inputValue) => {
-    setSearchKey2(inputValue);
+  const removeFormFields = (index) => {
+    let newFormValues = [...formValues];
+    newFormValues?.splice(index, 1);
+    setFormValues(newFormValues);
   };
+  const addFormFields = (e) => {
+    setFormValues([
+      ...formValues,
+      {
+        service: "",
+        package: "",
+      },
+    ]);
+  };
+
   const getBarClick = (val) => {
     console.log(val);
     setSideBar(val);
@@ -348,6 +381,8 @@ const MarketingOffers = () => {
                     <label htmlFor="">Combo Name (Ar)</label>
                     <input
                       type="text"
+                      lang="ar"
+                      dir="rtl"
                       className={classNames("form-control", {
                         "is-invalid": errors.combo_ar,
                       })}
@@ -355,7 +390,7 @@ const MarketingOffers = () => {
                       {...register("combo_ar", {
                         required: "*Combo Name is required!",
                         pattern: {
-                          value: /^[\u0621-\u064A\u0660-\u0669 ]+$/,
+                          value: /^[\u0600-\u06FF,\u0600-\u06FF,-]*$/,
                           message: "Only Arabic Characters are allowed!",
                         },
                       })}
@@ -366,54 +401,6 @@ const MarketingOffers = () => {
                       </small>
                     )}
                   </div>
-
-                  <div className="form-group col-4">
-                    <label htmlFor="">Select Category</label>
-                    <select
-                      className="form-select form-control"
-                      aria-label="Default select example"
-                      onChange={(e) => VendorsList(e.target.value)}
-                    >
-                      <option selected="" value="">
-                        Select Category
-                      </option>
-                      {allCategories?.map((item) => (
-                        <option value={item?._id}>{item?.name_en}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="form-group col-4">
-                    <label htmlFor="">Select Vendor</label>
-                    <select
-                      className="form-select form-control"
-                      aria-label="Default select example"
-                      onChange={(e) => createOptionsServices(e.target.value)}
-                    >
-                      <option selected="" value="">
-                        Select Vendor
-                      </option>
-                      {vendors?.map((item) => (
-                        <option value={item?._id}>{item?.full_name}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="form-group col-4">
-                    <label htmlFor="">Search Services</label>
-                    <Select
-                      defaultValue=""
-                      isMulti
-                      name="users"
-                      options={options2}
-                      className="basic-multi-select z-3"
-                      classNamePrefix="select"
-                      onChange={handleChange2}
-                      value={selectedServices?.servicesSelected}
-                      onInputChange={handleInputChange2}
-                    />
-                  </div>
-
                   <div className="form-group col-4 choose_file position-relative">
                     <span>Upload Image </span>{" "}
                     <label htmlFor="upload_video">
@@ -429,6 +416,7 @@ const MarketingOffers = () => {
                       onChange={(e) => onFileSelection(e, "upload_video")}
                     />
                   </div>
+
                   <div className="form-group col-4">
                     <label htmlFor="">Amount</label>
                     <input
@@ -483,37 +471,117 @@ const MarketingOffers = () => {
                       </small>
                     )}
                   </div>
+                  {(formValues || [])?.map((element, index) => (
+                    <div className="form-group mb-0 col-12 ">
+                      <div className="row mt-3" key={index}>
+                        <div className="form-group col-4">
+                          <label htmlFor="">Select Category</label>
+                          <select
+                            className="form-select "
+                            aria-label="Default select example"
+                            name="category"
+                            value={element.category || ""}
+                            onChange={(e) => {
+                              handleChange(index, e);
+                              VendorsList(e.target.value, index);
+                            }}
+                          >
+                            <option selected="" value="">
+                              Select Category
+                            </option>
+                            {allCategories?.map((item) => (
+                              <option value={item?._id}>{item?.name_en}</option>
+                            ))}
+                          </select>
+                        </div>
+                        {console.log(formValues)}
+                        <div className="form-group col-4">
+                          <label htmlFor="">Select Vendor</label>
+                          <select
+                            className="form-select "
+                            aria-label="Default select example"
+                            id={index}
+                            name="vendor"
+                            value={element.vendor || ""}
+                            onChange={(e) => {
+                              handleChange(index, e);
+                              createOptionsServices(e.target.value);
+                            }}
+                          >
+                            <option selected="" value="">
+                              Select Vendor
+                            </option>
 
-                  {/* <div className="form-group col-5">
-                    <label htmlFor="">Select Users</label>
-                    <select
-                      aria-label="Default select example"
-                      className="form-select"
-                      name="select_user"
-                      onChange={(e) => setUsertypes(e.target.value)}
+                            {vendors[index]?.map((item) => (
+                              <option value={item?._id}>
+                                {item?.full_name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="form-group col-3">
+                          <label htmlFor="">Select Service</label>
+                          <select
+                            className="form-select"
+                            aria-label="Default select example"
+                            name="service"
+                            value={element.service || ""}
+                            onChange={(e) => {
+                              handleChange(index, e);
+                            }}
+                          >
+                            <option selected="" value="">
+                              Select Service
+                            </option>
+                            {options2
+                              ?.filter(
+                                (itm, id) => itm?.vendor === element?.vendor
+                              )
+                              .map((item) => (
+                                <option value={item?._id}>
+                                  {item?.name_en}
+                                </option>
+                              ))}
+                          </select>
+                        </div>
+
+                        {/* <div className="form-group col-3">
+                          <label htmlFor="">Search Services</label>
+                          <Select
+                            defaultValue=""
+                            isMulti
+                            name="users"
+                            options={options2}
+                            className="basic-multi-select z-3"
+                            classNamePrefix="select"
+                            onChange={handleChange2}
+                            value={selectedServices?.servicesSelected}
+                            onInputChange={handleInputChange2}
+                          />
+                        </div> */}
+
+                        <div className="form-group col-1  mt-4">
+                          <button
+                            className="comman_btn mt-2"
+                            style={{ padding: "5px 20px" }}
+                            type="button"
+                            disabled={formValues?.length <= 1 ? true : false}
+                            onClick={() => removeFormFields(index)}
+                          >
+                            <i className="fa fa-minus mt-1 mx-1" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                  <div className="form-group mb-0 col-12 text-center mt-3">
+                    <a
+                      className="comman_btn mx-3 "
+                      onClick={() => addFormFields()}
                     >
-                      <option selected="">Select Users</option>
-                      <option value="all">All</option>
-                      <option value="specific">Specific User</option>
-                    </select>
-                  </div>
-
-                  <div className="form-group col-5">
-                    <label htmlFor="">Search User</label>
-                    <Select
-                      defaultValue=""
-                      isMulti
-                      name="users"
-                      options={options}
-                      className="basic-multi-select z-3"
-                      classNamePrefix="select"
-                      onChange={handleChange}
-                      value={selectedUsers?.usersSelected}
-                      onInputChange={handleInputChange}
-                      isDisabled={userTypes === "specific" ? false : true}
-                    />
-                  </div> */}
-                  <div className="form-group mb-0 mt-4 col-12 text-center">
+                      Add more +
+                    </a>
                     <button className="comman_btn" type="submit">
                       Save
                     </button>
@@ -671,49 +739,7 @@ const MarketingOffers = () => {
                     </small>
                   )}
                 </div>
-                {/* <div className="form-group col-4">
-                  <label htmlFor="">Select Category</label>
-                  <select
-                    aria-label="Default select example"
-                    className="form-select form-control"
-                    name="category"
-                    onChange={(e) => VendorsList(e.target.value)}
-                  >
-                    <option selected="">{offerData?.category?.name_en}</option>
-                    {allCategories?.map((item) => (
-                      <option value={item?._id}>{item?.name_en}</option>
-                    ))}
-                  </select>
-                </div> */}
-                {/* <div className="form-group col-4">
-                  <label htmlFor="">Select Vendor</label>
-                  <select
-                    className="form-select form-control"
-                    aria-label="Default select example"
-                    onChange={(e) => createOptionsServices(e.target.value)}
-                  >
-                    <option selected="" value="">
-                      Select Vendor
-                    </option>
-                    {vendors?.map((item) => (
-                      <option value={item?._id}>{item?.full_name}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="form-group col-4">
-                  <label htmlFor="">Search Services</label>
-                  <Select
-                    defaultValue=""
-                    isMulti
-                    name="users" 
-                    options={options2}
-                    className="basic-multi-select z-3"
-                    classNamePrefix="select"
-                    onChange={handleChange2}
-                    value={selectedServices?.servicesSelected}
-                    onInputChange={handleInputChange2}
-                  />
-                </div> */}
+
                 <div className="form-group col-4">
                   <label htmlFor="">Valid From</label>
                   <input

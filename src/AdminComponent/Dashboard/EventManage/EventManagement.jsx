@@ -238,7 +238,8 @@ const EventManagement = () => {
     newFormValues?.splice(index, 1);
     setFormValues(newFormValues);
   };
-  console.log(formValues, "jhijh");
+  // console.log(formValues, "jhijh");
+  
   return (
     <div className={sideBar === "click" ? "expanded_main" : "admin_main"}>
       <Sidebar slide={slide} getBarClick={getBarClick} />
