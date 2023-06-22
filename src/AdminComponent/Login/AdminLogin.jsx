@@ -59,7 +59,7 @@ const AdminLogin = () => {
                       onSubmit={handleSubmit(onSubmit)}
                     >
                       <div className="form-group col-12">
-                        <label htmlFor="Email">User Name</label>
+                        <label htmlFor="Email">Email Address</label>
                         <input
                           type="email"
                           className={classNames("form-control", {

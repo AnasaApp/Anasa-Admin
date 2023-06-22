@@ -237,7 +237,7 @@ const Categories = () => {
                               action=""
                               onSubmit={handleSubmit(onSubmit)}
                             >
-                              <div className="form-group mb-0 col">
+                              <div className="form-group mb-0 col-auto">
                                 <label htmlFor="">Category Name (En)</label>
                                 <input
                                   type="text"
@@ -268,7 +268,7 @@ const Categories = () => {
                                   </small>
                                 )}
                               </div>
-                              <div className="form-group mb-0 col">
+                              <div className="form-group mb-0 col-auto">
                                 <label htmlFor="">Category Name (Ar)</label>
                                 <input
                                   type="text"
@@ -320,7 +320,7 @@ const Categories = () => {
                                   }
                                 />
                               </div>
-                              <div className="form-group mt-4 col-1">
+                              <div className="form-group mt-4 col-auto">
                                 <button
                                   className="comman_btn mt-2"
                                   type="submit"

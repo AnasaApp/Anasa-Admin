@@ -188,26 +188,19 @@ const AdvertiseManagement = () => {
   };
   const saveAdd = async (e) => {
     e.preventDefault();
-    switch (type) {
-      case "TC":
-    }
+    console.log(selectedCate?.cateSelected?.map((item) => item?.value));
     await AddAddvertise({
       vendor:
-        type === "TV"
-          ? selectedUsers?.usersSelected?.map((item) => item?.value)
-          : null,
+        (type === "TV" &&
+          selectedUsers?.usersSelected?.map((item) => item?.value)) ||
+        (type === "NV" &&
+          selectedNewVendor?.newVendorSelected?.map((item) => item?.value)),
       category:
-        type === "TC"
-          ? selectedCate?.cateSelected?.map((item) => item?.value)
-          : null,
-      category:
-        type === "NC"
-          ? selectedNewCate?.newCateSelected?.map((item) => item?.value)
-          : null,
-      vendor:
-        type === "NV"
-          ? selectedNewVendor?.newVendorSelected?.map((item) => item?.value)
-          : null,
+        (type === "TC" &&
+          selectedCate?.cateSelected?.map((item) => item?.value)) ||
+        (type === "NC" &&
+          selectedNewCate?.newCateSelected?.map((item) => item?.value)),
+
       type:
         (type === "TC" && "category") ||
         (type === "TV" && "vendor") ||

@@ -75,20 +75,6 @@ const MarketingOffers = () => {
       },
 
       {
-        label: "Category",
-        field: "category",
-        sort: "asc",
-        width: 100,
-      },
-
-      {
-        label: "Vendor",
-        field: "vendor",
-        sort: "asc",
-        width: 100,
-      },
-
-      {
         label: "Combo(En)",
         field: "name_en",
         sort: "asc",
@@ -110,8 +96,21 @@ const MarketingOffers = () => {
       },
 
       {
-        label: "Users",
-        field: "userType",
+        label: "Category",
+        field: "category",
+        sort: "asc",
+        width: 100,
+      },
+
+      {
+        label: "Vendor",
+        field: "vendor",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "Service",
+        field: "service",
         sort: "asc",
         width: 100,
       },
@@ -144,10 +143,10 @@ const MarketingOffers = () => {
         returnData.sn = index + 1 + ".";
         returnData.name_en = list?.name_en;
         returnData.name_ar = list?.name_ar;
-        returnData.category = list?.category?.name_en;
-        returnData.vendor = list?.vendor?.full_name;
+        returnData.category = list?.type[0].category?.name_en;
+        returnData.vendor = list?.type[0].vendor?.full_name;
         returnData.number = list?.discount;
-        returnData.userType = list?.userType;
+        returnData.service = list?.type[0].service?.name_en;
         returnData.action = (
           <>
             <a
@@ -779,7 +778,7 @@ const MarketingOffers = () => {
                   )}
                 </div>
                 <div className="form-group col-4">
-                  <label htmlFor="">Discount % </label>
+                  <label htmlFor="">Amount </label>
                   <input
                     type="number"
                     className={classNames("form-control", {
@@ -797,32 +796,6 @@ const MarketingOffers = () => {
                   )}
                 </div>
 
-                {/* <div className="form-group col-12">
-                  <label htmlFor="">Selected Users - (ALL)</label>
-                  <input
-                    type="text"
-                    disabled
-                    className={classNames("form-control", {
-                      "is-invalid": errors2.users,
-                    })}
-                    name="users"
-                  />
-                </div> */}
-
-                {/* <div className="form-group col-6">
-                  <label htmlFor="">Search User</label>
-                  <Select
-                    defaultValue=""
-                    isMulti
-                    name="users"
-                    options={options}
-                    className="basic-multi-select z-3"
-                    classNamePrefix="select"
-                    onChange={handleChange}
-                    onInputChange={handleInputChange}
-                    isDisabled={userTypes === "specific" ? false : true}
-                  />
-                </div> */}
                 <div className="form-group mb-0 col-12 text-center mt-3">
                   <button className="comman_btn" type="submit">
                     Save
