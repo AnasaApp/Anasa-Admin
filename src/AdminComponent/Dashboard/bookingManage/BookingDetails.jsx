@@ -309,12 +309,12 @@ const BookingDetails = () => {
                                       <div className="row mx-0">
                                         <div className="col-6">
                                           <strong className="booking_head">
-                                            Vendor Contact Number:
+                                            Service Description :
                                           </strong>
                                         </div>
                                         <div className="col-6">
                                           <span className="booking_head">
-                                            {booking?.vendor?.phone_number}
+                                            {item?.service?.description_en }
                                           </span>
                                         </div>
                                       </div>

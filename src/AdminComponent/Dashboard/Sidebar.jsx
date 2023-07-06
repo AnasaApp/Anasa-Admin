@@ -32,6 +32,7 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
   const Logout = () => {
     localStorage.removeItem("token-admin");
     navigate("/Admin/Login");
+    window.location.reload()
   };
 
   return (

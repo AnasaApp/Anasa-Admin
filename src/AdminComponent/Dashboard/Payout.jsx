@@ -223,7 +223,7 @@ const Payout = () => {
                 onSubmit={handleSubmit2(onEdit)}
               >
                 <div className="form-group col-6">
-                  <label htmlFor="">Total Amount (En)</label>
+                  <label htmlFor="">Total Amount</label>
                   <input
                     type="text"
                     className={classNames("form-control", {
@@ -235,7 +235,7 @@ const Payout = () => {
                   />
                 </div>
                 <div className="form-group col-6">
-                  <label htmlFor="">Pending Amount (En)</label>
+                  <label htmlFor="">Pending Amount</label>
                   <input
                     type="text"
                     className={classNames("form-control", {

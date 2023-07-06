@@ -237,7 +237,7 @@ const Categories = () => {
                               action=""
                               onSubmit={handleSubmit(onSubmit)}
                             >
-                              <div className="form-group mb-0 col-auto">
+                              <div className="form-group mb-0 col-3">
                                 <label htmlFor="">Category Name (En)</label>
                                 <input
                                   type="text"
@@ -268,7 +268,7 @@ const Categories = () => {
                                   </small>
                                 )}
                               </div>
-                              <div className="form-group mb-0 col-auto">
+                              <div className="form-group mb-0 col-3">
                                 <label htmlFor="">Category Name (Ar)</label>
                                 <input
                                   type="text"
@@ -281,7 +281,7 @@ const Categories = () => {
                                   {...register("Category_name_ar", {
                                     required: "Category Name is required!",
                                     pattern: {
-                                      value: /^[\u0621-\u064A\u0660-\u0669 ]+$/,
+                                      value: /[\u0600-\u06ff]|[\u0750-\u077f]|[\ufb50-\ufc3f]|[\ufe70-\ufefc]/g,
                                       message:
                                         "Only Arabic Characters are allowed!",
                                     },
@@ -302,7 +302,7 @@ const Categories = () => {
                                   </small>
                                 )}
                               </div>
-                              <div className="form-group mb-0 col-auto choose_file position-relative">
+                              <div className="form-group mb-0 col-3 choose_file position-relative">
                                 <span>Category Image </span>{" "}
                                 <label htmlFor="upload_video">
                                   <i className="fa fa-camera me-1" />

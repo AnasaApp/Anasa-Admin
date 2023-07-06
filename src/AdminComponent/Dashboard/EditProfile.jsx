@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 import "../../assets/css/style.css";
 import { updateProfile } from "../httpServices/dashHttpService";
+import Swal from "sweetalert2";
 const EditProfile = () => {
   const [slide, setSlide] = useState("Dash");
   const [name, setName] = useState("");
   const [files, setFiles] = useState([]);
-  let Admin = JSON.parse(localStorage.getItem("token-admin-data"));
+  let Admin = JSON.parse(localStorage.getItem("AdminSave"));
   console.log(Admin);
 
   const [sideBar, setSideBar] = useState();
@@ -24,7 +25,17 @@ const EditProfile = () => {
     formData.append("name", name);
     formData.append("image", files?.image);
     const { data } = await updateProfile(formData);
+    if(!data.error){
+      Swal.fire({
+        title: "Profile Updated Successfully!",
+        icon: "success",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    localStorage.setItem("AdminSave", JSON.stringify(data.results.admin));
+    }
   };
+
   document
     .getElementById("profileImage")
     ?.addEventListener("change", function () {

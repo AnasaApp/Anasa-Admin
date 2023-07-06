@@ -426,6 +426,10 @@ const MarketingOffers = () => {
                       name="discount"
                       {...register("discount", {
                         required: "*Discount % is required!",
+                        maxLength: {
+                          value: 5,
+                          message: "*Max character Length is 5",
+                        },
                       })}
                     />
                     {errors.discount && (

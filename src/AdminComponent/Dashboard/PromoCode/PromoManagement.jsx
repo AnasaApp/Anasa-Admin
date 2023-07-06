@@ -222,16 +222,18 @@ const PromoManagement = () => {
   };
 
   const onEdit = async (data) => {
-    let formData = new FormData();
+console.log(data);
+let formData = new FormData();
     formData.append("name_en", data?.promo_code_en_edit);
     formData.append("name_ar", data?.promo_code_ar_edit);
     formData.append("discount", data?.EditDiscount);
-    formData.append("validFrom", data?.dateFrom);
-    formData.append("validTo", data?.dateTo);
+    formData.append("validFrom", data?.dateFromEdit);
+    formData.append("validTo", data?.dateToEdit);
     formData.append("image", files);
-
-    await editPromocode(promoId, formData).then((res) => {
-      if (!res.data.error) {
+    
+ const res = await editPromocode(promoId, formData)
+console.log(res);
+      if (!res.error) {
         document.getElementById("modal").click();
         GetPromocodes();
         Swal.fire({
@@ -241,7 +243,7 @@ const PromoManagement = () => {
           confirmButtonColor: "#e25829",
         });
       }
-    });
+    ;
   };
 
   const DeleteCode = async () => {};
@@ -628,6 +630,7 @@ const PromoManagement = () => {
                 className="form-design px-3 py-2 help-support-form row  justify-content-center"
                 action=""
                 onSubmit={handleSubmit2(onEdit)}
+                noValidate
               >
                 <div className="form-group col-6 choose_file position-relative">
                   <span>Promo Code Image </span>{" "}
@@ -706,41 +709,38 @@ const PromoManagement = () => {
                 <div className="form-group col-6">
                   <label htmlFor="">Valid From</label>
                   <input
+                  required={false}
                     type="date"
                     id="from"
                     className={classNames("form-control", {
-                      "is-invalid": errors2.dateFrom,
+                      "is-invalid": errors2.dateFromEdit,
                     })}
                     name="dateFromEdit"
                     {...register2("dateFromEdit", {
-                      required: "*Please Select a Date!",
                     })}
                   />
-                  {errors2.dateFrom && (
-                    <small className="errorText mx-1">
-                      {errors2.dateFrom.message}
-                    </small>
-                  )}
                 </div>
+
                 <div className="form-group col-6">
                   <label htmlFor="">Valid Till</label>
                   <input
                     type="date"
                     id="till"
                     className={classNames("form-control", {
-                      "is-invalid": errors2.dateTo,
+                      "is-invalid": errors2.dateToEdit,
                     })}
                     name="dateToEdit"
                     {...register2("dateToEdit", {
                       required: "*Please Select a Date!",
                     })}
                   />
-                  {errors2.dateTo && (
+                  {errors2.dateToEdit && (
                     <small className="errorText mx-1">
-                      {errors2.dateTo.message}
+                      {errors2.dateToEdit.message}
                     </small>
                   )}
                 </div>
+
                 <div className="form-group mb-0 col-auto mt-3">
                   <button className="comman_btn" type="submit">
                     Save
