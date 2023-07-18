@@ -194,6 +194,7 @@ const EventManagement = () => {
   console.log(packages);
 
   const onEditSave = async () => {
+    
     const { data } = await AddEventDetails(
       {
         packages: formValues,
@@ -355,17 +356,9 @@ const EventManagement = () => {
                   <input
                     type="text"
                     className="form-control"
-                    name="amount"
+                    name="address"
                     disabled
                     defaultValue={
-                      eventInfo?.event_location?.house_number +
-                      "," +
-                      eventInfo?.event_location?.building_name +
-                      " " +
-                      eventInfo?.event_location?.locality +
-                      " " +
-                      eventInfo?.event_location?.city +
-                      "," +
                       eventInfo?.event_location?.city
                     }
                   />

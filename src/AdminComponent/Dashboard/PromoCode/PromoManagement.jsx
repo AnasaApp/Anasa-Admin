@@ -196,20 +196,20 @@ const PromoManagement = () => {
   };
 
   const onSubmit = async (data) => {
-    await AddPromoCode({
-      name_en: data?.promo_code_en,
-      name_ar: data?.promo_code_ar,
-      discount: data?.discount,
-      validFrom: data?.dateFrom,
-      validTo: data?.dateTo,
-      userType: userTypes,
-      image: files[0],
-      selectedUsers:
-        userTypes === "specific" &&
-        selectedUsers.usersSelected?.map((item) => item?.value),
-    }).then((res) => {
+    let formData = new FormData()
+
+    formData.append("name_en",data?.promo_code_en)
+    formData.append("name_ar",data?.promo_code_ar)
+    formData.append("discount", data?.discount)
+    formData.append("validFrom",data?.dateFrom)
+    formData.append("validTo",data?.dateTo)
+    formData.append("image",files[0])
+    // formData.append("selectedUsers",userTypes === "specific" &&
+    // selectedUsers.usersSelected?.map((item) => item?.value),)
+    await AddPromoCode(formData).then((res) => {
       document.getElementById("ResetPromo").click();
       GetPromocodes();
+      setFiles([])
       if (!res.data.error) {
         Swal.fire({
           title: "Promo Code Added!",
@@ -236,6 +236,7 @@ console.log(res);
       if (!res.error) {
         document.getElementById("modal").click();
         GetPromocodes();
+        setFiles([])
         Swal.fire({
           title: "Promocode Modified Successfully!",
           icon: "success",
