@@ -150,11 +150,11 @@ h2 {
 }
 
 .sidebar_btn {
-  font-size: 18px;
+  font-size: 16px;
   color: #fff !important;
 }
 .admin_main {
-  margin-left: 280px;
+  margin-left: 260px;
   transition: 0.1s all;
 }
 .expanded_main {
@@ -172,7 +172,7 @@ h2 {
   left: 0;
   top: 0;
   z-index: 9;
-  width: 280px;
+  width: 260px;
   height: 100vh;
   background-image: url(../img/verification_bg.png);
   background-repeat: no-repeat;
@@ -286,7 +286,7 @@ h2 {
 }
 
 .sidebar_logo img {
-  max-width: 110px;
+  max-width: 100px !important;
   margin: 0 auto;
 }
 
@@ -299,7 +299,7 @@ h2 {
   color: #fff;
   font-weight: 500;
   display: flex;
-  font-size: 15px;
+  font-size: 13px !important;
   padding: 16px 15px;
   border-radius: 15px 0 0 15px;
   position: relative;
@@ -314,8 +314,8 @@ h2 {
 }
 .sidebar_menus ul li a i {
   width: 18px;
-  font-size: 16px;
-  margin-top: 3px;
+  font-size: 13px;
+  margin-top: 2px;
   display: flex;
   justify-content: center;
   margin-right: 9px;
@@ -328,7 +328,7 @@ h2 {
 }
 .showPassCheck {
   accent-color: #e25829 !important;
-}
+} 
 .showPassCheck2 {
   width: 0.8rem !important;
   height: 0.8rem;
@@ -457,7 +457,7 @@ input::-webkit-inner-spin-button {
 .form-design .form-control {
   border-radius: 10px;
   height: 50px;
-  font-size: 14px;
+  font-size: 12px;
   padding: 11px 18px;
   box-shadow: unset !important;
 }
@@ -468,7 +468,7 @@ input::-webkit-inner-spin-button {
 .form-design .form-group label {
   display: block;
   margin: 0 0 8px 0;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   text-align: left;
 }
@@ -488,7 +488,7 @@ input::-webkit-inner-spin-button {
   color: #fff !important;
   border: 1px dashed #4f73af !important;
   transition: 0.3s all;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   padding: 12px 34px;
   display: inline-block;
@@ -506,7 +506,7 @@ input::-webkit-inner-spin-button {
   color: #fff !important;
   border: 1px dashed #e25829 !important;
   transition: 0.3s all;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   padding: 12px 34px;
   display: inline-block;
@@ -598,7 +598,7 @@ div#google_translate_element {
 # Comman css
 --------------------------------------------------------------*/
 .admin_panel_data {
-  padding: 50px;
+  padding: 40px;
 }
 .height_adjust {
   height: calc(100vh - 70px);
@@ -666,7 +666,7 @@ div#google_translate_element {
 .comman_table_design th {
   color: #3e4093;
   background-color: #f2f2f2 !important;
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 600;
   padding: 15px 20px;
   border: 0;
@@ -677,12 +677,13 @@ div#google_translate_element {
 }
 .comman_table_design td {
   color: #000;
-  font-size: 14px;
+  font-size: 13px;
   padding: 15px 20px;
   border: 0;
   text-align: center;
   vertical-align: middle;
   border-bottom: 2px solid #f2f2f2;
+  border: 1px solid #cecaca;
   white-space: nowrap;
 }
 .table > :not(:first-child) {

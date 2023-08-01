@@ -201,6 +201,7 @@ const EventManagement = () => {
       },
       eventId
     );
+
     if (!data.error) {
       getAllEvents();
       document.getElementById("closedEdits").click();

@@ -13,6 +13,7 @@ import "bootstrap/dist/js/bootstrap.js";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "mdbreact/dist/css/mdb.css";
 import reportWebVitals from "./reportWebVitals";
+import "react-chat-elements/dist/main.css"
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
