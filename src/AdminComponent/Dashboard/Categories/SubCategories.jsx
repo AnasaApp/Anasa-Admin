@@ -288,7 +288,7 @@ const SubCategories = ({ cate }) => {
               </label>{" "}
               <input
                 type="file"
-                className="form-control"
+                className="form-control mx-2"
                 defaultValue=""
                 name="upload_video"
                 accept="image/*"
@@ -316,18 +316,7 @@ const SubCategories = ({ cate }) => {
               <h2>Sub Categories</h2>
             </div>
             <div className="col-3">
-              {/* <form className="form-design" action="">
-                <div className="form-group mb-0 position-relative icons_set">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Search"
-                    name="name"
-                    id="name"
-                  />
-                  <i className="far fa-search" />
-                </div>
-              </form> */}
+             
             </div>
           </div>
           <div className="row">
@@ -342,52 +331,7 @@ const SubCategories = ({ cate }) => {
                   noBottomColumns
                   sortable
                 />
-                {/* <table className="table mb-0">
-                  <thead>
-                    <tr>
-                      <th>S.No.</th>
-                      <th>Image</th>
-                      <th>Category (En)</th>
-                      <th>Sub Category (EN)</th>
-                      <th>Sub Category (AR)</th>
-                      <th>Added On</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {(allSubCategories || [])?.map((item, index) => (
-                      <tr key={index}>
-                        <td>{index + 1}</td>
-                        <td>
-                          <img
-                            className="table_img"
-                            src={
-                              item?.image
-                                ? item?.image
-                                : require("../../../assets/img/Nupload.jpg")
-                            }
-                            alt=""
-                          />
-                        </td>
-                        <td>{item?.category?.name_en}</td>
-                        <td>{item?.name_en}</td>
-                        <td>{item?.name_ar}</td>
-                        <td>{item?.createdAt?.slice(0, 10)}</td>
-                        <td>
-                          <a
-                            data-bs-toggle="modal"
-                            data-bs-target="#staticBackdrop1"
-                            className="comman_btn table_viewbtn mx-1"
-                            href="javascript:;"
-                            onClick={() => editSubCategory(item._id)}
-                          >
-                            Edit
-                          </a>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table> */}
+                
               </div>
             </div>
           </div>

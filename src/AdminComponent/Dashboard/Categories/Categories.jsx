@@ -104,7 +104,6 @@ const Categories = () => {
               data-bs-target="#staticBackdrop"
               className=" table_viewbtn"
               style={{ color: "#fff", background: "#4f73af" }}
-              // href="javascript:;"
               onClick={() => editCategory(list._id)}
             >
               Edit
@@ -305,12 +304,12 @@ const Categories = () => {
                               <div className="form-group mb-0 col-3 choose_file position-relative">
                                 <span>Category Image </span>{" "}
                                 <label htmlFor="upload_video">
-                                  <i className="fa fa-camera me-1" />
+                                  <i className="fa fa-camera me-1 " />
                                   Choose File
-                                </label>{" "}
+                                </label>
                                 <input
                                   type="file"
-                                  className="form-control"
+                                  className="form-control mx-2"
                                   defaultValue=""
                                   accept="image/*"
                                   name="upload_video"
@@ -358,56 +357,7 @@ const Categories = () => {
                                     noBottomColumns
                                     sortable
                                   />
-                                  {/* <table className="table mb-0">
-                                    <thead>
-                                      <tr>
-                                        <th>S.No.</th>
-                                        <th>Image</th>
-                                        <th>Category (En)</th>
-                                        <th>Category (Ar)</th>
-                                        <th>Added On</th>
-                                        <th>Action</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      {(allCategories || [])?.map(
-                                        (item, index) => (
-                                          <tr key={index}>
-                                            <td>{index + 1}.</td>
-                                            <td>
-                                              <img
-                                                src={
-                                                  item?.image
-                                                    ? item?.image
-                                                    : require("../../../assets/img/Nupload.jpg")
-                                                }
-                                                className="table_img"
-                                                alt=""
-                                              />
-                                            </td>
-                                            <td>{item?.name_en}</td>
-                                            <td>{item?.name_ar}</td>
-                                            <td>
-                                              {item?.createdAt?.slice(0, 10)}
-                                            </td>
-                                            <td>
-                                              <a
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#staticBackdrop"
-                                                className="comman_btn table_viewbtn"
-                                                href="javascript:;"
-                                                onClick={() =>
-                                                  editCategory(item._id)
-                                                }
-                                              >
-                                                Edit
-                                              </a>
-                                            </td>
-                                          </tr>
-                                        )
-                                      )}
-                                    </tbody>
-                                  </table> */}
+                               
                                 </div>
                               </div>
                             </div>
@@ -469,7 +419,7 @@ const Categories = () => {
                   </label>{" "}
                   <input
                     type="file"
-                    className="form-control"
+                    className="form-control mx-2"
                     defaultValue=""
                     name="upload_video2"
                     id="upload_video2"

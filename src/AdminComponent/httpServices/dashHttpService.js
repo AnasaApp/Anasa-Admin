@@ -652,9 +652,7 @@ export async function getVendorBooking(id, formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/getVendorBookings` +
         "/" +
         id,
-      {
-        formData,
-      }
+      formData
     );
     console.log(data);
 
@@ -2065,7 +2063,6 @@ export async function getViewVendorSupport(id) {
   }
 }
 
-
 export async function VendorsCount() {
   try {
     const { data } = await appHttpService.post(
@@ -2263,4 +2260,3 @@ export async function getPushNotify() {
     return { error };
   }
 }
-

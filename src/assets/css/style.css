@@ -1006,8 +1006,9 @@ strong.booking_head {
   position: absolute;
   top: 30px;
   background-color: #e25829;
-  height: 48px;
+  height: 49px;
   color: #fff;
+  left: 10px !important;
   display: flex !important;
   align-items: center;
   width: 120px;

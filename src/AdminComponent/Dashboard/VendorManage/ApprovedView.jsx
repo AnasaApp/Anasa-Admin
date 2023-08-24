@@ -11,6 +11,7 @@ import {
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
 import moment from "moment";
+import { MDBDataTable } from "mdbreact";
 
 const ApprovedView = () => {
   const [slide, setSlide] = useState("VM");
@@ -26,6 +27,98 @@ const ApprovedView = () => {
     GetVendorBooking();
     GetVendorTransactions();
   }, []);
+  const [bookings, setBookings] = useState({
+    columns: [
+      {
+        label: "S.NO.",
+        field: "sn",
+        sort: "asc",
+        maxWidth: 50,
+      },
+      {
+        label: "BOOKING ID",
+        field: "id",
+        sort: "asc",
+        width: 150,
+      },
+
+      {
+        label: "BOOKING DETAILS",
+        field: "details",
+        sort: "asc",
+        width: 150,
+      },
+      {
+        label: "AMOUNT",
+        field: "number",
+        sort: "asc",
+        width: 100,
+      },
+
+      {
+        label: "BOOKING DATE",
+        field: "date",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "STATUS",
+        field: "status",
+        sort: "asc",
+        width: 100,
+      },
+    ],
+    rows: [],
+  });
+  const [transactionList, setTransactionList] = useState({
+    columns: [
+      {
+        label: "S.NO.",
+        field: "sn",
+        sort: "asc",
+        maxWidth: 50,
+      },
+      {
+        label: "TRANSACTION ID",
+        field: "id",
+        sort: "asc",
+        width: 150,
+      },
+
+      {
+        label: "TRANSACTION DATE",
+        field: "date",
+        sort: "asc",
+        width: 150,
+      },
+      {
+        label: "AMOUNT",
+        field: "number",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "TYPE",
+        field: "type",
+        sort: "asc",
+        width: 100,
+      },
+
+      {
+        label: "STATUS",
+        field: "status",
+        sort: "asc",
+        width: 100,
+      },
+      // {
+      //   label: "ACTION",
+      //   field: "action",
+      //   sort: "asc",
+      //   width: 100,
+      // },
+    ],
+    rows: [],
+  });
   const handleDate = (e) => {
     const value = e.target.value;
     setValues({
@@ -41,25 +134,92 @@ const ApprovedView = () => {
   const GetVendorBooking = async () => {
     let id = location?.state?.id;
     const { data } = await getVendorBooking(id);
-    setVendorBooking(data?.results.bookings);
+    // setVendorBooking(data?.results.bookings);
+    const newRows = [];
+    if (!data.error) {
+      let values = data?.results.bookings;
+      console.log(values);
+      values?.map((list, index) => {
+        const returnData = {};
+        returnData.sn = index + 1 + ".";
+        returnData.id = list?.bookingID;
+        returnData.details = (
+          <>
+            <Link
+              className="comman_btn2 table_viewbtn"
+              to={`/Admin/Dashboard/Booking-Management/Booking-Details/${list?._id}`}
+              // state={{ id: list?._id }}
+            >
+              View
+            </Link>
+          </>
+        );
+        returnData.number = list?.total;
+        returnData.date = moment(list?.createdAt).format("L");
+        returnData.status = list?.status;
+        newRows.push(returnData);
+      });
+
+      setBookings({ ...bookings, rows: newRows });
+    }
   };
 
   const GetVendorTransactions = async () => {
     let id = location?.state?.id;
     const { data } = await getVendorTransactions(id);
-    setTransaction(data?.results.transaction);
+    const newRows = [];
+    if (!data.error) {
+      let values = data?.results.transaction;
+      console.log(values);
+      values?.map((list, index) => {
+        const returnData = {};
+        returnData.sn = index + 1 + ".";
+        returnData.id = list?.transactionID;
+        returnData.number = list?.deposit;
+        returnData.type = list?.type;
+        returnData.date = moment(list?.createdAt).format("L");
+        returnData.status = list?.status;
+        newRows.push(returnData);
+      });
+
+      setTransactionList({ ...transactionList, rows: newRows });
+    }
   };
   const onSearchBookings = async (e) => {
     let id = location?.state?.id;
     if (values?.from && values?.to) {
       e.preventDefault();
-      const { data } = await getVendorBooking("6450a0763dc28045aa7da0db ", {
+      const { data } = await getVendorBooking(id, {
         from: values?.from,
         to: values?.to,
-        status: "APPROVED",
-        page: 1,
       });
-      setVendorBooking(data?.results.bookings);
+      const newRows = [];
+      if (!data.error) {
+        let values = data?.results.bookings;
+        console.log(values);
+        values?.map((list, index) => {
+          const returnData = {};
+          returnData.sn = index + 1 + ".";
+          returnData.id = list?.bookingID;
+          returnData.details = (
+            <>
+              <Link
+                className="comman_btn2 table_viewbtn"
+                to={`/Admin/Dashboard/Booking-Management/Booking-Details/${list?._id}`}
+                // state={{ id: list?._id }}
+              >
+                View
+              </Link>
+            </>
+          );
+          returnData.number = list?.total;
+          returnData.date = moment(list?.createdAt).format("L");
+          returnData.status = list?.status;
+          newRows.push(returnData);
+        });
+
+        setBookings({ ...bookings, rows: newRows });
+      }
       setValues({ from: "", to: "" });
     } else {
       e.preventDefault();
@@ -216,8 +376,7 @@ const ApprovedView = () => {
                                 class="fa fa-eye preview_icon"
                                 onClick={() =>
                                   preview(vendor?.trade_licence_copy)
-                                }
-                              ></i>
+                                }></i>
                             ) : null}
                             {vendor?.trade_licence_copy ? (
                               <i
@@ -249,8 +408,9 @@ const ApprovedView = () => {
                             {vendor?.signed_contract ? (
                               <i
                                 class="fa fa-eye preview_icon"
-                                onClick={() => preview(vendor?.signed_contract)}
-                              ></i>
+                                onClick={() =>
+                                  preview(vendor?.signed_contract)
+                                }></i>
                             ) : null}
                             {vendor?.signed_contract ? (
                               <i
@@ -278,8 +438,7 @@ const ApprovedView = () => {
                     <div className="row view-inner-box border mx-0 w-100">
                       <div className="col">
                         <Link
-                          to={`/Admin/Dashboard/Vendor-Management/Services/${vendor?._id}`}
-                        >
+                          to={`/Admin/Dashboard/Vendor-Management/Services/${vendor?._id}`}>
                           <strong>Go to Listed Services</strong>
                         </Link>
                       </div>
@@ -313,8 +472,7 @@ const ApprovedView = () => {
               <div className="col-12">
                 <form
                   className="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"
-                  action=""
-                >
+                  action="">
                   <div className="form-group mb-0 col-5">
                     <label htmlFor="">From</label>
                     <input
@@ -344,8 +502,7 @@ const ApprovedView = () => {
                     <button
                       className="comman_btn2 d-none"
                       type="reset"
-                      id="Resets"
-                    >
+                      id="Resets">
                       Search
                     </button>
                   </div>
@@ -353,38 +510,17 @@ const ApprovedView = () => {
                 <div className="row">
                   <div className="col-12 comman_table_design px-0">
                     <div className="table-responsive">
-                      <table className="table mb-0">
-                        <thead>
-                          <tr>
-                            <th>S.No.</th>
-                            <th>Booking Id</th>
-                            <th>Booking Details</th>
-                            <th>Amount</th>
-                            <th>Booking Date</th>
-                            <th>Status</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {vendorBooking?.map((item, index) => (
-                            <tr>
-                              <td>{index + 1}</td>
-                              <td>{item?.bookingID}</td>
-                              <td>
-                                <Link
-                                  className="comman_btn2 table_viewbtn"
-                                  to={`/Admin/Dashboard/Booking-Management/Booking-Details/${item?._id}`}
-                                  // state={{ id: list?._id }}
-                                >
-                                  View
-                                </Link>
-                              </td>
-                              <td>{item?.total} /- </td>
-                              <td>{item?.createdAt?.slice(0, 10)}</td>
-                              <td>{item?.status}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                      <div className="table-responsive p-0">
+                        <MDBDataTable
+                          bordered
+                          displayEntries={false}
+                          className="categoryTable"
+                          hover
+                          data={bookings}
+                          noBottomColumns
+                          sortable
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -400,72 +536,18 @@ const ApprovedView = () => {
             </div>
             <div className="row">
               <div className="col-12">
-                {/* <form
-                  className="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"
-                  action=""
-                >
-                  <div className="form-group mb-0 col-5">
-                    <label htmlFor="">From</label>
-                    <input
-                      type="date"
-                      className="form-control"
-                      name="from"
-                      id="appFrom"
-                      value={values.from}
-                      onChange={handleDate}
-                    />
-                  </div>
-                  <div className="form-group mb-0 col-5">
-                    <label htmlFor="">To</label>
-                    <input
-                      type="date"
-                      className="form-control"
-                      name="to"
-                      id="appTo"
-                      value={values.to}
-                      onChange={handleDate}
-                    />
-                  </div>
-                  <div className="form-group mb-0 col-auto">
-                    <button className="comman_btn2" onClick={onSearchBookings}>
-                      Search
-                    </button>
-                    <button
-                      className="comman_btn2 d-none"
-                      type="reset"
-                      id="Resets"
-                    >
-                      Search
-                    </button>
-                  </div>
-                </form> */}
                 <div className="row">
                   <div className="col-12 comman_table_design px-0">
-                    <div className="table-responsive">
-                      <table className="table mb-0">
-                        <thead>
-                          <tr>
-                            <th>S.No.</th>
-                            <th>Transaction Id</th>
-                            <th>Transacion Date</th>
-                            <th>Amount</th>
-                            <th>Type</th>
-                            <th>Status</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {transaction?.map((item, index) => (
-                            <tr>
-                              <td>{index + 1}</td>
-                              <td>{item?.transactionID}</td>
-                              <td>{moment(item?.createdAt).format("L")}</td>
-                              <td>{item?.deposit} /- </td>
-                              <td>{item?.type} /- </td>
-                              <td>{item?.status}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                    <div className="table-responsive p-0">
+                      <MDBDataTable
+                        bordered
+                        displayEntries={false}
+                        className="userData"
+                        hover
+                        data={transactionList}
+                        noBottomColumns
+                        sortable
+                      />
                     </div>
                   </div>
                 </div>
@@ -479,8 +561,7 @@ const ApprovedView = () => {
         class="btn btn-primary d-none"
         id="preview_modal"
         data-bs-toggle="modal"
-        data-bs-target="#exampleModal"
-      >
+        data-bs-target="#exampleModal">
         Launch demo modal
       </button>
       <div
@@ -488,8 +569,7 @@ const ApprovedView = () => {
         id="exampleModal"
         tabindex="-1"
         aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
-      >
+        aria-hidden="true">
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header comman_modal">
@@ -498,22 +578,19 @@ const ApprovedView = () => {
                 type="button"
                 class="btn-close"
                 data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
+                aria-label="Close"></button>
             </div>
             <div class="modal-body">
               <img
                 src={vendor?.trade_licence_copy}
                 className="preview_image"
-                id="preview_images"
-              ></img>
+                id="preview_images"></img>
             </div>
             <div class="modal-footer">
               <button
                 type="button"
                 class="comman_btn2 "
-                data-bs-dismiss="modal"
-              >
+                data-bs-dismiss="modal">
                 Close
               </button>
             </div>
@@ -528,8 +605,7 @@ const ApprovedView = () => {
         data-bs-keyboard="false"
         tabIndex={-1}
         aria-labelledby="staticBackdropLabel"
-        aria-hidden="true"
-      >
+        aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content border-0">
             <div className="modal-header">
@@ -546,8 +622,7 @@ const ApprovedView = () => {
             <div className="modal-body">
               <form
                 className="form-design px-3 py-2 help-support-form row align-items-end justify-content-center"
-                action=""
-              >
+                action="">
                 <div className="form-group col-6">
                   <label htmlFor="">Total Payout</label>
                   <input
