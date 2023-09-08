@@ -389,7 +389,7 @@ const MarketingOffers = () => {
                       {...register("combo_ar", {
                         required: "*Combo Name is required!",
                         pattern: {
-                          value: /^[\u0600-\u06FF,\u0600-\u06FF,-]*$/,
+                          value: /^[\u0600-\u06FF,\u0600-\u06FF, ]*$/,
                           message: "Only Arabic Characters are allowed!",
                         },
                       })}
@@ -731,7 +731,7 @@ const MarketingOffers = () => {
                     {...register2("combo_ar_edit_ar", {
                       required: "*Combo Name is required!",
                       pattern: {
-                        value: /^[\u0621-\u064A\u0660-\u0669 ]+$/,
+                        value: /^[\u0621-\u064A\u0660-\u0669, ]+$/,
                         message: "Only Arabic Characters are allowed!",
                       },
                     })}
