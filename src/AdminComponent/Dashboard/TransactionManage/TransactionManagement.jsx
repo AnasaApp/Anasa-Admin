@@ -98,7 +98,7 @@ const TransactionManagement = () => {
       },
       {
         label: "BUYER NAME",
-        field: "name_vendor",
+        field: "name",
         sort: "asc",
         width: 150,
       },
@@ -124,6 +124,8 @@ const TransactionManagement = () => {
     ],
     rows: [],
   });
+
+
 
   const getVendorTransactions = async () => {
     const { data } = await VendorTransactions({
@@ -182,32 +184,20 @@ const TransactionManagement = () => {
       values?.map((list, index) => {
         const returnData = {};
         returnData.sn = index + 1 + ".";
-        returnData.name_vendor = list?.vendor.full_name;
-        returnData.amount = list?.withdrawl || list?.deposit;
+        returnData.name = list?.buyer.full_name;
+        returnData.amount = list?.amount ;
         returnData.date = moment(list?.createdAt).format("L");
         returnData.status = list?.status;
         returnData.action = (
           <>
             <Link
-              to="/Admin/Dashboard/Vendor-Management/Approved"
-              state={{ id: list?.vendor?._id }}
+              to="/Admin/Dashboard/Buyer-Details"
+              state={{ id: list?.buyer?._id }}
               className="comman_btn table_viewbtn mx-1"
             >
               View
             </Link>
-            <Link
-              data-bs-toggle="modal"
-              data-bs-target="#staticBackdrop44"
-              onClick={() => {
-                setTrans({
-                  status: list?.status,
-                  amount: list?.deposit || list?.withdrawl,
-                });
-              }}
-              className="comman_btn table_viewbtn mx-1"
-            >
-              Manage
-            </Link>
+          
           </>
         );
         newRows.push(returnData);

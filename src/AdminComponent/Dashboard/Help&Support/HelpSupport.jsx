@@ -48,16 +48,15 @@ const HelpSupport = () => {
         confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
-      
     }
   };
 
-  const VieWVendorSupport = async (id,status) => {
+  const VieWVendorSupport = async (id, status) => {
     setVenId(id);
     if (status) {
-    setVenId(id);
+      setVenId(id);
       const { data } = await getViewVendorSupport(id);
-        setChatV(data?.results.message?.reply);
+      setChatV(data?.results.message?.reply);
       setMainChatV(data?.results.message);
     } else {
       Swal.fire({
@@ -67,7 +66,6 @@ const HelpSupport = () => {
         confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
-      
     }
   };
 
@@ -89,23 +87,24 @@ const HelpSupport = () => {
 
   const sendMessage = async () => {
     const { data } = await SendMessageBuy({ message: newMessage }, buyId);
+    setNewMessage("");
+    scrollToBottom();
     let msg = data?.results?.reply?.reply?.slice(-1);
     setChat((chat) => [...chat, msg[0]]);
-    setNewMessage();
-    scrollToBottom();
   };
   const sendMessageV = async () => {
-    const { data } = await SendMessageBuy({ message: newMessageV },VenId);
+    const { data } = await SendMessageBuy({ message: newMessageV }, VenId);
+    setNewMessageV("");
+    scrollToBottom();
+
     let msg = data?.results?.reply?.reply?.slice(-1);
     setChatV((chatV) => [...chatV, msg[0]]);
-    setNewMessageV();
-    scrollToBottom();
   };
 
   const scrollToBottom = () => {
+    console.log("jijijo");
     ref.current.scrollIntoView({ behavior: "smooth" });
   };
-  console.log(chat);
 
   const TicketStatus = async (id) => {
     const { data } = await changeBuyerTicketStatus(id);
@@ -338,56 +337,56 @@ const HelpSupport = () => {
                                       </tr>
                                     </thead>
 
-                                      <tbody>
-                                        {(vendorSupport?.chats || [])?.map(
-                                          (item, ind) => (
-                                            <tr key={ind}>
-                                              <td>{ind + 1}</td>
-                                              <td>{item?.buyer?.full_name}</td>
-                                              <td>{item?.buyer?.email}</td>
-                                              <td>{item?.subject}</td>
-                                              <td>{item?.concern}</td>
-                                              <td>
-                                                {item?.createdAt?.slice(0, 10)}
-                                              </td>
-                                              <td>
-                                                <div className="check_toggle">
-                                                  <input
-                                                    defaultChecked={
-                                                      item?.status
-                                                    }
-                                                    type="checkbox"
-                                                    name="checkv1"
-                                                    id={item?._id}
-                                                    className="d-none"
-                                                    onClick={() => {
-                                                      TicketStatus(item?._id);
-                                                    }}
-                                                  />
-                                                  <label htmlFor={item?._id} />
-                                                </div>
-                                              </td>
-                                              <td>
-                                                <a
-                                                  data-bs-toggle="modal"
-                                                  data-bs-target="#staticBackdrop2"
-                                                  className="comman_btn table_viewbtn"
-                                                  onClick={() =>
-                                                    VieWVendorSupport(item?._id,item?.status)
-                                                  }>
-                                                  View
-                                                </a>
-                                                <a
-                                                  className="comman_btn2 table_viewbtn bg-red"
-                                                  href="javscript:;">
-                                                  Delete
-                                                </a>
-                                              </td>
-                                            </tr>
-                                          )
-                                        )}
-                                      </tbody>
-                                    
+                                    <tbody>
+                                      {(vendorSupport?.chats || [])?.map(
+                                        (item, ind) => (
+                                          <tr key={ind}>
+                                            <td>{ind + 1}</td>
+                                            <td>{item?.buyer?.full_name}</td>
+                                            <td>{item?.buyer?.email}</td>
+                                            <td>{item?.subject}</td>
+                                            <td>{item?.concern}</td>
+                                            <td>
+                                              {item?.createdAt?.slice(0, 10)}
+                                            </td>
+                                            <td>
+                                              <div className="check_toggle">
+                                                <input
+                                                  defaultChecked={item?.status}
+                                                  type="checkbox"
+                                                  name="checkv1"
+                                                  id={item?._id}
+                                                  className="d-none"
+                                                  onClick={() => {
+                                                    TicketStatus(item?._id);
+                                                  }}
+                                                />
+                                                <label htmlFor={item?._id} />
+                                              </div>
+                                            </td>
+                                            <td>
+                                              <a
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#staticBackdrop2"
+                                                className="comman_btn table_viewbtn"
+                                                onClick={() =>
+                                                  VieWVendorSupport(
+                                                    item?._id,
+                                                    item?.status
+                                                  )
+                                                }>
+                                                View
+                                              </a>
+                                              <a
+                                                className="comman_btn2 table_viewbtn bg-red"
+                                                href="javscript:;">
+                                                Delete
+                                              </a>
+                                            </td>
+                                          </tr>
+                                        )
+                                      )}
+                                    </tbody>
                                   </table>
                                 </div>
                               </div>
@@ -437,7 +436,6 @@ const HelpSupport = () => {
                           position={"right"}
                           type={"text"}
                           title={mainChat?.buyer?.full_name}
-                          
                           text={mainChat?.concern}
                           date={mainChat?.createdAt}
                         />
@@ -447,12 +445,11 @@ const HelpSupport = () => {
                           <MessageBox
                             position={"right"}
                             type={"photo"}
-                          title={mainChat?.buyer?.full_name}
-                            
+                            title={mainChat?.buyer?.full_name}
                             date={mainChat?.createdAt}
                             data={{
                               uri: item,
-                              width:50
+                              width: 50,
                             }}
                           />
                         </div>
@@ -473,12 +470,10 @@ const HelpSupport = () => {
                         </div>
                       </div>
                     ))}
-                    <div ref={ref}></div>
+                    <div ref={ref}>_____</div>
                   </div>
                 </div>
               </div>
-
-
 
               <div className="modal-footer">
                 <form className="message_send row mx-0 w-100" action="">
@@ -508,7 +503,6 @@ const HelpSupport = () => {
             </div>
           </div>
         </div>
-
         <div
           className="modal fade reply_modal"
           id="staticBackdrop2"
@@ -521,7 +515,7 @@ const HelpSupport = () => {
             <div className="modal-content border-0">
               <div className="modal-header">
                 <h5 className="modal-title" id="staticBackdropLabel">
-                 Vendor Chat
+                  Vendor Chat
                 </h5>
                 <button
                   type="button"
@@ -550,11 +544,10 @@ const HelpSupport = () => {
                             position={"right"}
                             type={"photo"}
                             title={mainChatV?.vendor?.full_name}
-                          
                             date={mainChatV?.createdAt}
                             data={{
                               uri: item,
-                              width:50
+                              width: 50,
                             }}
                           />
                         </div>
@@ -580,8 +573,6 @@ const HelpSupport = () => {
                 </div>
               </div>
 
-
-
               <div className="modal-footer">
                 <form className="message_send row mx-0 w-100" action="">
                   <div className="form-group col">
@@ -589,7 +580,7 @@ const HelpSupport = () => {
                       type="text"
                       className="form-control"
                       placeholder="Type a Message...."
-                      onChange={(e)=>setNewMessageV(e.target.value)}
+                      onChange={(e) => setNewMessageV(e.target.value)}
                       value={newMessageV}
                     />
                   </div>
@@ -610,7 +601,6 @@ const HelpSupport = () => {
             </div>
           </div>
         </div>
-
         <div
           className="modal fade Update_modal"
           id="staticBackdrop12"

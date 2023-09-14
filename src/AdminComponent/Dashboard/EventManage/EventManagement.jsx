@@ -139,18 +139,21 @@ const EventManagement = () => {
             <Link
               className={
                 list?.status === "Completed"
-                  ? " table_viewbtn"
+                  ? " comman_btn table_viewbtn"
                   : "comman_btn2 table_viewbtn"
               }
               data-bs-toggle="modal"
               data-bs-target={
-                list?.status === "Completed" ? "" : "#staticBackdrop49"
+                list?.status === "Completed"
+                  ? "#staticBackdrop50"
+                  : "#staticBackdrop49"
               }
               onClick={() =>
-                list?.status === "Completed" ? "" : manageEvent(list?._id)
-              }
-            >
-              {list?.status === "Completed" ? "Plan Added" : "Add Plan"}
+                list?.status === "Completed"
+                  ? manageEvent(list?._id)
+                  : manageEvent(list?._id)
+              }>
+              {list?.status === "Completed" ? "View Plan" : "Add Plan"}
             </Link>
           </>
         );
@@ -194,7 +197,6 @@ const EventManagement = () => {
   console.log(packages);
 
   const onEditSave = async () => {
-    
     const { data } = await AddEventDetails(
       {
         packages: formValues,
@@ -241,7 +243,7 @@ const EventManagement = () => {
     setFormValues(newFormValues);
   };
   // console.log(formValues, "jhijh");
-  
+
   return (
     <div className={sideBar === "click" ? "expanded_main" : "admin_main"}>
       <Sidebar slide={slide} getBarClick={getBarClick} />
@@ -257,8 +259,7 @@ const EventManagement = () => {
                         className="tab-pane fade show active"
                         id="home"
                         role="tabpanel"
-                        aria-labelledby="home-tab"
-                      >
+                        aria-labelledby="home-tab">
                         <div className="row p-4 mx-0">
                           <div className="col-12 inner_design_comman border">
                             <div className="row comman_header justify-content-between">
@@ -301,8 +302,7 @@ const EventManagement = () => {
         data-bs-keyboard="false"
         tabIndex={-1}
         aria-labelledby="staticBackdropLabel"
-        aria-hidden="true"
-      >
+        aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content border-0">
             <div className="modal-header">
@@ -330,8 +330,7 @@ const EventManagement = () => {
               <form
                 className="form-design px-3 py-2 help-support-form row  justify-content-center"
                 action=""
-                onSubmit={handleSubmit2(onEditSave)}
-              >
+                onSubmit={handleSubmit2(onEditSave)}>
                 <div className="form-group col-4">
                   <label htmlFor="">Event Name</label>
                   <input
@@ -359,9 +358,7 @@ const EventManagement = () => {
                     className="form-control"
                     name="address"
                     disabled
-                    defaultValue={
-                      eventInfo?.event_location?.city
-                    }
+                    defaultValue={eventInfo?.event_location?.city}
                   />
                 </div>
                 {(formValues || [])?.map((element, index) => (
@@ -377,8 +374,7 @@ const EventManagement = () => {
                           onChange={(e) => {
                             handleChange(index, e);
                             createOptionsServices(e.target.value);
-                          }}
-                        >
+                          }}>
                           <option selected="" value="">
                             Select
                           </option>
@@ -394,8 +390,7 @@ const EventManagement = () => {
                           aria-label="Default select example"
                           name="package"
                           value={element.package || ""}
-                          onChange={(e) => handleChange(index, e)}
-                        >
+                          onChange={(e) => handleChange(index, e)}>
                           <option selected="" value="">
                             Select
                           </option>
@@ -420,8 +415,7 @@ const EventManagement = () => {
                           style={{ padding: "5px 20px" }}
                           type="button"
                           disabled={formValues?.length <= 1 ? true : false}
-                          onClick={() => removeFormFields(index)}
-                        >
+                          onClick={() => removeFormFields(index)}>
                           <i className="fa fa-minus mt-1 mx-1" />
                         </button>
                       </div>
@@ -431,8 +425,7 @@ const EventManagement = () => {
                 <div className="form-group mb-0 col-12 text-center mt-3">
                   <a
                     className="comman_btn mx-3 "
-                    onClick={() => addFormFields()}
-                  >
+                    onClick={() => addFormFields()}>
                     Add more +
                   </a>
                   <button className="comman_btn" type="submit">
@@ -443,8 +436,107 @@ const EventManagement = () => {
                   <button
                     className="comman_btn d-none"
                     type="reset"
-                    id="ResetSSS"
-                  >
+                    id="ResetSSS">
+                    Reset
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        className="modal fade comman_modal"
+        id="staticBackdrop50"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabIndex={-1}
+        aria-labelledby="staticBackdropLabel"
+        aria-hidden="true">
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content border-0">
+            <div className="modal-header">
+              <h5 className="modal-title" id="staticBackdropLabel">
+                View Plan Details
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                id="closed"
+              />
+            </div>
+            <div className="modal-body">
+              <form
+                className="form-design px-3 py-2 help-support-form row  justify-content-center"
+                key={eventInfo}
+                action="">
+                <div className="form-group col-4">
+                  <label htmlFor="">Event Name</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="amount"
+                    defaultValue={eventInfo?.eventName}
+                    disabled
+                  />
+                </div>
+                <div className="form-group col-4">
+                  <label htmlFor="">Buyer Name</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="amount"
+                    defaultValue={eventInfo?.buyer?.full_name}
+                    disabled
+                  />
+                </div>{" "}
+                <div className="form-group col-4">
+                  <label htmlFor="">Event Location</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="address"
+                    disabled
+                    defaultValue={eventInfo?.event_location?.city}
+                  />
+                </div>
+                {(eventInfo?.packages || [])?.map((element, index) => (
+                  <div className="form-group mb-0 col-12 border-bottom">
+                    <div className="row" key={index}>
+                      <div className="form-group col-6 mt-3">
+                        <label htmlFor="">Service</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="address"
+                          disabled
+                          defaultValue={element?.service?.name_en}
+                        />
+                      </div>
+                      <div className="form-group col-6 mt-3">
+                        <label htmlFor="">Package</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="address"
+                          disabled
+                          defaultValue={element?.service?.name_en}
+                        />
+                      </div>
+
+                     
+                    </div>
+                  </div>
+                ))}
+               
+                <div className="form-group mb-0 col-12 text-center mt-3">
+                  <button
+                    className="comman_btn d-none"
+                    type="reset"
+                    id="ResetSSS">
                     Reset
                   </button>
                 </div>

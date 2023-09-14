@@ -11,6 +11,9 @@ import {
 } from "../../httpServices/dashHttpService";
 import { MDBDataTable } from "mdbreact";
 import moment from "moment";
+import { UploadOutlined } from "@ant-design/icons";
+import { Button, message, Upload } from "antd";
+
 const SubCategories = ({ cate }) => {
   const [allCategories, setAllCategories] = useState([]);
   const [allSubCategories, setAllSubCategories] = useState([]);
@@ -20,6 +23,7 @@ const SubCategories = ({ cate }) => {
   const [editSubCatEn, setEditSubCatEn] = useState("");
   const [editCatEn, setEditCatEn] = useState("");
   const [editSubCatAr, setEditSubCatAr] = useState("");
+  const [editedImg, setEditedImg] = useState();
   const [category, setCategory] = useState({
     columns: [
       {
@@ -70,6 +74,25 @@ const SubCategories = ({ cate }) => {
     rows: [],
   });
 
+  const props = {
+    name: "file",
+    action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
+    headers: {
+      authorization: "authorization-text",
+    },
+    onChange(info) {
+      if (info.file.status !== "uploading") {
+        console.log(info.file?.originFileObj);
+      }
+      if (info.file.status === "done") {
+        message.success(`${info.file.name} file uploaded successfully`);
+        setEditedImg(info.file?.originFileObj);
+      } else if (info.file.status === "error") {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+  };
+
   const {
     register,
     handleSubmit,
@@ -116,8 +139,7 @@ const SubCategories = ({ cate }) => {
               data-bs-target="#staticBackdrop1"
               className="comman_btn table_viewbtn mx-1"
               href="javascript:;"
-              onClick={() => editSubCategory(list?._id)}
-            >
+              onClick={() => editSubCategory(list?._id)}>
               Edit
             </a>
           </>
@@ -163,12 +185,13 @@ const SubCategories = ({ cate }) => {
     formData.append("category", editCatEn);
     formData.append("name_ar", editSubCatAr);
     formData.append("name_en", editSubCatEn);
-    formData.append("image", files?.upload_video2);
+    formData.append("image", editedImg);
     const { data } = await editSubCategoryData(CatId, formData);
 
     if (!data.error) {
       document.getElementById("modal2").click();
       getAllSubCat();
+      setEditedImg();
       Swal.fire({
         title: "Sub Category Modified Successfully!",
         icon: "success",
@@ -190,8 +213,7 @@ const SubCategories = ({ cate }) => {
           <form
             className="form-design py-4 px-3 help-support-form row  justify-content-between"
             action=""
-            onSubmit={handleSubmit(onSubmit)}
-          >
+            onSubmit={handleSubmit(onSubmit)}>
             <div className="form-group col-6">
               <label htmlFor="">Category</label>
               <select
@@ -202,8 +224,7 @@ const SubCategories = ({ cate }) => {
                 name="category"
                 {...register("category", {
                   required: "Category is required!",
-                })}
-              >
+                })}>
                 <option selected="">Select Category</option>
                 {(allCategories || [])?.map((item, index) => (
                   <option key={index} value={item?._id}>
@@ -227,13 +248,10 @@ const SubCategories = ({ cate }) => {
                 name="sub_category"
                 {...register("sub_category", {
                   required: "Sub Category Name is required!",
-                  pattern: {
-                    value: /^[A-Za-z\s]{1,}[\.]{0,1}[A-Za-z\s]{0,}$/,
-                    message: "Special Character not allowed!",
-                  },
+
                   maxLength: {
-                    value: 30,
-                    message: "Max length is 30 characters!",
+                    value: 50,
+                    message: "Max length is 50 characters!",
                   },
                   minLength: {
                     value: 2,
@@ -260,12 +278,12 @@ const SubCategories = ({ cate }) => {
                 {...register("sub_category_ar", {
                   required: "Sub Category(ar) Name is required!",
                   pattern: {
-                    value: /^[\u0621-\u064A\u0660-\u0669 ]+$/,
+                    value: /^[\u0621-\u064A\u0660-\u0669,{.'"!_-} ]+$/,
                     message: "Only Arabic Characters are allowed!",
                   },
                   maxLength: {
-                    value: 30,
-                    message: "Max length is 30 characters!",
+                    value: 50,
+                    message: "Max length is 50 characters!",
                   },
 
                   minLength: {
@@ -303,8 +321,7 @@ const SubCategories = ({ cate }) => {
               <button
                 className="comman_btn mt-1 d-none"
                 type="reset"
-                id="ResetSub"
-              >
+                id="ResetSub">
                 reset
               </button>
             </div>
@@ -315,9 +332,7 @@ const SubCategories = ({ cate }) => {
             <div className="col-auto">
               <h2>Sub Categories</h2>
             </div>
-            <div className="col-3">
-             
-            </div>
+            <div className="col-3"></div>
           </div>
           <div className="row">
             <div className="col-12 comman_table_design px-0">
@@ -331,7 +346,6 @@ const SubCategories = ({ cate }) => {
                   noBottomColumns
                   sortable
                 />
-                
               </div>
             </div>
           </div>
@@ -344,8 +358,7 @@ const SubCategories = ({ cate }) => {
         data-bs-keyboard="false"
         tabIndex={-1}
         aria-labelledby="staticBackdropLabel"
-        aria-hidden="true"
-      >
+        aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content border-0">
             <div className="modal-header">
@@ -365,23 +378,24 @@ const SubCategories = ({ cate }) => {
             </div>
             <div className="modal-body">
               <form
-                className="form-design px-3 py-2 help-support-form row align-items-end justify-content-center"
-                action=""
-              >
-                <div className="form-group col-6 choose_file position-relative">
-                  <span>Sub Category Image </span>{" "}
-                  <label htmlFor="upload_video">
-                    <i className="fa fa-camera me-1" />
-                    Choose File
-                  </label>{" "}
-                  <input
-                    type="file"
-                    className="form-control"
-                    defaultValue=""
-                    name="upload_video2"
-                    id="upload_video2"
-                    onChange={(e) => onFileSelection(e, "upload_video2")}
+                className="form-design px-3 py-2 help-support-form row  justify-content-center"
+                action="">
+                <div className="form-group col-6 ">
+                  <label htmlFor="">Sub-Category Image</label>
+                  <img
+                    src={editedSubCategories?.image}
+                    alt="image"
+                    className="table_img"
                   />
+                  {" --"}
+                  <Upload
+                    {...props}
+                    maxCount={1}
+                    key={editedSubCategories?.image}>
+                    <Button className="form-control" icon={<UploadOutlined />}>
+                      Click to Re-Upload
+                    </Button>
+                  </Upload>
                 </div>
 
                 <div className="form-group col-6">
@@ -390,12 +404,10 @@ const SubCategories = ({ cate }) => {
                     aria-label="Default select example"
                     name="category"
                     className="form-control"
-                    onChange={(e) => setEditCatEn(e.target.value)}
-                  >
+                    onChange={(e) => setEditCatEn(e.target.value)}>
                     <option
                       selected=""
-                      value={editedSubCategories?.category?._id}
-                    >
+                      value={editedSubCategories?.category?._id}>
                       {editedSubCategories?.category?.name_en}
                     </option>
                     {(allCategories || [])?.map((item, index) => (
@@ -436,8 +448,7 @@ const SubCategories = ({ cate }) => {
                 <button
                   className="comman_btn d-none"
                   id="modalSubReset"
-                  type="reset"
-                ></button>
+                  type="reset"></button>
               </form>
             </div>
           </div>

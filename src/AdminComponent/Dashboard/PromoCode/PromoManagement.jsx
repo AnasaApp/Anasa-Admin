@@ -441,35 +441,6 @@ console.log(res);
                     )}
                   </div>
 
-                  {/* <div className="form-group mb-0 col Select">
-                    <label htmlFor="">Select Users</label>
-                    <select
-                      aria-label="Default select example"
-                      className="form-select"
-                      name="select_user"
-                      onChange={(e) => setUsertypes(e.target.value)}
-                    >
-                      <option selected="">Select Users</option>
-                      <option value="all">All</option>
-                      <option value="specific">Specific User</option>
-                    </select>
-                  </div>
-
-                  <div className="form-group mb-0 col">
-                    <label htmlFor="">Search User</label>
-                    <Select
-                      defaultValue=""
-                      isMulti
-                      name="users"
-                      options={options}
-                      className="basic-multi-select z-3"
-                      classNamePrefix="select"
-                      onChange={handleChange}
-                      value={selectedUsers?.usersSelected}
-                      onInputChange={handleInputChange}
-                      isDisabled={userTypes === "specific" ? false : true}
-                    />
-                  </div> */}
                   <div className="form-group mb-0 mt-4 col-12 text-center">
                     <button className="comman_btn" type="submit">
                       Save
@@ -508,6 +479,7 @@ console.log(res);
                 <div className="row">
                   <div className="col-12 comman_table_design px-0">
                     <div className="table-responsive p-1">
+
                       <MDBDataTable
                         bordered
                         displayEntries={false}
@@ -517,81 +489,9 @@ console.log(res);
                         noBottomColumns
                         sortable
                       />
-                      {/* <table className="table mb-0">
-                        <thead>
-                          <tr>
-                            <th>S.No.</th>
-                            <th>Promo Code (En)</th>
-                            <th>Promo Code (Ar)</th>
-                            <th>Image</th>
-                            <th>Discount %</th>
-                            <th>Valid From</th>
-                            <th>Valid Till</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {(promoCodes || [])?.map((item, ind) => (
-                            <tr>
-                              <td>{ind + 1}</td>
-                              <td>{item?.name_en}</td>
-                              <td>{item?.name_ar}</td>
-                              <td>
-                                <img
-                                  className="table_img"
-                                  width={70}
-                                  height={60}
-                                  src={
-                                    item?.images
-                                      ? item?.images
-                                      : require("../../../assets/img/Nupload.jpg")
-                                  }
-                                  alt=""
-                                />
-                              </td>
-                              <td>{item?.discount}</td>
-                              <td>{item?.validFrom?.slice(0, 10)}</td>
-                              <td>{item?.validTo?.slice(0, 10)}</td>
-                              <td>
-                                <div className="check_toggle">
-                                  <input
-                                    type="checkbox"
-                                    defaultChecked={item?.status}
-                                    name="checkv4"
-                                    id={ind}
-                                    className="d-none"
-                                    onClick={() => {
-                                      PromoCodeStatus(item?._id);
-                                    }}
-                                  />
-                                  <label
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#staticBackdrop12"
-                                    htmlFor={ind}
-                                  />
-                                </div>
-                              </td>
-                              <td>
-                                <a
-                                  className="comman_btn table_viewbtn mx-1"
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#staticBackdrop22"
-                                  onClick={() => handleView(item._id)}
-                                >
-                                  Edit
-                                </a>
-                                <a
-                                  className="comman_btn2 table_viewbtn"
-                                  onClick={DeleteCode}
-                                >
-                                  Delete
-                                </a>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table> */}
+
+
+                    
                     </div>
                   </div>
                 </div>
