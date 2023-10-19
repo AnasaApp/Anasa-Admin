@@ -136,6 +136,7 @@ const CommissionManagement = () => {
       subCategory: formData?.subCategory,
       commissionPrice: formData?.commission,
     });
+    console.log(data);
     if (!data.error) {
       getCommissions();
       setFormData(null);

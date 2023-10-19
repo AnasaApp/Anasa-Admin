@@ -177,8 +177,7 @@ const PromoManagement = () => {
                 className="comman_btn table_viewbtn mx-1"
                 data-bs-toggle="modal"
                 data-bs-target="#staticBackdrop22"
-                onClick={() => handleView(list?._id)}
-              >
+                onClick={() => handleView(list?._id)}>
                 Edit
               </a>
               {/* <a className="comman_btn2 table_viewbtn" onClick={DeleteCode}>
@@ -196,20 +195,20 @@ const PromoManagement = () => {
   };
 
   const onSubmit = async (data) => {
-    let formData = new FormData()
+    let formData = new FormData();
 
-    formData.append("name_en",data?.promo_code_en)
-    formData.append("name_ar",data?.promo_code_ar)
-    formData.append("discount", data?.discount)
-    formData.append("validFrom",data?.dateFrom)
-    formData.append("validTo",data?.dateTo)
-    formData.append("image",files[0])
+    formData.append("name_en", data?.promo_code_en);
+    formData.append("name_ar", data?.promo_code_ar);
+    formData.append("discount", data?.discount);
+    formData.append("validFrom", data?.dateFrom);
+    formData.append("validTo", data?.dateTo);
+    formData.append("image", files[0]);
     // formData.append("selectedUsers",userTypes === "specific" &&
     // selectedUsers.usersSelected?.map((item) => item?.value),)
     await AddPromoCode(formData).then((res) => {
       document.getElementById("ResetPromo").click();
       GetPromocodes();
-      setFiles([])
+      setFiles([]);
       if (!res.data.error) {
         Swal.fire({
           title: "Promo Code Added!",
@@ -222,37 +221,30 @@ const PromoManagement = () => {
   };
 
   const onEdit = async (data) => {
-console.log(data);
-let formData = new FormData();
+    console.log(data);
+    let formData = new FormData();
     formData.append("name_en", data?.promo_code_en_edit);
     formData.append("name_ar", data?.promo_code_ar_edit);
     formData.append("discount", data?.EditDiscount);
     formData.append("validFrom", data?.dateFromEdit);
     formData.append("validTo", data?.dateToEdit);
-    formData.append("image", files);
-    
- const res = await editPromocode(promoId, formData)
-console.log(res);
-      if (!res.error) {
-        document.getElementById("modal").click();
-        GetPromocodes();
-        setFiles([])
-        Swal.fire({
-          title: "Promocode Modified Successfully!",
-          icon: "success",
-          confirmButtonText: "Ok",
-          confirmButtonColor: "#e25829",
-        });
-      }
-    ;
+    formData.append("image", files?.comboImg ? files?.comboImg : "");
+
+    const res = await editPromocode(promoId, formData);
+    console.log(res);
+    if (!res.error) {
+      document.getElementById("modal").click();
+      GetPromocodes();
+      setFiles([]);
+      Swal.fire({
+        title: "Promocode Modified Successfully!",
+        icon: "success",
+        confirmButtonText: "Ok",
+        confirmButtonColor: "#e25829",
+      });
+    }
   };
 
-  const DeleteCode = async () => {};
-  const handleChange = (selected) => {
-    setSelectedUsers({
-      usersSelected: selected,
-    });
-  };
   const handleView = async (id) => {
     setPromoId(id);
     const { data } = await getViewPromo(id);
@@ -275,12 +267,8 @@ console.log(res);
   const handleInputChange = (inputValue) => {
     setSearchKey(inputValue);
   };
-  const onFileSelection = async (e) => {
-    const formData = new FormData();
-    formData.append("image", e.target.files[0]);
-    const data = await ImageUpload(formData);
-    console.log(data.data?.results.obj);
-    setFiles(data.data.results?.obj);
+  const onFileSelection = (e, key) => {
+    setFiles({ ...files, [key]: e.target.files[0] });
   };
 
   console.log(files);
@@ -323,8 +311,7 @@ console.log(res);
                 <form
                   className="form-design py-4 px-3 help-support-form row  justify-content-between"
                   action=""
-                  onSubmit={handleSubmit(onSubmit)}
-                >
+                  onSubmit={handleSubmit(onSubmit)}>
                   <div className="form-group col-4">
                     <label htmlFor="">Promo Code (En)</label>
                     <input
@@ -449,8 +436,7 @@ console.log(res);
                       className="comman_btn d-none"
                       type="reset"
                       id="ResetPromo"
-                      onClick={() => setSelectedUsers({ usersSelected: [] })}
-                    >
+                      onClick={() => setSelectedUsers({ usersSelected: [] })}>
                       Reset
                     </button>
                   </div>
@@ -479,7 +465,6 @@ console.log(res);
                 <div className="row">
                   <div className="col-12 comman_table_design px-0">
                     <div className="table-responsive p-1">
-
                       <MDBDataTable
                         bordered
                         displayEntries={false}
@@ -489,9 +474,6 @@ console.log(res);
                         noBottomColumns
                         sortable
                       />
-
-
-                    
                     </div>
                   </div>
                 </div>
@@ -507,8 +489,7 @@ console.log(res);
         data-bs-keyboard="false"
         tabIndex={-1}
         aria-labelledby="staticBackdropLabel"
-        aria-hidden="true"
-      >
+        aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content border-0">
             <div className="modal-header">
@@ -531,20 +512,19 @@ console.log(res);
                 className="form-design px-3 py-2 help-support-form row  justify-content-center"
                 action=""
                 onSubmit={handleSubmit2(onEdit)}
-                noValidate
-              >
+                noValidate>
                 <div className="form-group col-6 choose_file position-relative">
                   <span>Promo Code Image </span>{" "}
-                  <label htmlFor="upload_video_1">
+                  <label htmlFor="upload_video_combo">
                     <i className="fa fa-camera me-1" />
                     Choose File
                   </label>{" "}
                   <input
                     type="file"
-                    className="form-control"
-                    name="upload_video_1"
-                    id="upload_video_1"
-                    onChange={(e) => onFileSelection(e)}
+                    className="form-control mx-3"
+                    name="comboImg"
+                    id="upload_video_combo"
+                    onChange={(e) => onFileSelection(e, "comboImg")}
                   />
                 </div>
                 <div className="form-group col-6">
@@ -610,15 +590,14 @@ console.log(res);
                 <div className="form-group col-6">
                   <label htmlFor="">Valid From</label>
                   <input
-                  required={false}
+                    required={false}
                     type="date"
                     id="from"
                     className={classNames("form-control", {
                       "is-invalid": errors2.dateFromEdit,
                     })}
                     name="dateFromEdit"
-                    {...register2("dateFromEdit", {
-                    })}
+                    {...register2("dateFromEdit", {})}
                   />
                 </div>
 
@@ -649,8 +628,7 @@ console.log(res);
                   <button
                     className="comman_btn d-none"
                     type="reset"
-                    id="resetModal"
-                  >
+                    id="resetModal">
                     reset
                   </button>
                 </div>

@@ -237,19 +237,7 @@ const AdvertiseManagement = () => {
     });
   };
 
-  const onSearch = async (e) => {
-    let search = e.target.value;
-    if (search !== "") {
-      let newArr = allAdds[0]?.vendor.filter((itm) =>
-        itm.full_name.toLowerCase().includes(search?.toLowerCase())
-      );
-      console.log(newArr);
-      setAllAdds(newArr);
-    } else {
-      GetAllAdds();
-    }
-  };
-
+ 
   const getBarClick = (val) => {
     console.log(val);
     setSideBar(val);

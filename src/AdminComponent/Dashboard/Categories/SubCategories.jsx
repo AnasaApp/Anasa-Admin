@@ -6,13 +6,12 @@ import {
   AddSubCategory,
   AllCategory,
   AllSubCategory,
+  changeSubCateStatus,
   editSubCategoryData,
   getViewSubCategory,
 } from "../../httpServices/dashHttpService";
 import { MDBDataTable } from "mdbreact";
 import moment from "moment";
-import { UploadOutlined } from "@ant-design/icons";
-import { Button, message, Upload } from "antd";
 
 const SubCategories = ({ cate }) => {
   const [allCategories, setAllCategories] = useState([]);
@@ -63,7 +62,12 @@ const SubCategories = ({ cate }) => {
         sort: "asc",
         width: 100,
       },
-
+      {
+        label: "Status",
+        field: "status",
+        sort: "asc",
+        width: 100,
+      },
       {
         label: "ACTION",
         field: "action",
@@ -73,25 +77,6 @@ const SubCategories = ({ cate }) => {
     ],
     rows: [],
   });
-
-  const props = {
-    name: "file",
-    action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
-    headers: {
-      authorization: "authorization-text",
-    },
-    onChange(info) {
-      if (info.file.status !== "uploading") {
-        console.log(info.file?.originFileObj);
-      }
-      if (info.file.status === "done") {
-        message.success(`${info.file.name} file uploaded successfully`);
-        setEditedImg(info.file?.originFileObj);
-      } else if (info.file.status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    },
-  };
 
   const {
     register,
@@ -132,6 +117,23 @@ const SubCategories = ({ cate }) => {
         returnData.name_en = list?.name_en;
         returnData.name_ar = list?.name_ar;
         returnData.date = moment(list?.createdAt).format("L");
+        returnData.status = (
+          <>
+            <div className="check_toggle" key={list?._id}>
+              <input
+                type="checkbox"
+                defaultChecked={list?.status}
+                name="check1"
+                id={list?._id}
+                className="d-none"
+                onClick={() => {
+                  SubCateStatus(list?._id);
+                }}
+              />
+              <label for={list?._id}></label>
+            </div>
+          </>
+        );
         returnData.action = (
           <>
             <a
@@ -150,9 +152,25 @@ const SubCategories = ({ cate }) => {
       setCategory({ ...category, rows: newRows });
     }
   };
+
+  const SubCateStatus = async (id) => {
+    const { data } = await changeSubCateStatus(id);
+
+    if (!data?.error) {
+      getAllCat();
+      Swal.fire({
+        title: "Sub-Category Status Changed!",
+        icon: "success",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+  };
+  
   const onFileSelection = (e, key) => {
     setFiles({ ...files, [key]: e.target.files[0] });
   };
+
   const onSubmit = async (data) => {
     const formData = new FormData();
     formData.append("name_en", data?.sub_category?.trim());
@@ -170,6 +188,7 @@ const SubCategories = ({ cate }) => {
         confirmButtonText: "Ok",
         confirmButtonColor: "#e25829",
       });
+      setFiles([]);
     }
   };
 
@@ -185,9 +204,8 @@ const SubCategories = ({ cate }) => {
     formData.append("category", editCatEn);
     formData.append("name_ar", editSubCatAr);
     formData.append("name_en", editSubCatEn);
-    formData.append("image", editedImg);
+    formData.append("image", files?.subCateImg);
     const { data } = await editSubCategoryData(CatId, formData);
-
     if (!data.error) {
       document.getElementById("modal2").click();
       getAllSubCat();
@@ -198,6 +216,7 @@ const SubCategories = ({ cate }) => {
         confirmButtonText: "Ok",
         confirmButtonColor: "#e25829",
       });
+      setFiles([]);
     }
   };
 
@@ -382,20 +401,16 @@ const SubCategories = ({ cate }) => {
                 action="">
                 <div className="form-group col-6 ">
                   <label htmlFor="">Sub-Category Image</label>
-                  <img
-                    src={editedSubCategories?.image}
-                    alt="image"
-                    className="table_img"
+
+                  <input
+                    type="file"
+                    className="form-control mx-2"
+                    defaultValue=""
+                    accept="image/*"
+                    name="subCateImg"
+                    id="subCateImgEdit"
+                    onChange={(e) => onFileSelection(e, "subCateImg")}
                   />
-                  {" --"}
-                  <Upload
-                    {...props}
-                    maxCount={1}
-                    key={editedSubCategories?.image}>
-                    <Button className="form-control" icon={<UploadOutlined />}>
-                      Click to Re-Upload
-                    </Button>
-                  </Upload>
                 </div>
 
                 <div className="form-group col-6">
@@ -435,6 +450,8 @@ const SubCategories = ({ cate }) => {
                   <label htmlFor="">Sub Category Name (Ar)</label>
                   <input
                     type="text"
+                    lang="ar"
+                    dir="rtl"
                     defaultValue={editedSubCategories?.name_ar}
                     className="form-control"
                     onChange={(e) => setEditSubCatAr(e.target.value)}

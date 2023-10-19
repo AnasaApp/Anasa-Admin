@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import {
   AddCategory,
   AllCategory,
+  changeCateStatus,
   editCategoryData,
   getViewCategory,
 } from "../../httpServices/dashHttpService";
@@ -59,6 +60,12 @@ const Categories = () => {
         sort: "asc",
         width: 100,
       },
+      {
+        label: "Status",
+        field: "status",
+        sort: "asc",
+        width: 100,
+      },
 
       {
         label: "ACTION",
@@ -69,25 +76,6 @@ const Categories = () => {
     ],
     rows: [],
   });
-
-  const props = {
-    name: "file",
-    action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
-    headers: {
-      authorization: "authorization-text",
-    },
-    onChange(info) {
-      if (info.file.status !== "uploading") {
-        console.log(info.file?.originFileObj);
-      }
-      if (info.file.status === "done") {
-        message.success(`${info.file.name} file uploaded successfully`);
-        setEditedImg(info.file?.originFileObj);
-      } else if (info.file.status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    },
-  };
 
   const getBarClick = (val) => {
     console.log(val);
@@ -119,6 +107,23 @@ const Categories = () => {
         returnData.name_en = list?.name_en;
         returnData.name_ar = list?.name_ar;
         returnData.date = moment(list?.createdAt).format("L");
+        returnData.status = (
+          <>
+            <div className="check_toggle" key={list?._id}>
+              <input
+                type="checkbox"
+                defaultChecked={list?.status}
+                name="check1"
+                id={list?._id}
+                className="d-none"
+                onClick={() => {
+                  CateStatus(list?._id);
+                }}
+              />
+              <label for={list?._id}></label>
+            </div>
+          </>
+        );
         returnData.action = (
           <>
             <a
@@ -137,6 +142,20 @@ const Categories = () => {
       setCategory({ ...category, rows: newRows });
     }
     // setAllCategories(data?.results?.categories);
+  };
+
+  const CateStatus = async (id) => {
+    const { data } = await changeCateStatus(id);
+
+    if (!data?.error) {
+      getAllCat();
+      Swal.fire({
+        title: "Category Status Changed!",
+        icon: "success",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
   };
 
   const onFileSelection = (e, key) => {
@@ -175,7 +194,7 @@ const Categories = () => {
     const formData = new FormData();
     formData.append("name_en", editCatEn);
     formData.append("name_ar", editCatAr);
-    formData.append("image", editedImg);
+    formData.append("image", files?.cateImg);
     console.log(formData);
     const { data } = await editCategoryData(CatId, formData);
     console.log(data);
@@ -425,30 +444,21 @@ const Categories = () => {
                 action="">
                 <div className="form-group col-6">
                   <label htmlFor="">Category Image</label>
-                  <img
+                  {/* <img
                     src={editedCategories?.image}
                     alt="image"
                     className="table_img"
-                  />
-                  {" --"}
-                  <Upload {...props} maxCount={1} key={editedCategories?.image}>
-                    <Button className="form-control" icon={<UploadOutlined />}>
-                      Click to Re-Upload
-                    </Button>
-                  </Upload>
-                  {/* <label htmlFor="">
-                    <i className="fa fa-camera me-1 " />
-                    Choose File
-                  </label>
+                  /> */}
+
                   <input
                     type="file"
                     className="form-control mx-2"
                     defaultValue=""
                     accept="image/*"
-                    name="upload_video_edit"
-                    id=""
-                    onChange={(e) => onFileSelection(e, "upload_video_edit")}
-                  /> */}
+                    name="cateImg"
+                    id="cateImgEdit"
+                    onChange={(e) => onFileSelection(e, "cateImg")}
+                  />
                 </div>
                 <div className="form-group col-6">
                   <label htmlFor="">Category Name (En)</label>
@@ -465,6 +475,8 @@ const Categories = () => {
                   <label htmlFor="">Category Name (Ar)</label>
                   <input
                     type="text"
+                    lang="ar"
+                    dir="rtl"
                     defaultValue={editedCategories?.name_ar}
                     className="form-control"
                     onChange={(e) => setEditCatAr(e.target.value)}

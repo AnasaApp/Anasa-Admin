@@ -78,12 +78,12 @@ const AddUser = () => {
                   <div className="form-group col-4 mb-4 choose_file position-relative">
                     <span>Upload Image</span>{" "}
                     <label htmlFor="upload_video">
-                      <i className="fal fa-camera me-1" />
+                      <i className="fa fa-camera me-1" />
                       Choose File
                     </label>
                     <input
                       type="file"
-                      className={classNames("form-control", {
+                      className={classNames("form-control mx-3", {
                         "is-invalid": errors.shop_cover_image,
                       })}
                       accept="image/*"
@@ -1171,7 +1171,7 @@ const AddUser = () => {
                               </p>
                             ) : (
                               <p>
-                                <i className="fa fa-download" /> Upload File
+                                <i className="fa fa-upload" /> Upload File
                               </p>
                             )}
                           </div>
@@ -1214,7 +1214,7 @@ const AddUser = () => {
                               </p>
                             ) : (
                               <p>
-                                <i className="fa fa-download" /> Upload File
+                                <i className="fa fa-upload" /> Upload File
                               </p>
                             )}
                           </div>

@@ -26,7 +26,6 @@ const MarketingOffers = () => {
   const [slide, setSlide] = useState("MO");
   const [sideBar, setSideBar] = useState();
   const [files, setFiles] = useState();
-  const [userTypes, setUsertypes] = useState();
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
   const [searchKey, setSearchKey] = useState("");
@@ -39,9 +38,7 @@ const MarketingOffers = () => {
   const [subCategoryData, setSubCategoryData] = useState();
   const [offers, setAllOffers] = useState([]);
   const [offerId, setOfferId] = useState();
-  const [categoryEditId, setCategoryEditId] = useState();
-  const [subEditCategory, setSubEditCategory] = useState([]);
-  const [subCategoryId, setSubCategoryId] = useState();
+ 
   const [offerData, setOfferData] = useState();
   const [vendors, setVendors] = useState([]);
   const [selectVendor, setSelectVendor] = useState();

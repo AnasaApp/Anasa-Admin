@@ -526,12 +526,9 @@ const EventManagement = () => {
                           defaultValue={element?.service?.name_en}
                         />
                       </div>
-
-                     
                     </div>
                   </div>
                 ))}
-               
                 <div className="form-group mb-0 col-12 text-center mt-3">
                   <button
                     className="comman_btn d-none"

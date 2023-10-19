@@ -14,6 +14,7 @@ const AdminLogin = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
+  
   const navigate = useNavigate();
   let AdminData = JSON.parse(localStorage.getItem("AdminSave"));
   function togglePassword() {
