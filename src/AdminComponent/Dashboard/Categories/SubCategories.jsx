@@ -13,7 +13,7 @@ import {
 import { MDBDataTable } from "mdbreact";
 import moment from "moment";
 
-const SubCategories = ({ cate }) => {
+const SubCategories = ({ cate, croppedImage }) => {
   const [allCategories, setAllCategories] = useState([]);
   const [allSubCategories, setAllSubCategories] = useState([]);
   const [files, setFiles] = useState();
@@ -176,8 +176,11 @@ const SubCategories = ({ cate }) => {
     formData.append("name_en", data?.sub_category?.trim());
     formData.append("name_ar", data?.sub_category_ar?.trim());
     formData.append("category", data?.category);
-    formData.append("image", files?.upload_video);
+    // formData.append("image", files?.upload_video);
+    formData.append("image", croppedImage );
     const res = await AddSubCategory(formData);
+    console.log(croppedImage)
+    // let res = true
     console.log(res);
     if (!res.data.error) {
       getAllSubCat();
@@ -204,7 +207,8 @@ const SubCategories = ({ cate }) => {
     formData.append("category", editCatEn);
     formData.append("name_ar", editSubCatAr);
     formData.append("name_en", editSubCatEn);
-    formData.append("image", files?.subCateImg);
+    // formData.append("image", files?.subCateImg);
+    formData.append("image", croppedImage);
     const { data } = await editSubCategoryData(CatId, formData);
     if (!data.error) {
       document.getElementById("modal2").click();

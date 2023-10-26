@@ -7,7 +7,7 @@ export async function updateProfile(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/updateProfile`,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -19,7 +19,7 @@ export async function updateProfile(formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response?.data);
+      // console.log(error?.response?.data);
       Swal.fire({
         title: error?.response?.data.message,
         text: "",
@@ -37,12 +37,12 @@ export async function getBuyers(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/getBuyers`,
       formData
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -59,12 +59,12 @@ export async function getBuyersDetails(id) {
     const { data } = await appHttpService.get(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/getBuyer` + "/" + id
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -81,12 +81,12 @@ export async function changeBuyerStatus(id) {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/changeStatus` + "/" + id
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -103,12 +103,12 @@ export async function changeCateStatus(id) {
     const { data } = await appHttpService.get(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/categoryStatus` + "/" + id
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -123,14 +123,39 @@ export async function changeCateStatus(id) {
 export async function changeSubCateStatus(id) {
   try {
     const { data } = await appHttpService.get(
-      `${process.env.REACT_APP_APIENDPOINT}api/admin/subCategoriesStatus` + "/" + id
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/subCategoriesStatus` +
+        "/" +
+        id
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
+
+export async function changeServiceStatus(id) {
+  try {
+    const { data } = await appHttpService.get(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/changeServiceStatus` +
+        "/" +
+        id
+    );
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -147,11 +172,11 @@ export async function getBuyerBookings(id) {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/getBookings` + "/" + id
     );
-    console.log(data);
+    // console.log(data);
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -168,12 +193,12 @@ export async function getBuyerBookingDetails(id) {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/viewBooking` + "/" + id
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -190,12 +215,12 @@ export async function getBuyerSupport(id) {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/getChatSupports` + "/" + id
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -213,7 +238,7 @@ export async function AddCategory(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/newCategory`,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -225,7 +250,7 @@ export async function AddCategory(formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -243,12 +268,12 @@ export async function getServices() {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/getAllServices`
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -266,7 +291,7 @@ export async function AllCategory() {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/getCategories`
     );
-    console.log(data);
+    // console.warn(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -278,7 +303,7 @@ export async function AllCategory() {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -295,12 +320,12 @@ export async function getViewCategory(id) {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/viewCategories` + "/" + id
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -318,12 +343,12 @@ export async function getSubCategory(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/subCategoryByCategory`,
       formData
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -342,12 +367,12 @@ export async function getViewSubCategory(id) {
         "/" +
         id
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -365,7 +390,7 @@ export async function AddSubCategory(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/addSubCategory`,
       formData
     );
-    console.log(data);
+    // console.log(data);
 
     if (data?.error) {
       Swal.fire({
@@ -378,7 +403,7 @@ export async function AddSubCategory(formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response?.data);
+      // console.log(error?.response?.data);
       Swal.fire({
         title: error?.response?.data.message,
         text: "",
@@ -395,7 +420,7 @@ export async function AllSubCategory() {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/getSubCategories`
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -407,7 +432,7 @@ export async function AllSubCategory() {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: error?.response?.data.message,
@@ -425,7 +450,7 @@ export async function editCategoryData(id, formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/editCategory` + "/" + id,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -438,7 +463,7 @@ export async function editCategoryData(id, formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -456,7 +481,7 @@ export async function editSubCategoryData(id, formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/editSubCat` + "/" + id,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -468,7 +493,7 @@ export async function editSubCategoryData(id, formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -487,7 +512,7 @@ export async function AddEventDetails(formData, id) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/addDetails` + "/" + id,
       formData
     );
-    console.log(data);
+    // console.log(data);
 
     if (data?.error) {
       Swal.fire({
@@ -500,7 +525,7 @@ export async function AddEventDetails(formData, id) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response?.data);
+      // console.log(error?.response?.data);
       Swal.fire({
         title: error?.response?.data.message,
         text: "",
@@ -519,7 +544,7 @@ export async function AllEventRequest(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/getAllRequests`,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -531,7 +556,7 @@ export async function AllEventRequest(formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -548,7 +573,7 @@ export async function GetEventReqInfo(id) {
     const { data } = await appHttpService.get(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/viewRequest` + "/" + id
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -560,7 +585,7 @@ export async function GetEventReqInfo(id) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -578,7 +603,7 @@ export async function AllVendors(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/getVendors`,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -590,7 +615,7 @@ export async function AllVendors(formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -610,7 +635,7 @@ export async function GetVendorByCate(id) {
         categoryId: id,
       }
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -622,7 +647,7 @@ export async function GetVendorByCate(id) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -641,7 +666,7 @@ export async function GetVendorWallet(id) {
         "/" +
         id
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -653,7 +678,7 @@ export async function GetVendorWallet(id) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -673,12 +698,12 @@ export async function getVendorDetails(id, formData) {
         formData,
       }
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -698,12 +723,12 @@ export async function getVendorBooking(id, formData) {
         id,
       formData
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -721,12 +746,12 @@ export async function downloadFiles(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/vendor/saveImage`,
       formData
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -748,12 +773,12 @@ export async function getVendorTransactions(id, formData) {
         formData,
       }
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -773,12 +798,12 @@ export async function getVendorServices(id, formData) {
         formData,
       }
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -795,12 +820,12 @@ export async function ApproveVender(id) {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/approveVendor` + "/" + id
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -818,7 +843,7 @@ export async function RejectVender(id, formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/rejectVendor` + "/" + id,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data.error) {
       Swal.fire({
         title: data.message,
@@ -830,7 +855,7 @@ export async function RejectVender(id, formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -848,7 +873,7 @@ export async function AddVendor(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/addVendor`,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -860,7 +885,7 @@ export async function AddVendor(formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response?.data);
+      // console.log(error?.response?.data);
       Swal.fire({
         title: error?.response?.data.message,
         text: "",
@@ -878,7 +903,7 @@ export async function AllBookings(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/getallBookings`,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -890,7 +915,7 @@ export async function AllBookings(formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -908,7 +933,7 @@ export async function CompletedBookings(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/completeBookings`,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -920,7 +945,7 @@ export async function CompletedBookings(formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -938,7 +963,7 @@ export async function CancelledBookings(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/cancelBookings`,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -950,7 +975,7 @@ export async function CancelledBookings(formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -967,12 +992,12 @@ export async function changeVendorStatus(id) {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/vendorStatus` + "/" + id
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -990,7 +1015,7 @@ export async function SearchUser(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/searchUser`,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1002,7 +1027,7 @@ export async function SearchUser(formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -1019,7 +1044,7 @@ export async function SearchVendorServices(id) {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/vendorServices` + "/" + id
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1031,7 +1056,7 @@ export async function SearchVendorServices(id) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -1049,7 +1074,7 @@ export async function VendorServices(id) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/serviceByVendors`,
       { vendorId: id }
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1061,7 +1086,7 @@ export async function VendorServices(id) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -1079,7 +1104,7 @@ export async function AddPromoCode(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/addPromocode`,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1091,7 +1116,7 @@ export async function AddPromoCode(formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response?.data);
+      // console.log(error?.response?.data);
       Swal.fire({
         title: error?.response?.data.message,
         text: "",
@@ -1108,7 +1133,7 @@ export async function AllPromocodes() {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/getAllPromocodes`
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1120,7 +1145,7 @@ export async function AllPromocodes() {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -1138,7 +1163,7 @@ export async function DeletePromoCode(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/`,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1150,7 +1175,7 @@ export async function DeletePromoCode(formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response?.data);
+      // console.log(error?.response?.data);
       Swal.fire({
         title: error?.response?.data.message,
         text: "",
@@ -1169,7 +1194,7 @@ export async function AddAddvertise(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/addAdvertisement`,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1181,7 +1206,7 @@ export async function AddAddvertise(formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response?.data);
+      // console.log(error?.response?.data);
       Swal.fire({
         title: error?.response?.data.message,
         text: "",
@@ -1200,7 +1225,7 @@ export async function DeleteAddvertise(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/deleteAdvertisement`,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1212,7 +1237,7 @@ export async function DeleteAddvertise(formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response?.data);
+      // console.log(error?.response?.data);
       Swal.fire({
         title: error?.response?.data.message,
         text: "",
@@ -1230,7 +1255,7 @@ export async function AllAdvertisement(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/getAllAdvertisement`,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1242,7 +1267,7 @@ export async function AllAdvertisement(formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -1259,12 +1284,12 @@ export async function getViewPromo(id) {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/getPromocode` + "/" + id
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -1282,7 +1307,7 @@ export async function editPromocode(id, formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/editPromocode` + "/" + id,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1294,7 +1319,7 @@ export async function editPromocode(id, formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -1311,12 +1336,12 @@ export async function changePromocodeStatus(id) {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/promocodeStatus` + "/" + id
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -1335,12 +1360,12 @@ export async function SearchVendor(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/searchVendor`,
       formData
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -1358,7 +1383,7 @@ export async function addCommission(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/addCommission`,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1370,7 +1395,7 @@ export async function addCommission(formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response?.data);
+      // console.log(error?.response?.data);
       Swal.fire({
         title: error?.response?.data.message,
         text: "",
@@ -1387,7 +1412,7 @@ export async function AllCommision() {
     const { data } = await appHttpService.get(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/getCommissions`
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1399,7 +1424,7 @@ export async function AllCommision() {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -1416,12 +1441,12 @@ export async function getViewCommission(id) {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/viewCommissions` + "/" + id
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -1440,7 +1465,7 @@ export async function AddCombo(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/addOffer`,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1452,7 +1477,7 @@ export async function AddCombo(formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response?.data);
+      // console.log(error?.response?.data);
       Swal.fire({
         title: error?.response?.data.message,
         text: "",
@@ -1470,7 +1495,7 @@ export async function editOffer(id, formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/editOffer` + "/" + id,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1482,7 +1507,7 @@ export async function editOffer(id, formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -1501,7 +1526,7 @@ export async function editWallet(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/withdrawFromVendor`,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1513,7 +1538,7 @@ export async function editWallet(formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -1531,7 +1556,7 @@ export async function EditCommission(formData, id) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/editCommission` + "/" + id,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1543,7 +1568,7 @@ export async function EditCommission(formData, id) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response?.data);
+      // console.log(error?.response?.data);
       Swal.fire({
         title: error?.response?.data.message,
         text: "",
@@ -1561,7 +1586,7 @@ export async function AllOffers() {
     const { data } = await appHttpService.get(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/getAllOffer`
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1573,7 +1598,7 @@ export async function AllOffers() {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -1591,12 +1616,12 @@ export async function getViewCombo(id) {
     const { data } = await appHttpService.get(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/getOffer` + "/" + id
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -1614,7 +1639,7 @@ export async function AboutUs() {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/getAboutUs`
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1626,7 +1651,7 @@ export async function AboutUs() {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -1643,7 +1668,7 @@ export async function TermCondition() {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/getTandC`
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1655,7 +1680,7 @@ export async function TermCondition() {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -1672,7 +1697,7 @@ export async function PrivacyPolicy() {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/getPrivacyPolicy`
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1684,7 +1709,7 @@ export async function PrivacyPolicy() {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -1702,7 +1727,7 @@ export async function EditAbout(formData, id) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/editAboutUs` + "/" + id,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1714,7 +1739,7 @@ export async function EditAbout(formData, id) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response?.data);
+      // console.log(error?.response?.data);
       Swal.fire({
         title: error?.response?.data.message,
         text: "",
@@ -1733,7 +1758,7 @@ export async function EditTerms(formData, id) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/editTandC` + "/" + id,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1745,7 +1770,7 @@ export async function EditTerms(formData, id) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response?.data);
+      // console.log(error?.response?.data);
       Swal.fire({
         title: error?.response?.data.message,
         text: "",
@@ -1765,7 +1790,7 @@ export async function EditPrivacy(formData, id) {
         id,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1777,7 +1802,7 @@ export async function EditPrivacy(formData, id) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response?.data);
+      // console.log(error?.response?.data);
       Swal.fire({
         title: error?.response?.data.message,
         text: "",
@@ -1795,7 +1820,7 @@ export async function VendorTransactions(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/getTransactions`,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1807,7 +1832,7 @@ export async function VendorTransactions(formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -1826,7 +1851,7 @@ export async function BuyerTransactions(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/buyerTransaction`,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1838,7 +1863,7 @@ export async function BuyerTransactions(formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -1858,7 +1883,7 @@ export async function UpdateTransactions(id, formData) {
         id,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1870,7 +1895,7 @@ export async function UpdateTransactions(id, formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -1887,7 +1912,7 @@ export async function totalEarning() {
     const { data } = await appHttpService.get(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/totalEarnings`
     );
-    console.log(data);
+    // console.warn(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1899,7 +1924,7 @@ export async function totalEarning() {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -1916,7 +1941,7 @@ export async function totalBuyers() {
     const { data } = await appHttpService.get(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/totalBuyers`
     );
-    console.log(data);
+    // console.warn("------------------------------",data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1928,7 +1953,7 @@ export async function totalBuyers() {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -1946,7 +1971,7 @@ export async function totalOrders() {
     const { data } = await appHttpService.get(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/totalOrders`
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1958,7 +1983,7 @@ export async function totalOrders() {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -1976,7 +2001,7 @@ export async function totalVendors() {
     const { data } = await appHttpService.get(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/totalVendors`
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -1988,7 +2013,7 @@ export async function totalVendors() {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -2006,7 +2031,7 @@ export async function RecentOrders() {
     const { data } = await appHttpService.get(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/recentBookings`
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -2018,7 +2043,7 @@ export async function RecentOrders() {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -2037,7 +2062,7 @@ export async function SupportList(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/supportList`,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -2049,7 +2074,7 @@ export async function SupportList(formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -2067,12 +2092,12 @@ export async function getViewBuyerSupport(id) {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/viewMessage` + "/" + id
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -2089,12 +2114,12 @@ export async function getViewVendorSupport(id) {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/viewMessage` + "/" + id
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -2112,7 +2137,7 @@ export async function VendorsCount() {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/countVendors`
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -2124,7 +2149,7 @@ export async function VendorsCount() {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -2142,7 +2167,7 @@ export async function BookingsCount() {
     const { data } = await appHttpService.get(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/countBookings`
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -2154,7 +2179,7 @@ export async function BookingsCount() {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -2173,7 +2198,7 @@ export async function SendMessageBuy(formData, id) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/adminReply` + "/" + id,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -2185,7 +2210,7 @@ export async function SendMessageBuy(formData, id) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response?.data);
+      // console.log(error?.response?.data);
       Swal.fire({
         title: error?.response?.data.message,
         text: "",
@@ -2203,12 +2228,12 @@ export async function changeBuyerTicketStatus(id) {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/supportStatus` + "/" + id
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -2227,12 +2252,12 @@ export async function ImageUpload(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/imageUpload`,
       formData
     );
-    console.log(data);
+    // console.log(data);
 
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",
@@ -2251,7 +2276,7 @@ export async function SendPushNotify(formData, id) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/addNotification`,
       formData
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -2263,7 +2288,7 @@ export async function SendPushNotify(formData, id) {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response?.data);
+      // console.log(error?.response?.data);
       Swal.fire({
         title: error?.response?.data.message,
         text: "",
@@ -2280,7 +2305,7 @@ export async function getPushNotify() {
     const { data } = await appHttpService.get(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/notificationsList`
     );
-    console.log(data);
+    // console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -2292,7 +2317,7 @@ export async function getPushNotify() {
     return { data };
   } catch (error) {
     if (error.response) {
-      console.log(error?.response);
+      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",

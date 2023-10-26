@@ -1287,3 +1287,23 @@ div.dataTables_wrapper div.dataTables_paginate {
   top: -70px;
   left: 40%;
 }
+
+.modal-header{
+  background-color: #4f73af;
+  color: white;
+}
+
+.close_btn{
+  font-size: 20px;
+  background-color: #e25829;
+  color: white;
+  font-weight: bold;
+  border-radius: 50%;
+  border: none;
+  height: 30px;
+  width: 30px;
+}
+
+.selected_image_for_crop{
+  max-height: 320px;
+}

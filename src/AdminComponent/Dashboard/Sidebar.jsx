@@ -15,7 +15,7 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
   let token = localStorage.getItem("token-admin");
   let AdminData = JSON.parse(localStorage.getItem("token-admin-data"));
 
-  console.log(AdminData);
+  // console.log(AdminData);
   if (token === null) {
     Swal.fire({
       title: "PLease Login to Continue!",
@@ -27,7 +27,7 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
       navigate("/Admin/Login");
     });
   }
-  console.log(width);
+  // console.log(width);
 
   const Logout = () => {
     localStorage.removeItem("token-admin");

@@ -5,10 +5,12 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import {
+  changeServiceStatus,
   getServices,
   getVendorServices,
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
+import Swal from "sweetalert2";
 
 const ServicesManage = () => {
   const [slide, setSlide] = useState("SM");
@@ -67,6 +69,12 @@ const ServicesManage = () => {
         width: 100,
       },
       {
+        label: "Status",
+        field: "status",
+        sort: "asc",
+        width: 100,
+      },
+      {
         label: "ACTION",
         field: "action",
         sort: "asc",
@@ -85,7 +93,7 @@ const ServicesManage = () => {
     const newRows = [];
     if (!data.error) {
       let values = data?.results?.services;
-      console.log(values);
+      // console.log(values);
       values?.map((list, index) => {
         const returnData = {};
         returnData.sn = index + 1 + ".";
@@ -96,16 +104,16 @@ const ServicesManage = () => {
         returnData.date = moment(list?.createdAt).format("L");
         returnData.status = (
           <div className="check_toggle" key={list?._id}>
-            {/* <input
+            <input
               type="checkbox"
               defaultChecked={list?.status}
               name="check1"
               id={list?._id}
               className="d-none"
               onClick={() => {
-                BuyerStatus(list?._id);
+                ServiceStatus(list?._id);
               }}
-            /> */}
+            />
             <label for={list?._id}></label>
           </div>
         );
@@ -125,6 +133,19 @@ const ServicesManage = () => {
       });
 
       setServices({ ...services, rows: newRows });
+    }
+  };
+
+  const ServiceStatus = async (id) => {
+    const { data } = await changeServiceStatus(id);
+    if (!data?.error) {
+      getAllServices();
+      Swal.fire({
+        title: "Service Status Changed!",
+        icon: "success",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
     }
   };
 

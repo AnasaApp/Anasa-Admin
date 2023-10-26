@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
@@ -17,6 +17,9 @@ import moment from "moment";
 import { UploadOutlined } from "@ant-design/icons";
 import { Button, message, Upload } from "antd";
 
+import Cropper from "react-easy-crop";
+import getCroppedImg from "../../CropImage/CropImage";
+
 const Categories = () => {
   const [slide, setSlide] = useState("CM");
   const [files, setFiles] = useState([]);
@@ -27,6 +30,16 @@ const Categories = () => {
   const [sideBar, setSideBar] = useState();
   const [cate, setCate] = useState(false);
   const [editedImg, setEditedImg] = useState();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imageName, setImageName] = useState(null);
+
+  // crop //
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [croppedImage, setCroppedImage] = useState(null);
+
   const [category, setCategory] = useState({
     columns: [
       {
@@ -78,7 +91,7 @@ const Categories = () => {
   });
 
   const getBarClick = (val) => {
-    console.log(val);
+    // console.log(val);
     setSideBar(val);
   };
 
@@ -97,7 +110,7 @@ const Categories = () => {
     const newRows = [];
     if (!data.error) {
       let values = data?.results?.categories;
-      console.log(values);
+      // console.log(values);
       values?.map((list, index) => {
         const returnData = {};
         returnData.sn = index + 1 + ".";
@@ -131,7 +144,8 @@ const Categories = () => {
               data-bs-target="#staticBackdrop"
               className=" table_viewbtn"
               style={{ color: "#fff", background: "#4f73af" }}
-              onClick={() => editCategory(list._id)}>
+              onClick={() => editCategory(list._id)}
+            >
               Edit
             </a>
           </>
@@ -158,15 +172,49 @@ const Categories = () => {
     }
   };
 
+  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
+    // console.warn(croppedArea, crop, croppedImage)
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
+
+  // const showCroppedImage = useCallback(async () => {
+
+  // }, [croppedAreaPixels]);
+  const onSubmitCroppedImage = async () => {
+    try {
+      const getCropImage = await getCroppedImg(
+        selectedImage,
+        croppedAreaPixels,
+        imageName
+      );
+      setCroppedImage(getCropImage);
+      setModalVisible(false);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const onFileSelection = (e, key) => {
+    setImageName(e.target.files[0].name);
     setFiles({ ...files, [key]: e.target.files[0] });
+    setSelectedImage(URL.createObjectURL(e.target.files[0]));
+    if (e.target.files[0]) {
+      setModalVisible(true);
+    }
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
   };
 
   const onSubmit = async (data) => {
     const formData = new FormData();
     formData.append("name_en", data?.Category_name?.trim());
     formData.append("name_ar", data?.Category_name_ar?.trim());
-    formData.append("image", files?.upload_video);
+    // formData.append("image", files?.upload_video);
+    formData.append("image", croppedImage);
+    console.log(formData);
+    console.log(croppedImage);
     const res = await AddCategory(formData);
     console.log(res);
     if (!res.data.error) {
@@ -187,14 +235,15 @@ const Categories = () => {
     const { data } = await getViewCategory(id);
     setEditedCategories(data?.results.categories);
   };
-  console.log(files);
+  // console.log(files);
 
   const saveCategories = async (e) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("name_en", editCatEn);
     formData.append("name_ar", editCatAr);
-    formData.append("image", files?.cateImg);
+    // formData.append("image", files?.cateImg);
+    formData.append("image", croppedImage);
     console.log(formData);
     const { data } = await editCategoryData(CatId, formData);
     console.log(data);
@@ -223,7 +272,8 @@ const Categories = () => {
                     <ul
                       className="nav nav-tabs comman_tabs"
                       id="myTab"
-                      role="tablist">
+                      role="tablist"
+                    >
                       <li className="nav-item" role="presentation">
                         <button
                           className="nav-link active "
@@ -233,7 +283,8 @@ const Categories = () => {
                           type="button"
                           role="tab"
                           aria-controls="home"
-                          aria-selected="true">
+                          aria-selected="true"
+                        >
                           Category
                         </button>
                       </li>
@@ -250,7 +301,8 @@ const Categories = () => {
                           onClick={() => {
                             getAllCat();
                             setCate(!cate);
-                          }}>
+                          }}
+                        >
                           Sub Category
                         </button>
                       </li>
@@ -260,7 +312,8 @@ const Categories = () => {
                         className="tab-pane fade show active"
                         id="home"
                         role="tabpanel"
-                        aria-labelledby="home-tab">
+                        aria-labelledby="home-tab"
+                      >
                         <div className="row p-4 mx-0">
                           <div className="col-12 mb-4 inner_design_comman border">
                             <div className="row comman_header justify-content-between">
@@ -271,7 +324,8 @@ const Categories = () => {
                             <form
                               className="form-design py-4 px-3 help-support-form row  justify-content-between"
                               action=""
-                              onSubmit={handleSubmit(onSubmit)}>
+                              onSubmit={handleSubmit(onSubmit)}
+                            >
                               <div className="form-group mb-0 col-3">
                                 <label htmlFor="">Category Name (En)</label>
                                 <input
@@ -338,7 +392,10 @@ const Categories = () => {
                                   </small>
                                 )}
                               </div>
-                              <div className="form-group mb-0 col-3 choose_file position-relative">
+                              <div
+                                // onClick={() => setModalVisible(true)}
+                                className="form-group mb-0 col-3 choose_file position-relative"
+                              >
                                 <span>Category Image </span>{" "}
                                 <label htmlFor="upload_video">
                                   <i className="fa fa-camera me-1 " />
@@ -356,10 +413,12 @@ const Categories = () => {
                                   }
                                 />
                               </div>
+
                               <div className="form-group mt-4 col-auto">
                                 <button
                                   className="comman_btn mt-2"
-                                  type="submit">
+                                  type="submit"
+                                >
                                   Save
                                 </button>
                               </div>
@@ -367,7 +426,8 @@ const Categories = () => {
                                 <button
                                   className="comman_btn d-none"
                                   type="reset"
-                                  id="Reset">
+                                  id="Reset"
+                                >
                                   reset
                                 </button>
                               </div>
@@ -402,8 +462,9 @@ const Categories = () => {
                         className="tab-pane fade"
                         id="profile"
                         role="tabpanel"
-                        aria-labelledby="profile-tab">
-                        <SubCategories cate={cate} />
+                        aria-labelledby="profile-tab"
+                      >
+                        <SubCategories cate={cate} croppedImage={croppedImage} />
                       </div>
                     </div>
                   </div>
@@ -420,7 +481,8 @@ const Categories = () => {
         data-bs-keyboard="false"
         tabIndex={-1}
         aria-labelledby="staticBackdropLabel"
-        aria-hidden="true">
+        aria-hidden="true"
+      >
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content border-0">
             <div className="modal-header">
@@ -441,7 +503,8 @@ const Categories = () => {
             <div className="modal-body">
               <form
                 className="form-design px-3 py-2 help-support-form row  justify-content-center"
-                action="">
+                action=""
+              >
                 <div className="form-group col-6">
                   <label htmlFor="">Category Image</label>
                   {/* <img
@@ -491,9 +554,65 @@ const Categories = () => {
                   <button
                     className="comman_btn d-none"
                     id="modalReset"
-                    type="reset"></button>
+                    type="reset"
+                  ></button>
                 </div>
               </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className={`modal ${modalVisible ? "show d-block" : "d-none"}`}
+        tabIndex="-1"
+        role="dialog"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">Selected Image</h5>
+              <button
+                type="button"
+                className="close close_btn"
+                onClick={closeModal}
+              >
+                <span aria-hidden="true">
+                  <i class="fa-solid fa-xmark"></i>
+                </span>
+              </button>
+            </div>
+            <p className="my-3 text-center">Zoom & Drag to crop & select the image</p>
+            <hr className="m-0" />
+            <div className="modal-body">
+              {selectedImage && (
+                <div className="selected_image_for_crop">
+                  <img
+                  className="w-100 h-100 object-fit-contain opacity-0"
+                  src={selectedImage}
+                  alt="selected"
+                />
+                </div>
+              )}
+              <Cropper
+                image={selectedImage}
+                crop={crop}
+                zoom={zoom}
+                aspect={1}
+                onCropChange={setCrop}
+                onCropComplete={onCropComplete}
+                onZoomChange={setZoom}
+                objectFit={"contain"}
+              />
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="comman_btn"
+                onClick={onSubmitCroppedImage}
+              >
+                Finish
+              </button>
             </div>
           </div>
         </div>

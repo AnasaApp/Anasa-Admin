@@ -399,7 +399,7 @@ const EventManagement = () => {
                               (itm, idx) => itm?._id === element?.service
                             )[0]
                             ?.packages?.map((item) => (
-                              <option value={item?._id}>{item?.name_en}</option>
+                              <option value={item?._id}>{item?.name_en} {item?.price}</option>
                             ))}
                           {console.log(
                             packages?.filter(
