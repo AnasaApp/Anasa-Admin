@@ -98,6 +98,7 @@ const SubCategories = ({ cate, croppedImage }) => {
     const newRows = [];
     if (!data.error) {
       let values = data?.results?.subCategories;
+      values.sort((a, b) => (a.status === true ? -1 : b.status === true ? 1 : 0));
       console.log(values);
       values?.map((list, index) => {
         const returnData = {};
@@ -157,7 +158,7 @@ const SubCategories = ({ cate, croppedImage }) => {
     const { data } = await changeSubCateStatus(id);
 
     if (!data?.error) {
-      getAllCat();
+      getAllSubCat();
       Swal.fire({
         title: "Sub-Category Status Changed!",
         icon: "success",

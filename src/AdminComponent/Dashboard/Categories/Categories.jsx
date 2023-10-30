@@ -107,9 +107,11 @@ const Categories = () => {
 
   const getAllCat = async () => {
     const { data } = await AllCategory();
+    console.warn(data.results.categories)
     const newRows = [];
     if (!data.error) {
       let values = data?.results?.categories;
+      values.sort((a, b) => (a.status === true ? -1 : b.status === true ? 1 : 0));
       // console.log(values);
       values?.map((list, index) => {
         const returnData = {};
@@ -177,9 +179,6 @@ const Categories = () => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
-  // const showCroppedImage = useCallback(async () => {
-
-  // }, [croppedAreaPixels]);
   const onSubmitCroppedImage = async () => {
     try {
       const getCropImage = await getCroppedImg(

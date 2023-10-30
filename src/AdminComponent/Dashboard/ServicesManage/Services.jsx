@@ -94,6 +94,7 @@ const ServicesManage = () => {
     if (!data.error) {
       let values = data?.results?.services;
       // console.log(values);
+      values.sort((a, b) => (a.status === true ? -1 : b.status === true ? 1:0))
       values?.map((list, index) => {
         const returnData = {};
         returnData.sn = index + 1 + ".";

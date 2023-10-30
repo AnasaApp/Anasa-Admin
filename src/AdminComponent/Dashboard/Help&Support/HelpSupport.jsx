@@ -13,6 +13,8 @@ import Sidebar from "../Sidebar";
 import { MessageBox } from "react-chat-elements";
 
 const HelpSupport = () => {
+  const chatpartMainRef = useRef(null);
+  const VchatpartMainRef = useRef(null);
   const [slide, setSlide] = useState("HS");
   const [sideBar, setSideBar] = useState();
   const [buyerSupport, setBuyerSupport] = useState([]);
@@ -25,19 +27,21 @@ const HelpSupport = () => {
   const [newMessageV, setNewMessageV] = useState("");
   const [buyId, setBuyId] = useState();
   const [VenId, setVenId] = useState();
-  const ref = useRef(null);
+  // const ref = useRef(null);
   useEffect(() => {
     getBuyerSupport();
     getVendorSupport();
   }, []);
   useEffect(() => {
     scrollToBottom();
-  }, [chat]);
+    VScrollToBottom()
+  }, [chat, chatV]);
 
   const ViewBuyerSupport = async (id, status) => {
     if (status) {
       setBuyId(id);
       const { data } = await getViewBuyerSupport(id);
+      console.warn(data)
       setChat(data?.results.message?.reply);
       setMainChat(data?.results.message);
     } else {
@@ -56,6 +60,7 @@ const HelpSupport = () => {
     if (status) {
       setVenId(id);
       const { data } = await getViewVendorSupport(id);
+      console.log(data)
       setChatV(data?.results.message?.reply);
       setMainChatV(data?.results.message);
     } else {
@@ -69,8 +74,20 @@ const HelpSupport = () => {
     }
   };
 
+  const scrollToBottom = () => {
+    if (chatpartMainRef.current) {
+      chatpartMainRef.current.scrollTop = chatpartMainRef.current.scrollHeight;
+    }
+  };
+  const VScrollToBottom = () => {
+    if (VchatpartMainRef.current) {
+      VchatpartMainRef.current.scrollTop = VchatpartMainRef.current.scrollHeight;
+    }
+  };
+
   const getBuyerSupport = async () => {
     const { data } = await SupportList({ page: 1, type: "Buyer" });
+    console.log(data)
     setBuyerSupport(data.results);
   };
 
@@ -81,30 +98,54 @@ const HelpSupport = () => {
 
   const handleMessage = (e) => {
     let text = e.target.value;
-    console.log(text);
+    // console.log(text);
     setNewMessage(text);
   };
 
   const sendMessage = async () => {
+    if(!newMessage || newMessage === null || newMessage === ''){
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'error',
+        title: "Message can not be empty",
+        showConfirmButton: false,
+        timerProgressBar: true,
+        timer: 3000,
+      });
+      return false;
+    }
     const { data } = await SendMessageBuy({ message: newMessage }, buyId);
     setNewMessage("");
-    scrollToBottom();
     let msg = data?.results?.reply?.reply?.slice(-1);
     setChat((chat) => [...chat, msg[0]]);
+    scrollToBottom();
   };
   const sendMessageV = async () => {
+    if(!newMessageV || newMessageV === null || newMessageV === ''){
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'error',
+        title: "Message can not be empty",
+        showConfirmButton: false,
+        timerProgressBar: true,
+        timer: 3000,
+      });
+      return false;
+    }
     const { data } = await SendMessageBuy({ message: newMessageV }, VenId);
     setNewMessageV("");
-    scrollToBottom();
+    VScrollToBottom();
 
     let msg = data?.results?.reply?.reply?.slice(-1);
     setChatV((chatV) => [...chatV, msg[0]]);
   };
 
-  const scrollToBottom = () => {
-    console.log("jijijo");
-    ref.current.scrollIntoView({ behavior: "smooth" });
-  };
+  // const scrollToBottom = () => {
+  //   console.log("scrolled");
+  //   ref.current.scrollIntoView({ behavior: "smooth" });
+  // };
 
   const TicketStatus = async (id) => {
     const { data } = await changeBuyerTicketStatus(id);
@@ -369,11 +410,13 @@ const HelpSupport = () => {
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#staticBackdrop2"
                                                 className="comman_btn table_viewbtn"
-                                                onClick={() =>
+                                                onClick={() =>{
                                                   VieWVendorSupport(
                                                     item?._id,
                                                     item?.status
                                                   )
+                                                  VScrollToBottom()
+                                                }
                                                 }>
                                                 View
                                               </a>
@@ -428,7 +471,7 @@ const HelpSupport = () => {
               </div>
 
               <div className="modal-body py-4 " id="chat">
-                <div className="chatpart_main " id="chat2">
+                <div className="chatpart_main " id="chat2" ref={chatpartMainRef}>
                   <div className="row mx-0 ">
                     <div className="col-12 user_chat mb-3">
                       <div className="row">
@@ -470,7 +513,7 @@ const HelpSupport = () => {
                         </div>
                       </div>
                     ))}
-                    <div ref={ref}>_____</div>
+                    {/* <div ref={ref}>_____</div> */}
                   </div>
                 </div>
               </div>
@@ -526,7 +569,7 @@ const HelpSupport = () => {
               </div>
 
               <div className="modal-body py-4 " id="chat">
-                <div className="chatpart_main " id="chat2">
+                <div className="chatpart_main " id="chat2" ref={VchatpartMainRef}>
                   <div className="row mx-0 ">
                     <div className="col-12 user_chat mb-3">
                       <div className="row">
@@ -568,7 +611,7 @@ const HelpSupport = () => {
                         </div>
                       </div>
                     ))}
-                    <div ref={ref}></div>
+                    {/* <div ref={ref}></div> */}
                   </div>
                 </div>
               </div>

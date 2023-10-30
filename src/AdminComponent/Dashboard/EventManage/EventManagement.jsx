@@ -24,6 +24,8 @@ const EventManagement = () => {
   const [selectedPackage, setSelectedPackage] = useState([]);
   const [searchKey, setSearchKey] = useState("");
   const [packages, setPackages] = useState([]);
+  const [selectedServiceImage, setSelectedServiceImage] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
   const [formValues, setFormValues] = useState([
     {
       service: "",
@@ -152,7 +154,8 @@ const EventManagement = () => {
                 list?.status === "Completed"
                   ? manageEvent(list?._id)
                   : manageEvent(list?._id)
-              }>
+              }
+            >
               {list?.status === "Completed" ? "View Plan" : "Add Plan"}
             </Link>
           </>
@@ -225,6 +228,30 @@ const EventManagement = () => {
     let newFormValues = [...formValues];
     newFormValues[i][e.target.name] = e.target.value;
     setFormValues(newFormValues);
+
+    let newTotalPrice = 0;
+    newFormValues.forEach((item) => {
+      if (item.service && item.package) {
+        const selectedService = services.find(
+          (service) => service._id === item.service
+        );
+        if (selectedService) {
+          const selectedPackage = selectedService.packages.find(
+            (pkg) => pkg._id === item.package
+          );
+          if (selectedPackage) {
+            newTotalPrice += selectedPackage.price;
+          }
+        }
+      }
+    });
+    setTotalPrice(newTotalPrice);
+  };
+
+  const updateSelectedServiceImage = (index, image) => {
+    const newImages = [...selectedServiceImage];
+    newImages[index] = image;
+    setSelectedServiceImage(newImages);
   };
 
   const addFormFields = (e) => {
@@ -235,13 +262,38 @@ const EventManagement = () => {
         package: "",
       },
     ]);
+    setSelectedServiceImage([...selectedServiceImage, null]);
   };
 
   const removeFormFields = (index) => {
     let newFormValues = [...formValues];
-    newFormValues?.splice(index, 1);
+    const removedItem = newFormValues[index];
+    newFormValues.splice(index, 1);
     setFormValues(newFormValues);
+
+    let newImages = [...selectedServiceImage];
+    newImages.splice(index, 1);
+    setSelectedServiceImage(newImages);
+
+    let newTotalPrice = totalPrice;
+
+    if (removedItem.service && removedItem.package) {
+      const selectedService = services.find(
+        (service) => service._id === removedItem.service
+      );
+      if (selectedService) {
+        const selectedPackage = selectedService.packages.find(
+          (pkg) => pkg._id === removedItem.package
+        );
+        if (selectedPackage) {
+          newTotalPrice -= selectedPackage.price;
+        }
+      }
+    }
+
+    setTotalPrice(newTotalPrice);
   };
+
   // console.log(formValues, "jhijh");
 
   return (
@@ -259,7 +311,8 @@ const EventManagement = () => {
                         className="tab-pane fade show active"
                         id="home"
                         role="tabpanel"
-                        aria-labelledby="home-tab">
+                        aria-labelledby="home-tab"
+                      >
                         <div className="row p-4 mx-0">
                           <div className="col-12 inner_design_comman border">
                             <div className="row comman_header justify-content-between">
@@ -302,7 +355,8 @@ const EventManagement = () => {
         data-bs-keyboard="false"
         tabIndex={-1}
         aria-labelledby="staticBackdropLabel"
-        aria-hidden="true">
+        aria-hidden="true"
+      >
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content border-0">
             <div className="modal-header">
@@ -323,6 +377,8 @@ const EventManagement = () => {
                       package: "",
                     },
                   ]);
+                  setSelectedServiceImage([]);
+                  setTotalPrice(0);
                 }}
               />
             </div>
@@ -330,7 +386,8 @@ const EventManagement = () => {
               <form
                 className="form-design px-3 py-2 help-support-form row  justify-content-center"
                 action=""
-                onSubmit={handleSubmit2(onEditSave)}>
+                onSubmit={handleSubmit2(onEditSave)}
+              >
                 <div className="form-group col-4">
                   <label htmlFor="">Event Name</label>
                   <input
@@ -363,8 +420,8 @@ const EventManagement = () => {
                 </div>
                 {(formValues || [])?.map((element, index) => (
                   <div className="form-group mb-0 col-12 border-bottom">
-                    <div className="row" key={index}>
-                      <div className="form-group col-5 mt-3">
+                    <div className="row align-items-center" key={index}>
+                      <div className="form-group col-4 mt-3">
                         <label htmlFor="">Select Services</label>
                         <select
                           className="form-select "
@@ -374,23 +431,35 @@ const EventManagement = () => {
                           onChange={(e) => {
                             handleChange(index, e);
                             createOptionsServices(e.target.value);
-                          }}>
+                            const selectedService = services.find(
+                              (item) => item._id === e.target.value
+                            );
+                            if (selectedService) {
+                              updateSelectedServiceImage(
+                                index,
+                                selectedService.images[0]
+                              );
+                            }
+                            console.log(services.price);
+                          }}
+                        >
                           <option selected="" value="">
                             Select
                           </option>
-                          {services?.map((item) => (
+                          {services?.filter(item => item.status === true ).map((item) => (
                             <option value={item?._id}>{item?.name_en}</option>
                           ))}
                         </select>
                       </div>
-                      <div className="form-group col-5 mt-3">
+                      <div className="form-group col-4 mt-3">
                         <label htmlFor="">Select Package</label>
                         <select
                           className="form-select "
                           aria-label="Default select example"
                           name="package"
                           value={element.package || ""}
-                          onChange={(e) => handleChange(index, e)}>
+                          onChange={(e) => handleChange(index, e)}
+                        >
                           <option selected="" value="">
                             Select
                           </option>
@@ -399,7 +468,9 @@ const EventManagement = () => {
                               (itm, idx) => itm?._id === element?.service
                             )[0]
                             ?.packages?.map((item) => (
-                              <option value={item?._id}>{item?.name_en} {item?.price}</option>
+                              <option value={item?._id}>
+                                {item?.name_en} د.إ {item?.price}
+                              </option>
                             ))}
                           {console.log(
                             packages?.filter(
@@ -408,24 +479,43 @@ const EventManagement = () => {
                           )}
                         </select>
                       </div>
-
+                      <div style={{ height: "80px" }} className="col-2">
+                        {selectedServiceImage[index] && (
+                          <img
+                            style={{ objectPosition: "top" }}
+                            className="w-100 h-100 object-fit-cover"
+                            src={selectedServiceImage[index]}
+                            alt="Service"
+                            height="50px"
+                          />
+                        )}
+                      </div>
                       <div className="form-group col-2  mt-5">
                         <button
                           className="comman_btn "
                           style={{ padding: "5px 20px" }}
                           type="button"
                           disabled={formValues?.length <= 1 ? true : false}
-                          onClick={() => removeFormFields(index)}>
+                          onClick={() => removeFormFields(index)}
+                        >
                           <i className="fa fa-minus mt-1 mx-1" />
                         </button>
                       </div>
                     </div>
                   </div>
                 ))}
+                {totalPrice !== 0 && (
+                  <div className="d-flex align-items-center justify-content-between mt-2">
+                    <p>Total Amount: </p>
+                    <p className="fw-bold">{totalPrice}</p>
+                  </div>
+                )}
+                <hr />
                 <div className="form-group mb-0 col-12 text-center mt-3">
                   <a
                     className="comman_btn mx-3 "
-                    onClick={() => addFormFields()}>
+                    onClick={() => addFormFields()}
+                  >
                     Add more +
                   </a>
                   <button className="comman_btn" type="submit">
@@ -436,7 +526,8 @@ const EventManagement = () => {
                   <button
                     className="comman_btn d-none"
                     type="reset"
-                    id="ResetSSS">
+                    id="ResetSSS"
+                  >
                     Reset
                   </button>
                 </div>
@@ -453,7 +544,8 @@ const EventManagement = () => {
         data-bs-keyboard="false"
         tabIndex={-1}
         aria-labelledby="staticBackdropLabel"
-        aria-hidden="true">
+        aria-hidden="true"
+      >
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content border-0">
             <div className="modal-header">
@@ -472,7 +564,8 @@ const EventManagement = () => {
               <form
                 className="form-design px-3 py-2 help-support-form row  justify-content-center"
                 key={eventInfo}
-                action="">
+                action=""
+              >
                 <div className="form-group col-4">
                   <label htmlFor="">Event Name</label>
                   <input
@@ -533,7 +626,8 @@ const EventManagement = () => {
                   <button
                     className="comman_btn d-none"
                     type="reset"
-                    id="ResetSSS">
+                    id="ResetSSS"
+                  >
                     Reset
                   </button>
                 </div>

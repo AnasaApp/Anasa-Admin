@@ -69,6 +69,7 @@ const AdvertiseManagement = () => {
           value: item?._id._id,
           label: item?._id.full_name,
         }));
+        optionList.sort((a, b) => a.label.localeCompare(b.label));
         setOptions(optionList);
       }
     });
@@ -82,6 +83,7 @@ const AdvertiseManagement = () => {
           value: item?._id._id,
           label: item?._id.full_name,
         }));
+        optionList.sort((a, b) => a.label.localeCompare(b.label));
         setOptionsNewVendors(optionList);
       }
     });
@@ -91,11 +93,13 @@ const AdvertiseManagement = () => {
     await AllCategory().then((res) => {
       if (!res.error) {
         let data = res?.data.results?.categories;
+        console.log(data)
         console.log(data);
         const optionList = data?.map((item, index) => ({
           value: item?._id,
           label: item?.name_en,
         }));
+        optionList.sort((a, b) => a.label.localeCompare(b.label));
         setOptionsCate(optionList);
       }
     });
@@ -109,6 +113,7 @@ const AdvertiseManagement = () => {
           value: item?._id,
           label: item?.name_en,
         }));
+        optionList.sort((a, b) => a.label.localeCompare(b.label));
         setOptionsNewCate(optionList);
       }
     });
