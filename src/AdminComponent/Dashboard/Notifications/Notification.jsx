@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import classNames from "classnames";
 import Select from "react-select";
 import {
+  AllVendors,
   Buyers,
   SearchUser,
   SearchVendor,
@@ -123,18 +124,35 @@ const Notification = () => {
   };
 
   const createVendorOptions = async () => {
-    await SearchVendor({ search: searchVendorKey }).then((res) => {
-      if (!res.error) {
-        let data = res?.data.results?.vendor;
-        console.log(data);
-        const optionList = data?.map((item, index) => ({
-          value: item?._id?._id,
-          label: item?._id?.full_name,
-        }));
-        optionList.sort((a, b) => a.label.localeCompare(b.label));
-        setVendorOptions(optionList);
-      }
+    const { data } = await AllVendors({
+      from: "",
+      to: "",
+      status: "APPROVED",
+      page: 1,
     });
+    // console.log(data?.results?.vendors);
+    if (!data.error) {
+      let res = data?.results?.vendors;
+      console.log(res);
+      const optionList = res?.map((item, index) => ({
+        value: item?._id,
+        label: item?.full_name,
+      }));
+      optionList.sort((a, b) => a.label.localeCompare(b.label));
+      setVendorOptions(optionList);
+    }
+    // await SearchVendor({ search: searchVendorKey }).then((res) => {
+    //   if (!res.error) {
+    //     let data = res?.data.results?.vendor;
+    //     console.log(data);
+    //     const optionList = data?.map((item, index) => ({
+    //       value: item?._id?._id,
+    //       label: item?._id?.full_name,
+    //     }));
+    //     optionList.sort((a, b) => a.label.localeCompare(b.label));
+    //     setVendorOptions(optionList);
+    //   }
+    // });
   };
 
   const handleChange = (selected) => {
