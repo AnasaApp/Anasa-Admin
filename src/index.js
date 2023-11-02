@@ -14,6 +14,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import "mdbreact/dist/css/mdb.css";
 import reportWebVitals from "./reportWebVitals";
 import "react-chat-elements/dist/main.css"
+import "react-datetime/css/react-datetime.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

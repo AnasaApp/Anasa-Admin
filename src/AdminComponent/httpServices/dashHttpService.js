@@ -661,9 +661,9 @@ export async function GetVendorByCate(id) {
 }
 export async function vendorServiceStatus(id) {
   try {
-    console.log(id)
+    console.log(id);
     const { data } = await appHttpService.get(
-      `${process.env.REACT_APP_APIENDPOINT}api/admin/serviceStatus` + "/" + id,
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/serviceStatus` + "/" + id
     );
     console.log(data);
     if (data?.error) {
@@ -2300,12 +2300,44 @@ export async function ImageUpload(formData) {
   }
 }
 
+export async function Buyers() {
+  try {
+    const { data } = await appHttpService.get(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/buyerListing`
+    );
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+
+      return false;
+    }
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      Swal.fire({
+        title: error?.response?.data.message,
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
+
 export async function SendPushNotify(formData, id) {
   try {
+    console.log(formData, id)
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/addNotification`,
       formData
     );
+    // let data = true
     // console.log(data);
     if (data?.error) {
       Swal.fire({

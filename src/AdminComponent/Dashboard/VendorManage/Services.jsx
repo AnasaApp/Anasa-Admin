@@ -20,15 +20,17 @@ const Services = () => {
   const [category, setCategory] = useState();
   const [selectedEnCategory, setSelectedEnCategory] = useState("");
   const [selectedArCategory, setSelectedArCategory] = useState("");
-  const [subCatId, setSubCatId] = useState();
+  const [selectedEnSubCategory, setSelectedEnSubCategory] = useState("");
+  const [selectedArSubCategory, setSelectedArSubCategory] = useState("");
+  const [subCategory, setSubCategory] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [files, setFiles] = useState(null);
   let id = useParams();
   // console.log(id);
   useEffect(() => {
     GetVendorServices();
     GetVendor();
     getAllCategory();
-    getAllSubCategory();
   }, []);
 
   const GetVendor = async () => {
@@ -47,10 +49,13 @@ const Services = () => {
     setCategory(data?.results?.categories);
     console.log(data?.results?.categories);
   };
-  const getAllSubCategory = async () => {
-    // const { data } = await getSubCategory({ categoryId: id });
-    // setCategory(data?.results?.categories);
-    console.warn("data");
+  const getAllSubCategory = async (categoryId) => {
+    console.log(categoryId);
+    const { data } = await getSubCategory({ categoryId });
+    setSubCategory(data?.results?.subCategories);
+    if (data.results.subCategories) {
+      setSelectedArSubCategory(data.results.subCategories[0].name_ar || " ");
+    }
   };
   const getBarClick = (val) => {
     // console.log(val);
@@ -63,29 +68,69 @@ const Services = () => {
   };
 
   const handleEdit = async (item) => {
+    let categoryId = item?.category?._id;
+    if (categoryId) {
+      await getAllSubCategory(categoryId);
+    } else {
+      setSubCategory([]);
+    }
+
     setModalVisible(true);
     setDataToEdit(item);
+    console.log(item);
     setSelectedEnCategory(item?.category?.name_en || "");
   };
 
   const handleCategoryEnChange = (e) => {
     setSelectedEnCategory(e.target.value);
+    const selectedCategory = category.find(
+      (cat) => cat.name_en === e.target.value
+    );
+    setSelectedArCategory(selectedCategory?.name_ar || "");
+    getAllSubCategory(selectedCategory?._id);
   };
 
+  const handleSubCatChange = (e) => {
+    let value = e.target.value;
+    setSelectedEnSubCategory(value);
+    let selectedSubCategory = subCategory.find(
+      (subCat) => subCat?.name_en === value
+    );
+    console.log(selectedSubCategory.name_ar);
+    setSelectedArSubCategory(selectedSubCategory.name_ar || "");
+  };
   const changeVendorServiceStatus = async (id) => {
     console.log(id);
     const { data } = await vendorServiceStatus(id);
     GetVendorServices();
     console.log(data);
     Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: 'success',
-        title: "Status changed successfully",
-        showConfirmButton: false,
-        timerProgressBar: true,
-        timer: 3000,
-      });
+      toast: true,
+      position: "top-end",
+      icon: "success",
+      title: "Status changed successfully",
+      showConfirmButton: false,
+      timerProgressBar: true,
+      timer: 3000,
+    });
+  };
+
+  const onFileSelection = (e, key) => {
+    const selectedFile = e.target.files[0];
+    setFiles({ ...files, [key]: selectedFile });
+  };
+  
+
+  const handleFileSubmit = async (e) => {
+    e.preventDefault();
+    if (!files || !files.upload_file) {
+      alert("Please select a file to upload.");
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append("excelFile", files.upload_file);
+    console.log(formData);
   };
 
   return (
@@ -158,6 +203,33 @@ const Services = () => {
                   <div className="col-auto">
                     <h2>Service Details</h2>
                   </div>
+                </div>
+                <div className="form-group mb-0 col-12 mt-3 mx-2 choose_file position-relative">
+                  <form
+                    className="d-flex align-items-center justify-content-between"
+                    onSubmit={(e) => handleFileSubmit(e)}
+                  >
+                    <div className="col-6">
+                      <span className="mx-2">Add Mass Services</span>{" "}
+                      <label htmlFor="upload_file">
+                        <i className="fa fa-camera me-1 " />
+                        Choose File
+                      </label>
+                      <input
+                        className="form-control mx-2 py-3"
+                        type="file"
+                        accept=".xls, .xlsx"
+                        name="upload_file"
+                        id="upload_file"
+                        onChange={(e) => onFileSelection(e, "upload_file")}
+                      />
+                    </div>
+                    <div className="col-4">
+                      <button className="comman_btn" type="submit">
+                        Submit
+                      </button>
+                    </div>
+                  </form>
                 </div>
                 <div className="row mx-0 ">
                   {vendorService?.length ? (
@@ -404,45 +476,39 @@ const Services = () => {
                             disabled
                           />
                         </div>
-                        {/* <div className="form-group col-6">
-                          <label htmlFor="">Select Category (En)</label>
-                          <select
-                            className="form-control w-100"
-                            name="category_en"
-                            id="category_en"
-                            value={selectedEnCategory}
-                            onChange={(e) => {
-                              handleCategoryEnChange(e);
-                              const selectedCategory = category.find(
-                                (cat) => cat.name_en === e.target.value
-                              );
-                              setSelectedArCategory(
-                                selectedCategory?.name_ar || ""
-                              );
-                            }}
-                          >
-                            {category &&
-                              category.map((cat, i) => (
-                                <option value={cat.name_en}>
-                                  {cat.name_en}
-                                </option>
-                              ))}
-                          </select>
-                        </div>
-                        <div className="form-group col-6">
-                          <label htmlFor="">Category (Ar)</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="serviceName_en"
-                            defaultValue={
-                              selectedArCategory
-                                ? selectedArCategory
-                                : dataToEdit?.category?.name_ar
-                            }
-                            disabled
-                          />
-                        </div> */}
+
+                        {subCategory.length > 0 && (
+                          <>
+                            <div className="form-group col-6">
+                              <label htmlFor="">Select Sub Category (En)</label>
+                              <select
+                                className="form-control w-100"
+                                name="category_en"
+                                id="category_en"
+                                value={selectedEnSubCategory}
+                                onChange={(e) => handleSubCatChange(e)}
+                              >
+                                {subCategory &&
+                                  subCategory.map((cat, i) => (
+                                    <option value={cat.name_en}>
+                                      {cat.name_en}
+                                    </option>
+                                  ))}
+                              </select>
+                            </div>
+                            <div className="form-group col-6">
+                              <label htmlFor="">Sub Category (Ar)</label>
+                              <input
+                                type="text"
+                                className="form-control"
+                                name="serviceName_en"
+                                defaultValue={selectedArSubCategory}
+                                value={selectedArSubCategory}
+                                disabled
+                              />
+                            </div>
+                          </>
+                        )}
                         <div className="form-group col-6">
                           <label htmlFor="">Price</label>
                           <input

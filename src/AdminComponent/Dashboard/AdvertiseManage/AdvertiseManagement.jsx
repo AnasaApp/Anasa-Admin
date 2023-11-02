@@ -6,6 +6,7 @@ import {
   AddAddvertise,
   AllAdvertisement,
   AllCategory,
+  AllVendors,
   DeleteAddvertise,
   SearchVendor,
 } from "../../httpServices/dashHttpService";
@@ -54,8 +55,23 @@ const AdvertiseManagement = () => {
     GetAddsNewCategory();
     GetAddsNewVendor();
     getAllCat();
+    getAllVendors();
   }, []);
 
+  const getAllVendors = async () => {
+    const { data } = await AllVendors({
+      status: "APPROVED",
+    });
+    let options = data?.results?.vendors;
+    let optionList = options?.map((item, index) => ({
+      value: item?._id,
+      label: item?.full_name,
+    }));
+    optionList = optionList.filter((item) => item.label.trim() !== "");
+    optionList.sort((a, b) => a.label.localeCompare(b.label));
+    setOptionsNewVendors(optionList);
+    setOptions(optionList);
+  };
   const getAllCat = async () => {
     const { data } = await AllCategory();
     setAllCategories(data?.results?.categories);
@@ -70,7 +86,7 @@ const AdvertiseManagement = () => {
           label: item?._id.full_name,
         }));
         optionList.sort((a, b) => a.label.localeCompare(b.label));
-        setOptions(optionList);
+        // setOptions(optionList);
       }
     });
   };
@@ -93,7 +109,7 @@ const AdvertiseManagement = () => {
     await AllCategory().then((res) => {
       if (!res.error) {
         let data = res?.data.results?.categories;
-        console.log(data)
+        console.log(data);
         console.log(data);
         const optionList = data?.map((item, index) => ({
           value: item?._id,
@@ -242,7 +258,6 @@ const AdvertiseManagement = () => {
     });
   };
 
- 
   const getBarClick = (val) => {
     console.log(val);
     setSideBar(val);

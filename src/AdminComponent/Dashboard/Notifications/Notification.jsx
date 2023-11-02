@@ -4,21 +4,26 @@ import { useForm } from "react-hook-form";
 import classNames from "classnames";
 import Select from "react-select";
 import {
+  Buyers,
   SearchUser,
+  SearchVendor,
   SendPushNotify,
   getPushNotify,
 } from "../../httpServices/dashHttpService";
 import Swal from "sweetalert2";
 import moment from "moment";
 import { MDBDataTable } from "mdbreact";
+import { message } from "antd";
 
 const Notification = () => {
   const [slide, setSlide] = useState("NM");
   const [sideBar, setSideBar] = useState();
-  const [userTypes, setUsertypes] = useState();
-  const [options, setOptions] = useState([]);
+  const [userTypes, setUsertypes] = useState('');
+  const [buyerOptions, setBuyerOptions] = useState([]);
+  const [vendorOptions, setVendorOptions] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [searchKey, setSearchKey] = useState("");
+  const [searchVendorKey, setSearchVendorKey] = useState("");
   const [notification, setNotifications] = useState([]);
 
   const getBarClick = (val) => {
@@ -30,8 +35,13 @@ const Notification = () => {
   }, [searchKey]);
 
   useEffect(() => {
+    createVendorOptions();
+  }, [searchVendorKey]);
+
+  useEffect(() => {
     GetNotifications();
-  }, []);
+    getAllBuyers()
+  }, [userTypes]);
 
   const [notifyList, setNotifyList] = useState({
     columns: [
@@ -99,13 +109,30 @@ const Notification = () => {
 
   const createOptions = async () => {
     await SearchUser({ search: searchKey }).then((res) => {
+      console.warn(res)
       if (!res.error) {
         let data = res?.data.results?.buyers;
         const optionList = data?.map((item, index) => ({
           value: item?._id,
           label: item?.full_name,
         }));
-        setOptions(optionList);
+        optionList.sort((a, b) => a.label.localeCompare(b.label));
+        setBuyerOptions(optionList);
+      }
+    });
+  };
+
+  const createVendorOptions = async () => {
+    await SearchVendor({ search: searchVendorKey}).then((res) => {
+      if (!res.error) {
+        let data = res?.data.results?.vendor;
+        console.log(data)
+        const optionList = data?.map((item, index) => ({
+          value: item?._id?._id,
+          label: item?._id?.full_name,
+        }));
+        optionList.sort((a, b) => a.label.localeCompare(b.label));
+        setVendorOptions(optionList);
       }
     });
   };
@@ -120,12 +147,16 @@ const Notification = () => {
     setSearchKey(inputValue);
   };
 
+  const getAllBuyers = async() => {
+    let {data} = await Buyers()
+  }
+
   const onSubmit = async (data) => {
     await SendPushNotify({
       message: data?.message,
       userType: userTypes,
       selectedUsers:
-        userTypes === "Specific"
+        userTypes === userTypes
           ? selectedUsers.usersSelected?.map((item) => item?.value)
           : [],
     }).then((res) => {
@@ -180,7 +211,7 @@ const Notification = () => {
                     )}
                   </div>
                   <div className="form-group mb-0 col Select">
-                    <label htmlFor="">Select Users</label>
+                    <label htmlFor="">Select Vendor/Buyer</label>
                     <select
                       // aria-label="Default select example"
                       className={classNames("form-select", {
@@ -193,9 +224,9 @@ const Notification = () => {
                           setUsertypes(e.target.value);
                         },
                       })}>
-                      <option value="">Select Users</option>
-                      <option value="All">All</option>
-                      <option value="Specific">Specific User</option>
+                      <option value="">Select Type</option>
+                      <option value="Vendor">Vendor</option>
+                      <option value="Buyer">Buyer</option>
                     </select>
                     {errors.userType && (
                       <small className="errorText mx-1">
@@ -210,13 +241,14 @@ const Notification = () => {
                       defaultValue=""
                       isMulti
                       name="users"
-                      options={options}
+                      // options={options}
+                          options={userTypes === "Vendor" ? vendorOptions : buyerOptions}
                       className="basic-multi-select z-3"
                       classNamePrefix="select"
                       onChange={handleChange}
                       value={selectedUsers?.usersSelected}
                       onInputChange={handleInputChange}
-                      isDisabled={userTypes === "Specific" ? false : true}
+                      isDisabled={userTypes === "" ? true : false}
                     />
                   </div>
                   <div className="form-group mb-0 col-auto mt-3">

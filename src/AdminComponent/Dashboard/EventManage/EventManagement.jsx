@@ -13,6 +13,11 @@ import {
 import Select from "react-select";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import dayjs from "dayjs";
 
 const EventManagement = () => {
   const [slide, setSlide] = useState("EM");
@@ -26,6 +31,15 @@ const EventManagement = () => {
   const [packages, setPackages] = useState([]);
   const [selectedServiceImage, setSelectedServiceImage] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [edit, setEdit] = useState(false);
+  const [selectedService, setSelectedService] = useState(""); // for edit option
+  const [selectedPackages, setSelectedPackages] = useState(""); // for edit option
+
+  const [startDateTime, setStartDateTime] = useState(null);
+  const [endDateTime, setEndDateTime] = useState(null);
+  const [budgetCost, setBudgetCost] = useState();
+  const [totalAmount, setTotalAmount] = useState();
+
   const [formValues, setFormValues] = useState([
     {
       service: "",
@@ -172,7 +186,17 @@ const EventManagement = () => {
     const { data } = await GetEventReqInfo(id);
     if (!data.error) {
       console.log(data);
+      let startDate = data?.results?.event.startDate;
+      let endDate = data?.results?.event.endDate;
+      let startTime = data?.results?.event.startTime;
+      let endTime = data?.results?.event.endTime;
+      formatDateTime(startDate, startTime, endDate, endTime);
+
+      setBudgetCost(data?.results?.event?.budget_cost);
+      setTotalAmount(data?.results?.event?.totalAmount);
+
       setEventInfo(data?.results?.event);
+
       await getServices().then((res) => {
         setServices(res?.data.results?.services);
       });
@@ -295,6 +319,54 @@ const EventManagement = () => {
   };
 
   // console.log(formValues, "jhijh");
+
+  const generateServiceOptions = () => {
+    return services
+      .filter((item) => item.status === true)
+      .map((item) => <option value={item._id}>{item.name_en}</option>);
+  };
+
+  const generatePackageOptions = (serviceId) => {
+    const selectedService = services.find((item) => item._id === serviceId);
+    if (selectedService) {
+      return selectedService.packages.map((item) => (
+        <option value={item._id}>
+          {item.name_en} د.إ {item.price}
+        </option>
+      ));
+    }
+    return [];
+  };
+
+  const sendEventInfo = (e, dataEvent) => {
+    e.preventDefault();
+    setEdit(true);
+  };
+
+  function formatDateTime(startDate, startTime, endDate, endTime) {
+    console.log(startDate, endDate, endTime);
+    let startDateTime = dayjs(startDate);
+    let startTimeParsed = dayjs(startTime, "hh:mm A");
+    startDateTime = startDateTime.set("hour", startTimeParsed.hour());
+    startDateTime = startDateTime.set("minute", startTimeParsed.minute());
+
+    let endDateTime = dayjs(endDate);
+    let endTimeParsed = dayjs(endTime, "hh:mm A");
+    endDateTime = endDateTime.set("hour", endTimeParsed.hour());
+    endDateTime = endDateTime.set("minute", endTimeParsed.minute());
+
+    let formattedStartDateTime = startDateTime.format("YYYY-MM-DDTHH:mm");
+    let formattedEndDateTime = endDateTime.format("YYYY-MM-DDTHH:mm");
+
+    setStartDateTime(formattedStartDateTime);
+    setEndDateTime(formattedEndDateTime);
+  }
+
+  const updateEvent = (data) => {
+    console.log("event", data);
+  };
+
+  // console.warn(eventInfo);
 
   return (
     <div className={sideBar === "click" ? "expanded_main" : "admin_main"}>
@@ -446,9 +518,11 @@ const EventManagement = () => {
                           <option selected="" value="">
                             Select
                           </option>
-                          {services?.filter(item => item.status === true ).map((item) => (
-                            <option value={item?._id}>{item?.name_en}</option>
-                          ))}
+                          {services
+                            ?.filter((item) => item.status === true)
+                            .map((item) => (
+                              <option value={item?._id}>{item?.name_en}</option>
+                            ))}
                         </select>
                       </div>
                       <div className="form-group col-4 mt-3">
@@ -553,11 +627,20 @@ const EventManagement = () => {
                 View Plan Details
               </h5>
               <button
+                style={{ marginLeft: "60%" }}
+                type="button"
+                className="comman_btn border border-light py-1 px-4 ml-auto"
+                onClick={(e) => sendEventInfo(e, eventInfo)}
+              >
+                Edit
+              </button>
+              <button
                 type="button"
                 className="btn-close"
                 data-bs-dismiss="modal"
                 aria-label="Close"
                 id="closed"
+                onClick={() => setEdit(false)}
               />
             </div>
             <div className="modal-body">
@@ -573,7 +656,7 @@ const EventManagement = () => {
                     className="form-control"
                     name="amount"
                     defaultValue={eventInfo?.eventName}
-                    disabled
+                    disabled={!edit}
                   />
                 </div>
                 <div className="form-group col-4">
@@ -592,7 +675,7 @@ const EventManagement = () => {
                     type="text"
                     className="form-control"
                     name="address"
-                    disabled
+                    disabled={!edit}
                     defaultValue={eventInfo?.event_location?.city}
                   />
                 </div>
@@ -616,12 +699,59 @@ const EventManagement = () => {
                           className="form-control"
                           name="address"
                           disabled
-                          defaultValue={element?.service?.name_en}
+                          defaultValue={element?.service?.packages?.name_en}
                         />
                       </div>
                     </div>
                   </div>
                 ))}
+                <div className="form-group col-6 mt-3">
+                  <label htmlFor="">Budget Price</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="address"
+                    disabled={!edit}
+                    value={budgetCost}
+                    onChange={(e) => setBudgetCost(e.target.value)}
+                  />
+                </div>
+                <div className="form-group col-6 mt-3">
+                  <label htmlFor="">Total Amount</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="address"
+                    disabled={!edit}
+                    value={totalAmount}
+                    onChange={(e) => setTotalAmount(e.target.value)}
+                  />
+                </div>
+                {/* TIME */}
+                <div className="form-group col-6 mt-3">
+                  <label htmlFor="">Select Start Date & Time</label>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DemoContainer components={["DateTimePicker"]}>
+                      <DateTimePicker
+                        value={dayjs(startDateTime)}
+                        onChange={(newValue) => setStartDateTime(newValue)}
+                        disabled={!edit}
+                      />
+                    </DemoContainer>
+                  </LocalizationProvider>
+                </div>
+                <div className="form-group col-6 mt-3">
+                  <label htmlFor="">Select End Date & Time</label>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DemoContainer components={["DateTimePicker"]}>
+                      <DateTimePicker
+                        value={dayjs(endDateTime)}
+                        onChange={(newValue) => setEndDateTime(newValue)}
+                        disabled={!edit}
+                      />
+                    </DemoContainer>
+                  </LocalizationProvider>
+                </div>
                 <div className="form-group mb-0 col-12 text-center mt-3">
                   <button
                     className="comman_btn d-none"
@@ -631,6 +761,17 @@ const EventManagement = () => {
                     Reset
                   </button>
                 </div>
+                {edit ? (
+                  <div className="form-group mb-0 col-12 text-center mt-3">
+                    <button
+                      className="comman_btn"
+                      type="button"
+                      onClick={() => updateEvent(eventInfo)}
+                    >
+                      Update
+                    </button>
+                  </div>
+                ) : null}
               </form>
             </div>
           </div>

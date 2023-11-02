@@ -5,11 +5,17 @@ import Swal from "sweetalert2";
 import {
   AllBookings,
   changeBuyerStatus,
+  changeBuyerTicketStatus,
   getBuyerBookings,
   getBuyersDetails,
   getBuyerSupport,
+  getViewBuyerSupport,
+  SendMessageBuy,
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
+import { useRef } from "react";
+import { MessageBox } from "react-chat-elements";
+import moment from "moment";
 const BuyerDetails = () => {
   const [slide, setSlide] = useState("BuyM");
   const [values, setValues] = useState({ from: "", to: "" });
@@ -18,6 +24,12 @@ const BuyerDetails = () => {
   let location = useLocation();
   const [sideBar, setSideBar] = useState();
   const [support, setSupport] = useState();
+
+  const [buyId, setBuyId] = useState();
+  const [newMessage, setNewMessage] = useState("");
+  const [mainChat, setMainChat] = useState([]);
+  const [chat, setChat] = useState([]);
+  const chatpartMainRef = useRef(null);
 
   const getBarClick = (val) => {
     console.log(val);
@@ -29,6 +41,9 @@ const BuyerDetails = () => {
     getBookings();
     getChatSupport();
   }, []);
+  useEffect(() => {
+    scrollToBottom();
+  }, [chat]);
 
   const getBuyer = async () => {
     let id = location.state?.id;
@@ -102,6 +117,60 @@ const BuyerDetails = () => {
         title: "Please select a Date range!",
         icon: "warning",
         button: "ok",
+        confirmButtonColor: "#e25829",
+      });
+    }
+  };
+
+  const handleMessage = (e) => {
+    let text = e.target.value;
+    // console.log(text);
+    setNewMessage(text);
+  };
+
+  const sendMessage = async () => {
+    if (!newMessage || newMessage === null || newMessage === "") {
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: "Message can not be empty",
+        showConfirmButton: false,
+        timerProgressBar: true,
+        timer: 3000,
+      });
+      return false;
+    }
+    const { data } = await SendMessageBuy({ message: newMessage }, buyId);
+    setNewMessage("");
+    let msg = data?.results?.reply?.reply?.slice(-1);
+    setChat((chat) => [...chat, msg[0]]);
+    scrollToBottom();
+  };
+
+  const ViewBuyerSupport = async (id) => {
+    console.log(id);
+    setBuyId(id);
+    const { data } = await getViewBuyerSupport(id);
+    console.warn(data);
+    setChat(data?.results.message?.reply);
+    setMainChat(data?.results.message);
+  };
+
+  const scrollToBottom = () => {
+    if (chatpartMainRef.current) {
+      chatpartMainRef.current.scrollTop = chatpartMainRef.current.scrollHeight;
+    }
+  };
+
+  const TicketStatus = async (id) => {
+    const { data } = await changeBuyerTicketStatus(id);
+    if (!data?.error) {
+      Swal.fire({
+        title: "Ticket Status Changed!",
+        text: data?.message,
+        icon: "success",
+        confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
     }
@@ -379,21 +448,28 @@ const BuyerDetails = () => {
                                           <td>{index + 1}</td>
                                           <td>{item?.email}</td>
                                           <td>{item?.subject}</td>
-                                          <td>Lorem ipsum dolor sit amet</td>
-                                          <td>March 28,2022</td>
+                                          <td>{item?.concern}</td>
                                           <td>
-                                            <div className="check_toggle">
+                                            {moment(item?.createdAt).format(
+                                              "L"
+                                            )}
+                                          </td>
+                                          <td>
+                                            <div
+                                              className="check_toggle"
+                                              key={item?._id}
+                                            >
                                               <input
                                                 type="checkbox"
-                                                name="checkv1"
-                                                id="checkv1"
+                                                defaultChecked={item?.status}
+                                                name="check1"
+                                                id={item?._id}
                                                 className="d-none"
+                                                onClick={() => {
+                                                  TicketStatus(item?._id);
+                                                }}
                                               />
-                                              <label
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#staticBackdrop12"
-                                                htmlFor="checkv1"
-                                              />
+                                              <label for={item?._id}></label>
                                             </div>
                                           </td>
                                           <td>
@@ -401,7 +477,10 @@ const BuyerDetails = () => {
                                               data-bs-toggle="modal"
                                               data-bs-target="#staticBackdrop"
                                               className="comman_btn table_viewbtn"
-                                              href="javscript:;"
+                                              onClick={() => {
+                                                ViewBuyerSupport(item?._id);
+                                                scrollToBottom();
+                                              }}
                                             >
                                               View
                                             </a>
@@ -454,56 +533,54 @@ const BuyerDetails = () => {
                   aria-label="Close"
                 />
               </div>
-              <div className="modal-body py-4">
-                <div className="chatpart_main">
-                  <div className="row mx-0">
+              <div className="modal-body py-4 " id="chat">
+                <div
+                  className="chatpart_main "
+                  id="chat2"
+                  ref={chatpartMainRef}
+                >
+                  <div className="row mx-0 ">
                     <div className="col-12 user_chat mb-3">
                       <div className="row">
-                        <div className="col text-end">
-                          <div className="user_chat_box">Hello Sir</div>
-                          <span className="time_chat">Jan 14th, 7:19 pm</span>
+                        <MessageBox
+                          position={"right"}
+                          type={"text"}
+                          title={mainChat?.buyer?.full_name}
+                          text={mainChat?.concern}
+                          date={mainChat?.createdAt}
+                        />
+                      </div>
+                      {mainChat?.images?.map((item) => (
+                        <div className="row mt-1">
+                          <MessageBox
+                            position={"right"}
+                            type={"photo"}
+                            title={mainChat?.vendor?.full_name}
+                            date={mainChat?.createdAt}
+                            data={{
+                              uri: item,
+                              width: 50,
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    {(chat || [])?.map((item) => (
+                      <div className="col-12 user_chat mb-3">
+                        <div className="row">
+                          <MessageBox
+                            position={
+                              item?.replyBy === "Buyer" ? "right" : "left"
+                            }
+                            type={"text"}
+                            title={item?.replyBy}
+                            text={item?.message}
+                            date={item?.createdAt}
+                          />
                         </div>
                       </div>
-                    </div>
-                    <div className="col-12 admin_chat mb-3">
-                      <div className="row">
-                        <div className="col text-start">
-                          <div className="admin_chat_box">
-                            Hello Vishnu we are working on it.
-                          </div>
-                          <span className="time_chat">Jan 14th, 7:20 pm</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-12 user_chat mb-3">
-                      <div className="row">
-                        <div className="col text-end">
-                          <div className="user_chat_box">
-                            I'm Facing problem on my reservations
-                          </div>
-                          <span className="time_chat">Jan 14th, 7:20 pm</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-12 admin_chat mb-3">
-                      <div className="row">
-                        <div className="col text-start">
-                          <div className="admin_chat_box">
-                            Wait for some time we will provide solution you
-                            shortly
-                          </div>
-                          <span className="time_chat">Jan 14th, 7:21 pm</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-12 user_chat mb-3">
-                      <div className="row">
-                        <div className="col text-end">
-                          <div className="user_chat_box">Okay, Thanks</div>
-                          <span className="time_chat">Jan 14th, 7:22 pm</span>
-                        </div>
-                      </div>
-                    </div>
+                    ))}
+                    {/* <div ref={ref}></div> */}
                   </div>
                 </div>
               </div>
@@ -514,10 +591,20 @@ const BuyerDetails = () => {
                       type="text"
                       className="form-control"
                       placeholder="Type a Message...."
+                      onChange={(e) => setNewMessage(e.target.value)}
+                      value={newMessage}
                     />
                   </div>
+
                   <div className="form-group col-auto ps-0">
-                    <button className="send_btn" type="send">
+                    <button
+                      className="send_btn"
+                      type="send"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        sendMessage();
+                      }}
+                    >
                       <i className="fab fa-telegram-plane" />
                     </button>
                   </div>
