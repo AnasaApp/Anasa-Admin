@@ -2333,12 +2333,11 @@ export async function Buyers() {
 export async function SendPushNotify(formData, id) {
   try {
     console.log(formData, id)
-    // const { data } = await appHttpService.post(
-    //   `${process.env.REACT_APP_APIENDPOINT}api/admin/addNotification`,
-    //   formData
-    // );
-    let data = true
-    // console.log(data);
+    const { data } = await appHttpService.post(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/addNotification`,
+      formData
+    );
+    console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,

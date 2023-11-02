@@ -152,44 +152,54 @@ const Notification = () => {
   };
 
   const onSubmit = async (data) => {
-    if (userTypes === "Vendor") {
-      if (!selectedUsers.usersSelected) {
-        // Send to all vendors
-        let users = vendorOptions.map((vendor) => vendor.value);
-        setSelectedUsers(users);
+    if (userTypes) {
+      if (
+        selectedUsers.usersSelected &&
+        selectedUsers.usersSelected.length > 0
+      ) {
+        await SendPushNotify({
+          message: data?.message,
+          userType: userTypes,
+          selectedUsers: selectedUsers.usersSelected.map((item) => item?.value),
+        }).then((res) => {
+          document.getElementById("resetForm").click();
+          GetNotifications();
+          setSelectedUsers({ usersSelected: [] });
+          if (!res.data.error) {
+            Swal.fire({
+              title: "Notification Sent!",
+              icon: "success",
+              confirmButtonText: "Okay",
+              confirmButtonColor: "#e25829",
+            });
+          }
+        });
       } else {
-        // Send to selected vendors
-        let users = selectedUsers.usersSelected.map((item) => item.value);
-        setSelectedUsers(users);
-      }
-    } else if (userTypes === "Buyer") {
-      if (selectedUsers.usersSelected.length === 0) {
-        // Send to all buyers
-        let users = buyerOptions.map((buyer) => buyer.value);
-        setSelectedUsers(users);
-      } else {
-        // Send to selected buyers
-        let users = selectedUsers.usersSelected.map((item) => item.value);
-        setSelectedUsers(users);
-      }
-    }
-    await SendPushNotify({
-      message: data?.message,
-      userType: userTypes,
-      selectedUsers,
-    }).then((res) => {
-      document.getElementById("resetForm").click();
-      GetNotifications();
-      setSelectedUsers({ usersSelected: [] });
-      if (!res.data.error) {
-        Swal.fire({
-          title: "Notificaton Send!",
-          icon: "success",
-          confirmButtonText: "Okay",
-          confirmButtonColor: "#e25829",
+        const allUsersOfType =
+          userTypes === "Vendor" ? vendorOptions : buyerOptions;
+        const selectedUserIds = allUsersOfType.map((item) => item.value);
+
+        await SendPushNotify({
+          message: data?.message,
+          userType: userTypes,
+          selectedUsers: selectedUserIds,
+        }).then((res) => {
+          document.getElementById("resetForm").click();
+          GetNotifications();
+          setSelectedUsers({ usersSelected: [] });
+          if (!res.data.error) {
+            Swal.fire({
+              title: "Notification Sent to All " + userTypes + "s!",
+              icon: "success",
+              confirmButtonText: "Okay",
+              confirmButtonColor: "#e25829",
+            });
+          }
         });
       }
-    });
+    } else {
+      message.error("Please select a user type.");
+    }
   };
 
   return (

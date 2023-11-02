@@ -73,6 +73,7 @@ const CommissionManagement = () => {
 
   const getAllCat = async () => {
     const { data } = await AllCategory();
+    console.log(data);
     setAllCategories(data?.results?.categories);
   };
   const getCommissions = async () => {
@@ -202,9 +203,14 @@ const CommissionManagement = () => {
                       onChange={(e) => subCategories(e.target.value)}
                     >
                       <option selected="">Select Category</option>
-                      {allCategories?.map((item) => (
-                        <option value={item?._id}>{item?.name_en}</option>
-                      ))}
+                      {allCategories &&
+                        allCategories
+                          .filter((item) => item.status === true)
+                          .map((item) => (
+                            <option value={item._id} key={item._id}>
+                              {item.name_en}
+                            </option>
+                          ))}
                     </select>
                   </div>
 
