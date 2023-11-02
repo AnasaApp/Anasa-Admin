@@ -169,6 +169,13 @@ const Notification = () => {
     let { data } = await Buyers();
   };
 
+  // setSelectedUsers({ usersSelected: [] });
+  const handleUserTypeChange = (e) => {
+    const newUserType = e.target.value;
+    setUsertypes(newUserType);
+    setSelectedUsers({ usersSelected: [] });
+  };
+
   const onSubmit = async (data) => {
     if (userTypes) {
       if (
@@ -267,8 +274,13 @@ const Notification = () => {
                       name="userType"
                       {...register("userType", {
                         required: "*Required!",
+                        // onChange: (e) => {
+                        //   setUsertypes(e.target.value);
+                        //   setVendorOptions([]);
+                        //   setBuyerOptions([]);
+                        // },
                         onChange: (e) => {
-                          setUsertypes(e.target.value);
+                          handleUserTypeChange(e);
                         },
                       })}
                     >

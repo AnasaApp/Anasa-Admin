@@ -109,6 +109,7 @@ const Dashboard = () => {
     const dataEarning = await totalEarning();
     const dataVendor = await totalVendors();
     const dataOrder = await totalOrders();
+    console.log(dataOrder)
     localStorage.setItem("buyers", dataBuyer?.data?.results.buyers);
     localStorage.setItem(
       "earning",

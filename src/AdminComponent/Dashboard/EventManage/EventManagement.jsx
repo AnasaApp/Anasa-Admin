@@ -39,7 +39,7 @@ const EventManagement = () => {
   const [endDateTime, setEndDateTime] = useState(null);
   const [budgetCost, setBudgetCost] = useState();
   const [totalAmount, setTotalAmount] = useState();
-  const [eventName, setEventName] = useState()
+  const [eventName, setEventName] = useState();
 
   const [formValues, setFormValues] = useState([
     {
@@ -195,7 +195,7 @@ const EventManagement = () => {
 
       setBudgetCost(data?.results?.event?.budget_cost);
       setTotalAmount(data?.results?.event?.totalAmount);
-      setEventName(data?.results?.event?.eventName)
+      setEventName(data?.results?.event?.eventName);
 
       setEventInfo(data?.results?.event);
 
@@ -364,9 +364,25 @@ const EventManagement = () => {
     setEndDateTime(formattedEndDateTime);
   }
 
-  const updateEvent = () => {
-    console.log(startDateTime, endDateTime, budgetCost, totalAmount)
-  };
+  const updateEvent = (e) => {
+    e.preventDefault();
+
+    alert("Hello")
+    const Sdate = new Date(startDateTime);
+    const Edate = new Date(endDateTime);
+    let startDate = Sdate.toISOString().split("T")[0];
+    let startTime = Sdate.toISOString().split("T")[1].slice(0, 5);
+    let endDate = Edate.toISOString().split("T")[0];
+    let endTime = Edate.toISOString().split("T")[1].slice(0, 5);
+
+    let formData = new FormData();
+    formData.append("startDate", startDate);
+    formData.append("startTime", startTime);
+    formData.append("endDate", endDate);
+    formData.append("endTime", endTime);
+    console.log(formData)
+    console.log(startDate, startTime, endDate, totalAmount);
+  }
 
   // console.warn(eventInfo);
 
@@ -763,17 +779,17 @@ const EventManagement = () => {
                     Reset
                   </button>
                 </div>
-                {edit ? (
+                {edit && (
                   <div className="form-group mb-0 col-12 text-center mt-3">
                     <button
                       className="comman_btn"
                       type="button"
-                      onClick={() => updateEvent()}
+                      onClick={updateEvent}
                     >
                       Update
                     </button>
                   </div>
-                ) : null}
+                )}
               </form>
             </div>
           </div>

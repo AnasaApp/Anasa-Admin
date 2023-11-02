@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import {
   AllCategory,
+  UpdateServices,
   getSubCategory,
   getVendorDetails,
   getVendorServices,
@@ -60,8 +61,8 @@ const Services = () => {
     console.log(categoryId);
     const { data } = await getSubCategory({ categoryId });
     setSubCategory(data?.results?.subCategories);
-    if (data.results.subCategories) {
-      setSelectedArSubCategory(data.results.subCategories[0].name_ar || " ");
+    if (data?.results?.subCategories) {
+      setSelectedArSubCategory(data?.results?.subCategories[0]?.name_ar || " ");
     }
   };
   const getBarClick = (val) => {
@@ -97,12 +98,32 @@ const Services = () => {
   };
 
   const handleCategoryEnChange = (e) => {
-    setSelectedEnCategory(e.target.value);
+    const selectedCategoryNameEn = e.target.value;
+    setSelectedEnCategory(selectedCategoryNameEn);
+
+    // Find the selected category based on its English name
     const selectedCategory = category.find(
-      (cat) => cat.name_en === e.target.value
+      (cat) => cat.name_en === selectedCategoryNameEn
     );
-    setSelectedArCategory(selectedCategory?.name_ar || "");
-    getAllSubCategory(selectedCategory?._id);
+    if (selectedCategory) {
+      getAllSubCategory(selectedCategory._id);
+
+      const defaultSubCategory = selectedCategory.subCategories.find(
+        (subCat) => subCat.is_default
+      );
+
+      setSelectedEnSubCategory(
+        defaultSubCategory ? defaultSubCategory.name_en : ""
+      );
+
+      setSelectedArSubCategory(
+        defaultSubCategory ? defaultSubCategory.name_ar : ""
+      );
+    } else {
+      setSubCategory([]);
+      setSelectedEnSubCategory("");
+      setSelectedArSubCategory("");
+    }
   };
 
   const handleSubCatChange = (e) => {
@@ -147,17 +168,40 @@ const Services = () => {
     console.log(formData);
   };
 
-  const handleEditFinish = async () => {
-    let formData = new FormData();
-    console.log(
-      price,
-      serviceNameEn,
-      serviceNameAr,
-      selectedEnCategory,
-      selectedArCategory,
-      descriptionNameAr,
-      descriptionNameEn
+  const handleEditFinish = async (id, e) => {
+    e.preventDefault();
+    let category_id = category.find(
+      (cat) => selectedEnCategory === cat.name_en
     );
+    let subCat_Id;
+    if (selectedEnSubCategory) {
+      subCat_Id = subCategory.find(
+        (subCat) => selectedEnSubCategory === subCat.name_en
+      );
+    }
+    console.log("SubCat", subCat_Id?._id);
+    console.log("Cat", category_id._id);
+    const formData = new FormData();
+    formData.append("name_en", serviceNameEn);
+    formData.append("name_ar", serviceNameAr);
+    formData.append("description_en", descriptionNameEn);
+    formData.append("description_ar", descriptionNameAr);
+    formData.append("categoryId", category_id?._id);
+    if (subCat_Id) {
+      formData.append("subCategoryId", subCat_Id?._id);
+    }
+    formData.append("price", price);
+    let { data } = await UpdateServices(id, formData);
+    if (!data.error) {
+      Swal.fire({
+        title: data.message,
+        icon: "success",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    setModalVisible(false);
+    GetVendorServices();
   };
 
   return (
@@ -490,11 +534,13 @@ const Services = () => {
                             }}
                           >
                             {category &&
-                              category.map((cat, i) => (
-                                <option value={cat.name_en}>
-                                  {cat.name_en}
-                                </option>
-                              ))}
+                              category
+                                .filter((cat) => cat.status === true)
+                                .map((cat, i) => (
+                                  <option value={cat.name_en}>
+                                    {cat.name_en}
+                                  </option>
+                                ))}
                           </select>
                         </div>
                         <div className="form-group col-6">
@@ -524,11 +570,13 @@ const Services = () => {
                                 onChange={(e) => handleSubCatChange(e)}
                               >
                                 {subCategory &&
-                                  subCategory.map((cat, i) => (
-                                    <option value={cat.name_en}>
-                                      {cat.name_en}
-                                    </option>
-                                  ))}
+                                  subCategory
+                                    .filter((subCat) => subCat.status === true)
+                                    .map((cat, i) => (
+                                      <option value={cat.name_en}>
+                                        {cat.name_en}
+                                      </option>
+                                    ))}
                               </select>
                             </div>
                             <div className="form-group col-6">
@@ -558,11 +606,11 @@ const Services = () => {
                     </div>
                     <div className="modal-footer">
                       <button
-                        onClick={handleEditFinish}
+                        onClick={(e) => handleEditFinish(dataToEdit?._id, e)}
                         type="button"
                         className="comman_btn"
                       >
-                        Finish
+                        Update
                       </button>
                     </div>
                   </div>

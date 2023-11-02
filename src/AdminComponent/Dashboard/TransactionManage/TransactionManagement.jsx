@@ -24,6 +24,8 @@ const TransactionManagement = () => {
   const [vendorId, setVendorId] = useState();
   const [wallet, setWallet] = useState();
   const [value, setValue] = useState();
+  const [totalBuyerAmount, setTotalBuyerAmount] = useState()
+  const [totalVendorAmount, setTotalVendorAmount] = useState()
 
   const {
     register: register2,
@@ -181,6 +183,7 @@ const TransactionManagement = () => {
     const newRows = [];
     if (!data.error) {
       let values = data?.results.transactions;
+      console.log(values)
       values?.map((list, index) => {
         const returnData = {};
         returnData.sn = index + 1 + ".";
@@ -429,7 +432,7 @@ const TransactionManagement = () => {
                                 <strong>Total Amount: </strong>
                               </div>
                               <div className="col-6 text-end">
-                                <span>0.00</span>
+                                <span>{totalBuyerAmount}</span>
                               </div>
                             </div>
                           </div>

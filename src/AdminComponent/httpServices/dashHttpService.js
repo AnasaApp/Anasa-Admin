@@ -820,6 +820,7 @@ export async function getVendorTransactions(id, formData) {
     return { error };
   }
 }
+
 export async function getVendorServices(id, formData) {
   try {
     const { data } = await appHttpService.post(
@@ -1069,6 +1070,39 @@ export async function SearchUser(formData) {
     return { error };
   }
 }
+
+export async function UpdateServices(id, formData) {
+  try{
+    const { data } = await appHttpService.post(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/editServices` + "/" + id,
+      formData
+    );
+    console.warn(data);
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { data };
+  }
+  catch (error) {
+    if (error.response) {
+      // console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
+
 export async function SearchVendorServices(id) {
   try {
     const { data } = await appHttpService.post(

@@ -36,7 +36,6 @@ const SubCategories = ({ cate }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageName, setImageName] = useState(null);
 
-
   const [category, setCategory] = useState({
     columns: [
       {
@@ -226,7 +225,6 @@ const SubCategories = ({ cate }) => {
     formData.append("image", croppedImage);
     const res = await AddSubCategory(formData);
     console.log(croppedImage);
-    // let res = true
     console.log(res);
     if (!res.data.error) {
       getAllSubCat();
@@ -297,11 +295,13 @@ const SubCategories = ({ cate }) => {
                 })}
               >
                 <option selected="">Select Category</option>
-                {(allCategories || [])?.map((item, index) => (
-                  <option key={index} value={item?._id}>
-                    {item?.name_en}
-                  </option>
-                ))}
+                {(allCategories || [])
+                  ?.filter((cat) => cat.status === true)
+                  .map((item, index) => (
+                    <option key={index} value={item?._id}>
+                      {item?.name_en}
+                    </option>
+                  ))}
               </select>
               {errors.category && (
                 <small className="errorText mx-1">
@@ -371,7 +371,7 @@ const SubCategories = ({ cate }) => {
             </div>
             <div className="form-group mb-0 col-auto choose_file position-relative">
               <span>Sub Category Image </span>{" "}
-              <label htmlFor="upload_video">
+              <label htmlFor="upload_cat_img">
                 <i className="fa fa-camera me-1" />
                 Choose File
               </label>{" "}
@@ -379,10 +379,10 @@ const SubCategories = ({ cate }) => {
                 type="file"
                 className="form-control mx-2"
                 defaultValue=""
-                name="upload_video"
+                name="upload_cat_img"
                 accept=".jpg, .jpeg, .png"
-                id="upload_video"
-                onChange={(e) => onFileSelection(e, "upload_video")}
+                id="upload_cat_img"
+                onChange={(e) => onFileSelection(e, "upload_cat_img")}
               />
             </div>
             <div className="form-group mt-4 col-auto">
