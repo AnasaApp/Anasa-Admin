@@ -25,6 +25,13 @@ const Services = () => {
   const [subCategory, setSubCategory] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [files, setFiles] = useState(null);
+
+  const [serviceNameEn, setServiceNameEn] = useState();
+  const [serviceNameAr, setServiceNameAr] = useState();
+  const [descriptionNameEn, setDescriptionNameEn] = useState();
+  const [descriptionNameAr, setDescriptionNameAr] = useState();
+  const [price, setPrice] = useState();
+
   let id = useParams();
   // console.log(id);
   useEffect(() => {
@@ -77,8 +84,16 @@ const Services = () => {
 
     setModalVisible(true);
     setDataToEdit(item);
+    setServiceNameEn(item?.name_en);
+    setServiceNameAr(item?.name_ar);
+    setDescriptionNameAr(item?.description_ar);
+    setDescriptionNameEn(item?.description_en);
+    setPrice(item?.price);
     console.log(item);
     setSelectedEnCategory(item?.category?.name_en || "");
+    setSelectedEnSubCategory(item?.subCategory?.name_en || "");
+    setSelectedArSubCategory(item?.subCategory?.name_ar || "");
+    setSelectedArCategory(item?.category?.name_ar || "");
   };
 
   const handleCategoryEnChange = (e) => {
@@ -119,7 +134,6 @@ const Services = () => {
     const selectedFile = e.target.files[0];
     setFiles({ ...files, [key]: selectedFile });
   };
-  
 
   const handleFileSubmit = async (e) => {
     e.preventDefault();
@@ -127,10 +141,23 @@ const Services = () => {
       alert("Please select a file to upload.");
       return;
     }
-  
+
     const formData = new FormData();
     formData.append("excelFile", files.upload_file);
     console.log(formData);
+  };
+
+  const handleEditFinish = async () => {
+    let formData = new FormData();
+    console.log(
+      price,
+      serviceNameEn,
+      serviceNameAr,
+      selectedEnCategory,
+      selectedArCategory,
+      descriptionNameAr,
+      descriptionNameEn
+    );
   };
 
   return (
@@ -405,7 +432,8 @@ const Services = () => {
                             type="text"
                             className="form-control"
                             name="serviceName_en"
-                            defaultValue={dataToEdit?.name_en}
+                            value={serviceNameEn}
+                            onChange={(e) => setServiceNameEn(e.target.value)}
                           />
                         </div>
 
@@ -414,8 +442,9 @@ const Services = () => {
                           <input
                             type="text"
                             className="form-control"
-                            name="serviceName_en"
-                            defaultValue={dataToEdit?.name_ar}
+                            name="serviceName_ar"
+                            value={serviceNameAr}
+                            onChange={(e) => setServiceNameAr(e.target.value)}
                           />
                         </div>
 
@@ -424,8 +453,11 @@ const Services = () => {
                           <input
                             type="text"
                             className="form-control"
-                            name="serviceName_en"
-                            defaultValue={dataToEdit?.description_en}
+                            name="description_en"
+                            value={descriptionNameEn}
+                            onChange={(e) =>
+                              setDescriptionNameEn(e.target.value)
+                            }
                           />
                         </div>
                         <div className="form-group col-12">
@@ -433,8 +465,11 @@ const Services = () => {
                           <input
                             type="text"
                             className="form-control"
-                            name="serviceName_en"
-                            defaultValue={dataToEdit?.description_ar}
+                            name="description_ar"
+                            value={descriptionNameAr}
+                            onChange={(e) =>
+                              setDescriptionNameAr(e.target.value)
+                            }
                           />
                         </div>
                         <div className="form-group col-6">
@@ -446,12 +481,12 @@ const Services = () => {
                             value={selectedEnCategory}
                             onChange={(e) => {
                               handleCategoryEnChange(e);
-                              const selectedCategory = category.find(
-                                (cat) => cat.name_en === e.target.value
-                              );
-                              setSelectedArCategory(
-                                selectedCategory?.name_ar || ""
-                              );
+                              // const selectedCategory = category.find(
+                              //   (cat) => cat.name_en === e.target.value
+                              // );
+                              // setSelectedArCategory(
+                              //   selectedCategory?.name_ar || ""
+                              // );
                             }}
                           >
                             {category &&
@@ -467,8 +502,8 @@ const Services = () => {
                           <input
                             type="text"
                             className="form-control"
-                            name="serviceName_en"
-                            defaultValue={
+                            name="category_ar"
+                            value={
                               selectedArCategory
                                 ? selectedArCategory
                                 : dataToEdit?.category?.name_ar
@@ -483,8 +518,8 @@ const Services = () => {
                               <label htmlFor="">Select Sub Category (En)</label>
                               <select
                                 className="form-control w-100"
-                                name="category_en"
-                                id="category_en"
+                                name=""
+                                id="subCategory_en"
                                 value={selectedEnSubCategory}
                                 onChange={(e) => handleSubCatChange(e)}
                               >
@@ -501,8 +536,8 @@ const Services = () => {
                               <input
                                 type="text"
                                 className="form-control"
-                                name="serviceName_en"
-                                defaultValue={selectedArSubCategory}
+                                name="subCategory_ar"
+                                // defaultValue={selectedArSubCategory}
                                 value={selectedArSubCategory}
                                 disabled
                               />
@@ -514,14 +549,19 @@ const Services = () => {
                           <input
                             type="text"
                             className="form-control"
-                            name="serviceName_en"
-                            defaultValue={dataToEdit?.price}
+                            name="price"
+                            value={price}
+                            onChange={(e) => setPrice(e.target.value)}
                           />
                         </div>
                       </form>
                     </div>
                     <div className="modal-footer">
-                      <button type="button" className="comman_btn">
+                      <button
+                        onClick={handleEditFinish}
+                        type="button"
+                        className="comman_btn"
+                      >
                         Finish
                       </button>
                     </div>

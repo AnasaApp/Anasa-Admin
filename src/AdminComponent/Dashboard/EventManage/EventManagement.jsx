@@ -39,6 +39,7 @@ const EventManagement = () => {
   const [endDateTime, setEndDateTime] = useState(null);
   const [budgetCost, setBudgetCost] = useState();
   const [totalAmount, setTotalAmount] = useState();
+  const [eventName, setEventName] = useState()
 
   const [formValues, setFormValues] = useState([
     {
@@ -194,6 +195,7 @@ const EventManagement = () => {
 
       setBudgetCost(data?.results?.event?.budget_cost);
       setTotalAmount(data?.results?.event?.totalAmount);
+      setEventName(data?.results?.event?.eventName)
 
       setEventInfo(data?.results?.event);
 
@@ -362,8 +364,8 @@ const EventManagement = () => {
     setEndDateTime(formattedEndDateTime);
   }
 
-  const updateEvent = (data) => {
-    console.log("event", data);
+  const updateEvent = () => {
+    console.log(startDateTime, endDateTime, budgetCost, totalAmount)
   };
 
   // console.warn(eventInfo);
@@ -656,7 +658,7 @@ const EventManagement = () => {
                     className="form-control"
                     name="amount"
                     defaultValue={eventInfo?.eventName}
-                    disabled={!edit}
+                    disabled
                   />
                 </div>
                 <div className="form-group col-4">
@@ -675,7 +677,7 @@ const EventManagement = () => {
                     type="text"
                     className="form-control"
                     name="address"
-                    disabled={!edit}
+                    disabled
                     defaultValue={eventInfo?.event_location?.city}
                   />
                 </div>
@@ -766,7 +768,7 @@ const EventManagement = () => {
                     <button
                       className="comman_btn"
                       type="button"
-                      onClick={() => updateEvent(eventInfo)}
+                      onClick={() => updateEvent()}
                     >
                       Update
                     </button>

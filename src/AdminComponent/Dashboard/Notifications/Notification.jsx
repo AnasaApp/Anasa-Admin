@@ -18,7 +18,7 @@ import { message } from "antd";
 const Notification = () => {
   const [slide, setSlide] = useState("NM");
   const [sideBar, setSideBar] = useState();
-  const [userTypes, setUsertypes] = useState('');
+  const [userTypes, setUsertypes] = useState("");
   const [buyerOptions, setBuyerOptions] = useState([]);
   const [vendorOptions, setVendorOptions] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
@@ -40,7 +40,7 @@ const Notification = () => {
 
   useEffect(() => {
     GetNotifications();
-    getAllBuyers()
+    getAllBuyers();
   }, [userTypes]);
 
   const [notifyList, setNotifyList] = useState({
@@ -109,7 +109,7 @@ const Notification = () => {
 
   const createOptions = async () => {
     await SearchUser({ search: searchKey }).then((res) => {
-      console.warn(res)
+      console.warn(res);
       if (!res.error) {
         let data = res?.data.results?.buyers;
         const optionList = data?.map((item, index) => ({
@@ -123,10 +123,10 @@ const Notification = () => {
   };
 
   const createVendorOptions = async () => {
-    await SearchVendor({ search: searchVendorKey}).then((res) => {
+    await SearchVendor({ search: searchVendorKey }).then((res) => {
       if (!res.error) {
         let data = res?.data.results?.vendor;
-        console.log(data)
+        console.log(data);
         const optionList = data?.map((item, index) => ({
           value: item?._id?._id,
           label: item?._id?.full_name,
@@ -147,21 +147,39 @@ const Notification = () => {
     setSearchKey(inputValue);
   };
 
-  const getAllBuyers = async() => {
-    let {data} = await Buyers()
-  }
+  const getAllBuyers = async () => {
+    let { data } = await Buyers();
+  };
 
   const onSubmit = async (data) => {
+    if (userTypes === "Vendor") {
+      if (!selectedUsers.usersSelected) {
+        // Send to all vendors
+        let users = vendorOptions.map((vendor) => vendor.value);
+        setSelectedUsers(users);
+      } else {
+        // Send to selected vendors
+        let users = selectedUsers.usersSelected.map((item) => item.value);
+        setSelectedUsers(users);
+      }
+    } else if (userTypes === "Buyer") {
+      if (selectedUsers.usersSelected.length === 0) {
+        // Send to all buyers
+        let users = buyerOptions.map((buyer) => buyer.value);
+        setSelectedUsers(users);
+      } else {
+        // Send to selected buyers
+        let users = selectedUsers.usersSelected.map((item) => item.value);
+        setSelectedUsers(users);
+      }
+    }
     await SendPushNotify({
       message: data?.message,
       userType: userTypes,
-      selectedUsers:
-        userTypes === userTypes
-          ? selectedUsers.usersSelected?.map((item) => item?.value)
-          : [],
+      selectedUsers,
     }).then((res) => {
       document.getElementById("resetForm").click();
-      GetNotifications()
+      GetNotifications();
       setSelectedUsers({ usersSelected: [] });
       if (!res.data.error) {
         Swal.fire({
@@ -190,7 +208,8 @@ const Notification = () => {
                 <form
                   className="form-design py-4 px-3 help-support-form row  justify-content-between"
                   action=""
-                  onSubmit={handleSubmit(onSubmit)}>
+                  onSubmit={handleSubmit(onSubmit)}
+                >
                   <div className="form-group col-12">
                     <label htmlFor="">Write a message</label>
                     <textarea
@@ -223,7 +242,8 @@ const Notification = () => {
                         onChange: (e) => {
                           setUsertypes(e.target.value);
                         },
-                      })}>
+                      })}
+                    >
                       <option value="">Select Type</option>
                       <option value="Vendor">Vendor</option>
                       <option value="Buyer">Buyer</option>
@@ -242,7 +262,9 @@ const Notification = () => {
                       isMulti
                       name="users"
                       // options={options}
-                          options={userTypes === "Vendor" ? vendorOptions : buyerOptions}
+                      options={
+                        userTypes === "Vendor" ? vendorOptions : buyerOptions
+                      }
                       className="basic-multi-select z-3"
                       classNamePrefix="select"
                       onChange={handleChange}
@@ -258,7 +280,8 @@ const Notification = () => {
                     <button
                       className="comman_btn d-none"
                       type="reset"
-                      id="resetForm">
+                      id="resetForm"
+                    >
                       reset
                     </button>
                   </div>
