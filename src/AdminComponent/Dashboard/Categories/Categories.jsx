@@ -194,6 +194,7 @@ const Categories = () => {
   };
 
   const onFileSelection = (e, key) => {
+    console.log(e.target.files[0].name)
     setImageName(e.target.files[0].name);
     setFiles({ ...files, [key]: e.target.files[0] });
     setSelectedImage(URL.createObjectURL(e.target.files[0]));

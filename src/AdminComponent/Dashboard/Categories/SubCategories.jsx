@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import {
@@ -13,7 +13,10 @@ import {
 import { MDBDataTable } from "mdbreact";
 import moment from "moment";
 
-const SubCategories = ({ cate, croppedImage }) => {
+import Cropper from "react-easy-crop";
+import getCroppedImg from "../../CropImage/CropImage";
+
+const SubCategories = ({ cate }) => {
   const [allCategories, setAllCategories] = useState([]);
   const [allSubCategories, setAllSubCategories] = useState([]);
   const [files, setFiles] = useState();
@@ -23,6 +26,17 @@ const SubCategories = ({ cate, croppedImage }) => {
   const [editCatEn, setEditCatEn] = useState("");
   const [editSubCatAr, setEditSubCatAr] = useState("");
   const [editedImg, setEditedImg] = useState();
+
+  // crop //
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [croppedImage, setCroppedImage] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imageName, setImageName] = useState(null);
+
+
   const [category, setCategory] = useState({
     columns: [
       {
@@ -98,7 +112,9 @@ const SubCategories = ({ cate, croppedImage }) => {
     const newRows = [];
     if (!data.error) {
       let values = data?.results?.subCategories;
-      values.sort((a, b) => (a.status === true ? -1 : b.status === true ? 1 : 0));
+      values.sort((a, b) =>
+        a.status === true ? -1 : b.status === true ? 1 : 0
+      );
       console.log(values);
       values?.map((list, index) => {
         const returnData = {};
@@ -142,7 +158,8 @@ const SubCategories = ({ cate, croppedImage }) => {
               data-bs-target="#staticBackdrop1"
               className="comman_btn table_viewbtn mx-1"
               href="javascript:;"
-              onClick={() => editSubCategory(list?._id)}>
+              onClick={() => editSubCategory(list?._id)}
+            >
               Edit
             </a>
           </>
@@ -167,9 +184,37 @@ const SubCategories = ({ cate, croppedImage }) => {
       });
     }
   };
-  
+
+  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
+    // console.warn(croppedArea, crop, croppedImage)
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
+
+  const onSubmitCroppedImage = async () => {
+    try {
+      const getCropImage = await getCroppedImg(
+        selectedImage,
+        croppedAreaPixels,
+        imageName
+      );
+      setCroppedImage(getCropImage);
+      setModalVisible(false);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const onFileSelection = (e, key) => {
+    setImageName(e.target.files[0].name);
     setFiles({ ...files, [key]: e.target.files[0] });
+    setSelectedImage(URL.createObjectURL(e.target.files[0]));
+    if (e.target.files[0]) {
+      setModalVisible(true);
+    }
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
   };
 
   const onSubmit = async (data) => {
@@ -178,9 +223,9 @@ const SubCategories = ({ cate, croppedImage }) => {
     formData.append("name_ar", data?.sub_category_ar?.trim());
     formData.append("category", data?.category);
     // formData.append("image", files?.upload_video);
-    formData.append("image", croppedImage );
+    formData.append("image", croppedImage);
     const res = await AddSubCategory(formData);
-    console.log(croppedImage)
+    console.log(croppedImage);
     // let res = true
     console.log(res);
     if (!res.data.error) {
@@ -237,7 +282,8 @@ const SubCategories = ({ cate, croppedImage }) => {
           <form
             className="form-design py-4 px-3 help-support-form row  justify-content-between"
             action=""
-            onSubmit={handleSubmit(onSubmit)}>
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <div className="form-group col-6">
               <label htmlFor="">Category</label>
               <select
@@ -248,7 +294,8 @@ const SubCategories = ({ cate, croppedImage }) => {
                 name="category"
                 {...register("category", {
                   required: "Category is required!",
-                })}>
+                })}
+              >
                 <option selected="">Select Category</option>
                 {(allCategories || [])?.map((item, index) => (
                   <option key={index} value={item?._id}>
@@ -333,7 +380,7 @@ const SubCategories = ({ cate, croppedImage }) => {
                 className="form-control mx-2"
                 defaultValue=""
                 name="upload_video"
-                accept="image/*"
+                accept=".jpg, .jpeg, .png"
                 id="upload_video"
                 onChange={(e) => onFileSelection(e, "upload_video")}
               />
@@ -345,7 +392,8 @@ const SubCategories = ({ cate, croppedImage }) => {
               <button
                 className="comman_btn mt-1 d-none"
                 type="reset"
-                id="ResetSub">
+                id="ResetSub"
+              >
                 reset
               </button>
             </div>
@@ -382,7 +430,8 @@ const SubCategories = ({ cate, croppedImage }) => {
         data-bs-keyboard="false"
         tabIndex={-1}
         aria-labelledby="staticBackdropLabel"
-        aria-hidden="true">
+        aria-hidden="true"
+      >
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content border-0">
             <div className="modal-header">
@@ -403,7 +452,8 @@ const SubCategories = ({ cate, croppedImage }) => {
             <div className="modal-body">
               <form
                 className="form-design px-3 py-2 help-support-form row  justify-content-center"
-                action="">
+                action=""
+              >
                 <div className="form-group col-6 ">
                   <label htmlFor="">Sub-Category Image</label>
 
@@ -411,7 +461,7 @@ const SubCategories = ({ cate, croppedImage }) => {
                     type="file"
                     className="form-control mx-2"
                     defaultValue=""
-                    accept="image/*"
+                    accept=".jpg, .jpeg, .png"
                     name="subCateImg"
                     id="subCateImgEdit"
                     onChange={(e) => onFileSelection(e, "subCateImg")}
@@ -424,10 +474,12 @@ const SubCategories = ({ cate, croppedImage }) => {
                     aria-label="Default select example"
                     name="category"
                     className="form-control"
-                    onChange={(e) => setEditCatEn(e.target.value)}>
+                    onChange={(e) => setEditCatEn(e.target.value)}
+                  >
                     <option
                       selected=""
-                      value={editedSubCategories?.category?._id}>
+                      value={editedSubCategories?.category?._id}
+                    >
                       {editedSubCategories?.category?.name_en}
                     </option>
                     {(allCategories || [])?.map((item, index) => (
@@ -470,8 +522,66 @@ const SubCategories = ({ cate, croppedImage }) => {
                 <button
                   className="comman_btn d-none"
                   id="modalSubReset"
-                  type="reset"></button>
+                  type="reset"
+                ></button>
               </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className={`modal ${modalVisible ? "show d-block" : "d-none"}`}
+        tabIndex="-1"
+        role="dialog"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">Selected Image</h5>
+              <button
+                type="button"
+                className="close close_btn"
+                onClick={closeModal}
+              >
+                <span aria-hidden="true">
+                  <i class="fa-solid fa-xmark"></i>
+                </span>
+              </button>
+            </div>
+            <p className="my-3 text-center">
+              Zoom & Drag to crop & select the image
+            </p>
+            <hr className="m-0" />
+            <div className="modal-body">
+              {selectedImage && (
+                <div className="selected_image_for_crop">
+                  <img
+                    className="w-100 h-100 object-fit-contain opacity-0"
+                    src={selectedImage}
+                    alt="selected"
+                  />
+                </div>
+              )}
+              <Cropper
+                image={selectedImage}
+                crop={crop}
+                zoom={zoom}
+                aspect={1}
+                onCropChange={setCrop}
+                onCropComplete={onCropComplete}
+                onZoomChange={setZoom}
+                objectFit={"contain"}
+              />
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="comman_btn"
+                onClick={onSubmitCroppedImage}
+              >
+                Finish
+              </button>
             </div>
           </div>
         </div>
