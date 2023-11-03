@@ -138,6 +138,13 @@ const TransactionManagement = () => {
     const newRows = [];
     if (!data.error) {
       let values = data?.results.transactions;
+      // console.log(values)
+      let total = values
+      .filter((item) => item.status === "Paid")
+      .reduce((acc, next) => {
+        return +next.withdrawl + acc;
+      }, 0);
+      setTotalVendorAmount(total)
       values?.map((list, index) => {
         const returnData = {};
         returnData.sn = index + 1 + ".";
@@ -183,7 +190,13 @@ const TransactionManagement = () => {
     const newRows = [];
     if (!data.error) {
       let values = data?.results.transactions;
-      console.log(values)
+      // console.log(values)
+      let total = values
+      .filter((item) => item.status === "Successful")
+      .reduce((acc, next) => {
+        return +next.amount + acc;
+      }, 0);
+      setTotalBuyerAmount(total)
       values?.map((list, index) => {
         const returnData = {};
         returnData.sn = index + 1 + ".";
@@ -216,7 +229,7 @@ const TransactionManagement = () => {
       [e.target.name]: value,
     });
   };
-  console.log(trans);
+  // console.log(trans);
 
   const onSearch = async (e) => {
     if (values?.from && values?.to) {
@@ -250,7 +263,7 @@ const TransactionManagement = () => {
   };
 
   const onEdit = async (data) => {
-    console.log(data);
+    // console.log(data);
     await editWallet({ amount: value, vendorId: vendorId }).then((res) => {
       if (!res.data.error) {
         document.getElementById("transClose").click();
@@ -269,13 +282,13 @@ const TransactionManagement = () => {
   const manageVendor = async (id) => {
     const { data } = await GetVendorWallet(id);
     if (!data.error) {
-      console.log(data);
+      // console.log(data);
       setWallet(data?.results.wallet);
     }
   };
 
   const getBarClick = (val) => {
-    console.log(val);
+    // console.log(val);
     setSideBar(val);
   };
   return (
@@ -432,7 +445,7 @@ const TransactionManagement = () => {
                                 <strong>Total Amount: </strong>
                               </div>
                               <div className="col-6 text-end">
-                                <span>{totalBuyerAmount}</span>
+                                <span>{totalBuyerAmount} SAR</span>
                               </div>
                             </div>
                           </div>
@@ -540,7 +553,7 @@ const TransactionManagement = () => {
                                 <strong>Total Amount: </strong>
                               </div>
                               <div className="col-6 text-end">
-                                <span>0.00 SAR</span>
+                                <span>{totalVendorAmount}</span>
                               </div>
                             </div>
                           </div>
