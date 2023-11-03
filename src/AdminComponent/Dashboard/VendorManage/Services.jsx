@@ -33,6 +33,8 @@ const Services = () => {
   const [descriptionNameAr, setDescriptionNameAr] = useState();
   const [price, setPrice] = useState();
 
+  const [subCat_Id, setSubCat_Id] = useState()
+
   let id = useParams();
   // console.log(id);
   useEffect(() => {
@@ -61,8 +63,10 @@ const Services = () => {
     console.log(categoryId);
     const { data } = await getSubCategory({ categoryId });
     setSubCategory(data?.results?.subCategories);
+    console.log(data)
     if (data?.results?.subCategories) {
       setSelectedArSubCategory(data?.results?.subCategories[0]?.name_ar || " ");
+      setSubCat_Id(data?.results?.subCategories[0]._id)
     }
   };
   const getBarClick = (val) => {
@@ -100,31 +104,22 @@ const Services = () => {
   const handleCategoryEnChange = (e) => {
     const selectedCategoryNameEn = e.target.value;
     setSelectedEnCategory(selectedCategoryNameEn);
-
-    // Find the selected category based on its English name
-    const selectedCategory = category.find(
-      (cat) => cat.name_en === selectedCategoryNameEn
-    );
-    if (selectedCategory) {
-      getAllSubCategory(selectedCategory._id);
-
-      const defaultSubCategory = selectedCategory.subCategories.find(
-        (subCat) => subCat.is_default
+    if (category && category.length > 0) {
+      const selectedCategory = category.find(
+        (cat) => cat.name_en === selectedCategoryNameEn
       );
 
-      setSelectedEnSubCategory(
-        defaultSubCategory ? defaultSubCategory.name_en : ""
-      );
-
-      setSelectedArSubCategory(
-        defaultSubCategory ? defaultSubCategory.name_ar : ""
-      );
-    } else {
-      setSubCategory([]);
-      setSelectedEnSubCategory("");
-      setSelectedArSubCategory("");
+      if (selectedCategory) {
+        getAllSubCategory(selectedCategory._id);
+        setSelectedArCategory(selectedCategory.name_ar)
+      } else {
+        setSubCategory([]);
+        setSelectedEnSubCategory("");
+        setSelectedArSubCategory("");
+      }
     }
   };
+  
 
   const handleSubCatChange = (e) => {
     let value = e.target.value;
@@ -132,8 +127,9 @@ const Services = () => {
     let selectedSubCategory = subCategory.find(
       (subCat) => subCat?.name_en === value
     );
-    console.log(selectedSubCategory.name_ar);
+    console.log(selectedSubCategory);
     setSelectedArSubCategory(selectedSubCategory.name_ar || "");
+    setSubCat_Id(selectedSubCategory?._id)
   };
   const changeVendorServiceStatus = async (id) => {
     console.log(id);
@@ -173,14 +169,6 @@ const Services = () => {
     let category_id = category.find(
       (cat) => selectedEnCategory === cat.name_en
     );
-    let subCat_Id;
-    if (selectedEnSubCategory) {
-      subCat_Id = subCategory.find(
-        (subCat) => selectedEnSubCategory === subCat.name_en
-      );
-    }
-    console.log("SubCat", subCat_Id?._id);
-    console.log("Cat", category_id._id);
     const formData = new FormData();
     formData.append("name_en", serviceNameEn);
     formData.append("name_ar", serviceNameAr);
@@ -188,7 +176,7 @@ const Services = () => {
     formData.append("description_ar", descriptionNameAr);
     formData.append("categoryId", category_id?._id);
     if (subCat_Id) {
-      formData.append("subCategoryId", subCat_Id?._id);
+      formData.append("subCategoryId", subCat_Id);
     }
     formData.append("price", price);
     let { data } = await UpdateServices(id, formData);
