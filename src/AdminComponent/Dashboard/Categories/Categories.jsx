@@ -39,6 +39,8 @@ const Categories = () => {
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
+  const [edit, setEdit] = useState(false);
+  const [finish, setFinish] = useState(true);
 
   const [category, setCategory] = useState({
     columns: [
@@ -102,22 +104,51 @@ const Categories = () => {
   } = useForm();
 
   useEffect(() => {
+    setSelectedImage(null);
     getAllCat();
   }, []);
 
   const getAllCat = async () => {
     const { data } = await AllCategory();
-    console.warn(data.results.categories)
+    console.warn(data.results.categories);
     const newRows = [];
     if (!data.error) {
       let values = data?.results?.categories;
-      values.sort((a, b) => (a.status === true ? -1 : b.status === true ? 1 : 0));
+      values.sort((a, b) =>
+        a.status === true ? -1 : b.status === true ? 1 : 0
+      );
       // console.log(values);
       values?.map((list, index) => {
         const returnData = {};
         returnData.sn = index + 1 + ".";
         returnData.image = (
-          <img src={list.image} alt="image" className="table_img" />
+          <div
+            className="cursor-pointer position-relative"
+            onClick={() => {
+              editSubCatImage(list?._id);
+              setSelectedImage(null);
+              setFiles([]);
+            }}
+          >
+            <div>
+              <img src={list.image} alt="image" className="table_img" />
+            </div>
+            <div
+              style={{
+                top: "-15px",
+                right: "-10px",
+                background: "#e25829",
+              }}
+              className="position-absolute rounded p-1"
+            >
+              <i
+                style={{
+                  left: "2px",
+                }}
+                className="fa fa-camera me-1 text-light position-relative"
+              />
+            </div>
+          </div>
         );
         returnData.name_en = list?.name_en;
         returnData.name_ar = list?.name_ar;
@@ -187,20 +218,32 @@ const Categories = () => {
         imageName
       );
       setCroppedImage(getCropImage);
-      setModalVisible(false);
+      if (!edit) {
+        setModalVisible(false);
+      }
     } catch (e) {
       console.error(e);
     }
   };
 
   const onFileSelection = (e, key) => {
-    console.log(e.target.files[0].name)
+    console.log(e.target.files[0].name);
     setImageName(e.target.files[0].name);
     setFiles({ ...files, [key]: e.target.files[0] });
     setSelectedImage(URL.createObjectURL(e.target.files[0]));
     if (e.target.files[0]) {
       setModalVisible(true);
     }
+  };
+
+  const editSubCatImage = async (id) => {
+    setFiles([]);
+    setModalVisible(true);
+    setEdit(true);
+    setCatId(id);
+    const { data } = await getViewCategory(id);
+    console.log(data);
+    setEditedCategories(data?.results.categories);
   };
 
   const closeModal = () => {
@@ -239,6 +282,7 @@ const Categories = () => {
 
   const saveCategories = async (e) => {
     e.preventDefault();
+    console.log(croppedImage);
     const formData = new FormData();
     formData.append("name_en", editCatEn);
     formData.append("name_ar", editCatAr);
@@ -251,6 +295,12 @@ const Categories = () => {
       document.getElementById("modal").click();
       getAllCat();
       setEditedImg();
+      setModalVisible(false);
+      setCroppedImage(null);
+      setFiles([]);
+      setSelectedImage(null);
+      setFinish(true);
+      setEdit(false);
       Swal.fire({
         title: "Category Modified Successfully!",
         icon: "success",
@@ -394,6 +444,7 @@ const Categories = () => {
                               </div>
                               <div
                                 // onClick={() => setModalVisible(true)}
+                                onClick={() => setEdit(false)}
                                 className="form-group mb-0 col-3 choose_file position-relative"
                               >
                                 <span>Category Image </span>{" "}
@@ -464,7 +515,10 @@ const Categories = () => {
                         role="tabpanel"
                         aria-labelledby="profile-tab"
                       >
-                        <SubCategories cate={cate} croppedImage={croppedImage} />
+                        <SubCategories
+                          cate={cate}
+                          croppedImage={croppedImage}
+                        />
                       </div>
                     </div>
                   </div>
@@ -505,13 +559,8 @@ const Categories = () => {
                 className="form-design px-3 py-2 help-support-form row  justify-content-center"
                 action=""
               >
-                <div className="form-group col-6">
+                {/* <div className="form-group col-6">
                   <label htmlFor="">Category Image</label>
-                  {/* <img
-                    src={editedCategories?.image}
-                    alt="image"
-                    className="table_img"
-                  /> */}
 
                   <input
                     type="file"
@@ -522,7 +571,7 @@ const Categories = () => {
                     id="cateImgEdit"
                     onChange={(e) => onFileSelection(e, "cateImg")}
                   />
-                </div>
+                </div> */}
                 <div className="form-group col-6">
                   <label htmlFor="">Category Name (En)</label>
                   <input
@@ -534,7 +583,7 @@ const Categories = () => {
                     onChange={(e) => setEditCatEn(e.target.value)}
                   />
                 </div>
-                <div className="form-group col-12">
+                <div className="form-group col-6">
                   <label htmlFor="">Category Name (Ar)</label>
                   <input
                     type="text"
@@ -575,23 +624,44 @@ const Categories = () => {
               <button
                 type="button"
                 className="close close_btn"
-                onClick={closeModal}
+                onClick={() => {
+                  closeModal();
+                  const fileInput = document.getElementById("cateImgEdit");
+                  if (fileInput) {
+                    fileInput.value = "";
+                  }
+                }}
               >
                 <span aria-hidden="true">
                   <i class="fa-solid fa-xmark"></i>
                 </span>
               </button>
             </div>
-            <p className="my-3 text-center">Zoom & Drag to crop & select the image</p>
+            <p className="my-3 text-center">
+              Zoom & Drag to crop & select the image
+            </p>
+            {edit ? (
+              <div className="px-2">
+                <input
+                  type="file"
+                  className="form-control mx-2 w-100 py-3"
+                  defaultValue=""
+                  accept="image/*"
+                  name="cateImgEdit"
+                  id="cateImgEdit"
+                  onChange={(e) => onFileSelection(e, "cateImgEdit")}
+                />
+              </div>
+            ) : null}
             <hr className="m-0" />
             <div className="modal-body">
               {selectedImage && (
                 <div className="selected_image_for_crop">
                   <img
-                  className="w-100 h-100 object-fit-contain opacity-0"
-                  src={selectedImage}
-                  alt="selected"
-                />
+                    className="w-100 h-100 object-fit-contain opacity-0"
+                    src={selectedImage}
+                    alt="selected"
+                  />
                 </div>
               )}
               <Cropper
@@ -605,15 +675,42 @@ const Categories = () => {
                 objectFit={"contain"}
               />
             </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="comman_btn"
-                onClick={onSubmitCroppedImage}
-              >
-                Finish
-              </button>
-            </div>
+            {edit ? (
+              finish ? (
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="comman_btn"
+                    onClick={() => {
+                      onSubmitCroppedImage();
+                      setFinish(false);
+                    }}
+                  >
+                    Finish
+                  </button>
+                </div>
+              ) : (
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="comman_btn"
+                    onClick={saveCategories}
+                  >
+                    Update
+                  </button>
+                </div>
+              )
+            ) : (
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="comman_btn"
+                  onClick={onSubmitCroppedImage}
+                >
+                  Finish
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

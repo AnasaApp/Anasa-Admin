@@ -178,6 +178,15 @@ const Notification = () => {
 
   const onSubmit = async (data) => {
     if (userTypes) {
+      console.log(userTypes);
+  
+      let selectedUsersKey;
+      if (userTypes === "Vendor") {
+        selectedUsersKey = "vendors";
+      } else {
+        selectedUsersKey = "buyers";
+      }
+  
       if (
         selectedUsers.usersSelected &&
         selectedUsers.usersSelected.length > 0
@@ -185,7 +194,7 @@ const Notification = () => {
         await SendPushNotify({
           message: data?.message,
           userType: userTypes,
-          selectedUsers: selectedUsers.usersSelected.map((item) => item?.value),
+          [selectedUsersKey]: selectedUsers.usersSelected.map((item) => item?.value),
         }).then((res) => {
           document.getElementById("resetForm").click();
           GetNotifications();
@@ -200,14 +209,15 @@ const Notification = () => {
           }
         });
       } else {
+        // ALL USERS ON SELECTED TYPE
         const allUsersOfType =
           userTypes === "Vendor" ? vendorOptions : buyerOptions;
         const selectedUserIds = allUsersOfType.map((item) => item.value);
-
+  
         await SendPushNotify({
           message: data?.message,
           userType: userTypes,
-          selectedUsers: selectedUserIds,
+          [selectedUsersKey]: selectedUserIds,
         }).then((res) => {
           document.getElementById("resetForm").click();
           GetNotifications();
@@ -226,6 +236,7 @@ const Notification = () => {
       message.error("Please select a user type.");
     }
   };
+  
 
   return (
     <div className={sideBar === "click" ? "expanded_main" : "admin_main"}>
