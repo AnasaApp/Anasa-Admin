@@ -538,7 +538,8 @@ export async function AddEventDetails(formData, id) {
   }
 }
 
-export async function EditEventDetails(formData, id) {
+export async function EditEventDetails(id, formData) {
+  console.log(formData, id)
   try {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/editDetails` + "/" + id,

@@ -13,8 +13,9 @@ import {
 import { MDBDataTable } from "mdbreact";
 import moment from "moment";
 
-import Cropper from "react-easy-crop";
 import getCroppedImg from "../../CropImage/CropImage";
+import { useRef } from "react";
+import { Cropper } from "react-advanced-cropper";
 
 const SubCategories = ({ cate }) => {
   const [allCategories, setAllCategories] = useState([]);
@@ -28,16 +29,14 @@ const SubCategories = ({ cate }) => {
   const [editedImg, setEditedImg] = useState();
 
   // crop //
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
+  const [edit, setEdit] = useState(false);
+  const [finish, setFinish] = useState(true);
+  const cropperRef = useRef(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageName, setImageName] = useState(null);
 
-  const [edit, setEdit] = useState(false);
-  const [finish, setFinish] = useState(true);
 
   const [category, setCategory] = useState({
     columns: [
@@ -214,27 +213,6 @@ const SubCategories = ({ cate }) => {
     }
   };
 
-  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
-    // console.warn(croppedArea, crop, croppedImage)
-    setCroppedAreaPixels(croppedAreaPixels);
-  }, []);
-
-  const onSubmitCroppedImage = async () => {
-    try {
-      const getCropImage = await getCroppedImg(
-        selectedImage,
-        croppedAreaPixels,
-        imageName
-      );
-      setCroppedImage(getCropImage);
-      if (!edit) {
-        setModalVisible(false);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
   const onFileSelection = (e, key) => {
     setImageName(e.target.files[0].name);
     setFiles({ ...files, [key]: e.target.files[0] });
@@ -252,10 +230,29 @@ const SubCategories = ({ cate }) => {
     setFiles([]);
     setModalVisible(true);
     setEdit(true);
-    setCatId(id);
-    // const { data } = await getViewCategory(id);
-    // console.log(data);
-    // setEditedCategories(data?.results.categories);
+    await editSubCategory(id)
+  };
+  const onCrop = async () => {
+    try {
+      if (cropperRef.current) {
+        const pixelCrop = cropperRef.current.getCoordinates();
+        console.log(pixelCrop);
+        const croppedImageData = await getCroppedImg(
+          selectedImage,
+          pixelCrop,
+          imageName
+        );
+        console.log(croppedImageData);
+        setCroppedImage(croppedImageData);
+        if (!edit) {
+          setModalVisible(false);
+        }
+      } else {
+        console.error("error on image uploading");
+      }
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const onSubmit = async (data) => {
@@ -282,13 +279,17 @@ const SubCategories = ({ cate }) => {
   };
 
   const editSubCategory = async (id) => {
+    console.log(id)
     setCatId(id);
     const { data } = await getViewSubCategory(id);
+    setEditSubCatAr(data?.results?.subCategories?.name_ar)
+    setEditSubCatEn(data?.results?.subCategories?.name_en)
     setEditedSubCategories(data?.results.subCategories);
   };
 
   const saveSubCategory = async (e) => {
     e.preventDefault();
+    // console.log(first)
     const formData = new FormData();
     formData.append("category", editCatEn);
     formData.append("name_ar", editSubCatAr);
@@ -610,38 +611,25 @@ const SubCategories = ({ cate }) => {
               Zoom & Drag to crop & select the image
             </p>
             {edit ? (
-              <div className="px-2">
+              <div className="ps-2 pe-4">
                 <input
                   type="file"
                   className="form-control mx-2 w-100 py-3"
                   defaultValue=""
                   accept="image/*"
-                  name="cateImg"
+                  name="cateImgEdit"
                   id="cateImgEdit"
-                  onChange={(e) => onFileSelection(e, "cateImg")}
+                  onChange={(e) => onFileSelection(e, "cateImgEdit")}
                 />
               </div>
             ) : null}
-            <hr className="m-0" />
-            <div className="modal-body">
-              {selectedImage && (
-                <div className="selected_image_for_crop">
-                  <img
-                    className="w-100 h-100 object-fit-contain opacity-0"
-                    src={selectedImage}
-                    alt="selected"
-                  />
-                </div>
-              )}
+            {/* <hr className="m-0" /> */}
+            <div style={{ height: "400px" }} className="modal-body">
               <Cropper
-                image={selectedImage}
-                crop={crop}
-                zoom={zoom}
-                aspect={1}
-                onCropChange={setCrop}
-                onCropComplete={onCropComplete}
-                onZoomChange={setZoom}
-                objectFit={"contain"}
+                ref={cropperRef}
+                src={selectedImage}
+                onChange={onchange}
+                className={"cropper"}
               />
             </div>
             {edit ? (
@@ -651,7 +639,7 @@ const SubCategories = ({ cate }) => {
                     type="button"
                     className="comman_btn"
                     onClick={() => {
-                      onSubmitCroppedImage();
+                      onCrop();
                       setFinish(false);
                     }}
                   >
@@ -671,11 +659,7 @@ const SubCategories = ({ cate }) => {
               )
             ) : (
               <div className="modal-footer">
-                <button
-                  type="button"
-                  className="comman_btn"
-                  onClick={onSubmitCroppedImage}
-                >
+                <button type="button" className="comman_btn" onClick={onCrop}>
                   Finish
                 </button>
               </div>

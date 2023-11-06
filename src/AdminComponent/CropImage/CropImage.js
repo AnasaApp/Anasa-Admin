@@ -12,6 +12,7 @@ const createImage = url =>
  * @param {Object} pixelCrop - pixelCrop Object provided by react-easy-crop
  */
 export default async function getCroppedImg(imageSrc, pixelCrop, outputFileName) {
+  console.log(pixelCrop)
   const image = await createImage(imageSrc)
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
@@ -43,8 +44,8 @@ export default async function getCroppedImg(imageSrc, pixelCrop, outputFileName)
   // paste the generated rotated image with correct offsets for x and y crop values.
   ctx.putImageData(
     data,
-    Math.round(0 - safeArea / 2 + image.width * 0.5 - pixelCrop.x),
-    Math.round(0 - safeArea / 2 + image.height * 0.5 - pixelCrop.y)
+    Math.round(0 - safeArea / 2 + image.width * 0.5 - pixelCrop.left),
+    Math.round(0 - safeArea / 2 + image.height * 0.5 - pixelCrop.top)
   )
   
   return new Promise(resolve => {

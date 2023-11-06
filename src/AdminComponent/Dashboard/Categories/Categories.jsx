@@ -17,8 +17,10 @@ import moment from "moment";
 import { UploadOutlined } from "@ant-design/icons";
 import { Button, message, Upload } from "antd";
 
-import Cropper from "react-easy-crop";
 import getCroppedImg from "../../CropImage/CropImage";
+
+import { CropperRef, Cropper } from "react-advanced-cropper";
+import { useRef } from "react";
 
 const Categories = () => {
   const [slide, setSlide] = useState("CM");
@@ -35,12 +37,10 @@ const Categories = () => {
   const [imageName, setImageName] = useState(null);
 
   // crop //
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
   const [edit, setEdit] = useState(false);
   const [finish, setFinish] = useState(true);
+  const cropperRef = useRef(null);
 
   const [category, setCategory] = useState({
     columns: [
@@ -91,6 +91,29 @@ const Categories = () => {
     ],
     rows: [],
   });
+
+  const onCrop = async () => {
+    try {
+      if (cropperRef.current) {
+        const pixelCrop = cropperRef.current.getCoordinates();
+        console.log(pixelCrop);
+        const croppedImageData = await getCroppedImg(
+          selectedImage,
+          pixelCrop,
+          imageName
+        );
+        console.log(croppedImageData);
+        setCroppedImage(croppedImageData);
+        if (!edit) {
+          setModalVisible(false);
+        }
+      } else {
+        console.error("error on image uploading");
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const getBarClick = (val) => {
     // console.log(val);
@@ -205,27 +228,6 @@ const Categories = () => {
     }
   };
 
-  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
-    // console.warn(croppedArea, crop, croppedImage)
-    setCroppedAreaPixels(croppedAreaPixels);
-  }, []);
-
-  const onSubmitCroppedImage = async () => {
-    try {
-      const getCropImage = await getCroppedImg(
-        selectedImage,
-        croppedAreaPixels,
-        imageName
-      );
-      setCroppedImage(getCropImage);
-      if (!edit) {
-        setModalVisible(false);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
   const onFileSelection = (e, key) => {
     console.log(e.target.files[0].name);
     setImageName(e.target.files[0].name);
@@ -243,7 +245,9 @@ const Categories = () => {
     setCatId(id);
     const { data } = await getViewCategory(id);
     console.log(data);
-    setEditedCategories(data?.results.categories);
+    setEditedCategories(data?.results?.categories);
+    setEditCatEn(data?.results?.categories?.name_en);
+    setEditCatAr(data?.results?.categories?.name_ar);
   };
 
   const closeModal = () => {
@@ -251,13 +255,16 @@ const Categories = () => {
   };
 
   const onSubmit = async (data) => {
+    console.log(data);
     const formData = new FormData();
     formData.append("name_en", data?.Category_name?.trim());
     formData.append("name_ar", data?.Category_name_ar?.trim());
     // formData.append("image", files?.upload_video);
-    formData.append("image", croppedImage);
+
+    if (croppedImage) {
+      formData.append("image", croppedImage);
+    }
     console.log(formData);
-    console.log(croppedImage);
     const res = await AddCategory(formData);
     console.log(res);
     if (!res.data.error) {
@@ -282,7 +289,7 @@ const Categories = () => {
 
   const saveCategories = async (e) => {
     e.preventDefault();
-    console.log(croppedImage);
+    console.log(croppedImage, editCatEn, editCatAr);
     const formData = new FormData();
     formData.append("name_en", editCatEn);
     formData.append("name_ar", editCatAr);
@@ -515,10 +522,7 @@ const Categories = () => {
                         role="tabpanel"
                         aria-labelledby="profile-tab"
                       >
-                        <SubCategories
-                          cate={cate}
-                          croppedImage={croppedImage}
-                        />
+                        <SubCategories cate={cate} />
                       </div>
                     </div>
                   </div>
@@ -641,7 +645,7 @@ const Categories = () => {
               Zoom & Drag to crop & select the image
             </p>
             {edit ? (
-              <div className="px-2">
+              <div className="ps-2 pe-4">
                 <input
                   type="file"
                   className="form-control mx-2 w-100 py-3"
@@ -653,26 +657,12 @@ const Categories = () => {
                 />
               </div>
             ) : null}
-            <hr className="m-0" />
-            <div className="modal-body">
-              {selectedImage && (
-                <div className="selected_image_for_crop">
-                  <img
-                    className="w-100 h-100 object-fit-contain opacity-0"
-                    src={selectedImage}
-                    alt="selected"
-                  />
-                </div>
-              )}
+            <div style={{ height: "400px" }} className="modal-body">
               <Cropper
-                image={selectedImage}
-                crop={crop}
-                zoom={zoom}
-                aspect={1}
-                onCropChange={setCrop}
-                onCropComplete={onCropComplete}
-                onZoomChange={setZoom}
-                objectFit={"contain"}
+                ref={cropperRef}
+                src={selectedImage}
+                onChange={onchange}
+                className={"cropper"}
               />
             </div>
             {edit ? (
@@ -682,9 +672,10 @@ const Categories = () => {
                     type="button"
                     className="comman_btn"
                     onClick={() => {
-                      onSubmitCroppedImage();
+                      onCrop();
                       setFinish(false);
                     }}
+                    disabled={!selectedImage}
                   >
                     Finish
                   </button>
@@ -695,6 +686,7 @@ const Categories = () => {
                     type="button"
                     className="comman_btn"
                     onClick={saveCategories}
+                    disabled={!selectedImage}
                   >
                     Update
                   </button>
@@ -705,7 +697,8 @@ const Categories = () => {
                 <button
                   type="button"
                   className="comman_btn"
-                  onClick={onSubmitCroppedImage}
+                  onClick={onCrop}
+                  disabled={!selectedImage}
                 >
                   Finish
                 </button>

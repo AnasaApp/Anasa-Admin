@@ -1311,3 +1311,12 @@ div.dataTables_wrapper div.dataTables_paginate {
 .cursor-pointer{
   cursor: pointer;
 }
+
+.react-datetime-picker__wrapper{
+  padding: 10px 15px;
+  border-radius: 5px;
+}
+
+.react-datetime-picker__button{
+  display: none;
+}
