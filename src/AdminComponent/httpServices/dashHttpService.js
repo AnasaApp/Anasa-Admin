@@ -538,12 +538,11 @@ export async function AddEventDetails(formData, id) {
   }
 }
 
-export async function EditEventDetails(id, formData) {
-  console.log(formData, id)
+export async function EditEventDetails(id, eventData) {
   try {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/editDetails` + "/" + id,
-      formData
+      eventData
     );
     console.log(data);
 
@@ -1649,11 +1648,12 @@ export async function editWallet(formData) {
 }
 export async function EditCommission(formData, id) {
   try {
-    const { data } = await appHttpService.post(
-      `${process.env.REACT_APP_APIENDPOINT}api/admin/editCommission` + "/" + id,
-      formData
-    );
+    // const { data } = await appHttpService.post(
+    //   `${process.env.REACT_APP_APIENDPOINT}api/admin/editCommission` + "/" + id,
+    //   formData
+    // );
     // console.log(data);
+    let data = false
     if (data?.error) {
       Swal.fire({
         title: data?.message,

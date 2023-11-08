@@ -405,7 +405,7 @@ const MarketingOffers = () => {
                     </label>{" "}
                     <input
                       type="file"
-                      className="form-control"
+                      className="form-control ms-3"
                       accept="image/*"
                       name="upload_video"
                       id="upload_video"
@@ -489,7 +489,7 @@ const MarketingOffers = () => {
                             <option selected="" value="">
                               Select Category
                             </option>
-                            {allCategories?.map((item) => (
+                            {allCategories?.filter(cat => cat.status === true)?.map((item) => (
                               <option value={item?._id}>{item?.name_en}</option>
                             ))}
                           </select>

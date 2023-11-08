@@ -56,7 +56,6 @@ const HelpSupport = () => {
   };
 
   const VieWVendorSupport = async (id, status) => {
-    setVenId(id);
     if (status) {
       setVenId(id);
       const { data } = await getViewVendorSupport(id);
@@ -71,6 +70,7 @@ const HelpSupport = () => {
         confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
+      return false
     }
   };
 
@@ -148,6 +148,7 @@ const HelpSupport = () => {
   // };
 
   const TicketStatus = async (id) => {
+    console.log(id)
     const { data } = await changeBuyerTicketStatus(id);
     if (!data?.error) {
       Swal.fire({
@@ -157,6 +158,8 @@ const HelpSupport = () => {
         confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
+      getBuyerSupport()
+      getVendorSupport()
     }
   };
 
@@ -408,7 +411,7 @@ const HelpSupport = () => {
                                             <td>
                                               <a
                                                 data-bs-toggle="modal"
-                                                data-bs-target="#staticBackdrop2"
+                                                data-bs-target={item?.status ? "#staticBackdrop2": ''}
                                                 className="comman_btn table_viewbtn"
                                                 onClick={() =>{
                                                   VieWVendorSupport(

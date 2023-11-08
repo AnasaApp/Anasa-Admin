@@ -33,7 +33,7 @@ const Services = () => {
   const [descriptionNameAr, setDescriptionNameAr] = useState();
   const [price, setPrice] = useState();
 
-  const [subCat_Id, setSubCat_Id] = useState()
+  const [subCat_Id, setSubCat_Id] = useState();
 
   let id = useParams();
   // console.log(id);
@@ -63,10 +63,10 @@ const Services = () => {
     console.log(categoryId);
     const { data } = await getSubCategory({ categoryId });
     setSubCategory(data?.results?.subCategories);
-    console.log(data)
+    console.log(data);
     if (data?.results?.subCategories) {
       setSelectedArSubCategory(data?.results?.subCategories[0]?.name_ar || " ");
-      setSubCat_Id(data?.results?.subCategories[0]._id)
+      setSubCat_Id(data?.results?.subCategories[0]?._id);
     }
   };
   const getBarClick = (val) => {
@@ -94,24 +94,23 @@ const Services = () => {
     setDescriptionNameAr(item?.description_ar);
     setDescriptionNameEn(item?.description_en);
     setPrice(item?.price);
-    console.log(item);
-    setSelectedEnCategory(item?.category?.name_en || "");
+    // setSelectedEnCategory(item?.category?.name_en);
     setSelectedEnSubCategory(item?.subCategory?.name_en || "");
     setSelectedArSubCategory(item?.subCategory?.name_ar || "");
-    setSelectedArCategory(item?.category?.name_ar || "");
   };
 
   const handleCategoryEnChange = (e) => {
-    const selectedCategoryNameEn = e.target.value;
-    setSelectedEnCategory(selectedCategoryNameEn);
+    let value = e.target.value;
+    const selectedCategoryId = value;
     if (category && category.length > 0) {
       const selectedCategory = category.find(
-        (cat) => cat.name_en === selectedCategoryNameEn
+        (cat) => cat?._id === selectedCategoryId
       );
 
       if (selectedCategory) {
         getAllSubCategory(selectedCategory._id);
-        setSelectedArCategory(selectedCategory.name_ar)
+        setSelectedArCategory(selectedCategory.name_ar);
+        setSelectedEnCategory(selectedCategory?.name_en);
       } else {
         setSubCategory([]);
         setSelectedEnSubCategory("");
@@ -119,7 +118,6 @@ const Services = () => {
       }
     }
   };
-  
 
   const handleSubCatChange = (e) => {
     let value = e.target.value;
@@ -129,7 +127,7 @@ const Services = () => {
     );
     console.log(selectedSubCategory);
     setSelectedArSubCategory(selectedSubCategory.name_ar || "");
-    setSubCat_Id(selectedSubCategory?._id)
+    setSubCat_Id(selectedSubCategory?._id);
   };
   const changeVendorServiceStatus = async (id) => {
     console.log(id);
@@ -270,12 +268,12 @@ const Services = () => {
                   >
                     <div className="col-6">
                       <span className="mx-2">Add Mass Services</span>{" "}
-                      <label htmlFor="upload_file">
+                      <label className="mt-1 " htmlFor="upload_file">
                         <i className="fa fa-camera me-1 " />
                         Choose File
                       </label>
                       <input
-                        className="form-control mx-2 py-3"
+                        className="form-control py-3 ms-2"
                         type="file"
                         accept=".xls, .xlsx"
                         name="upload_file"
@@ -510,22 +508,14 @@ const Services = () => {
                             className="form-control w-100"
                             name="category_en"
                             id="category_en"
-                            value={selectedEnCategory}
-                            onChange={(e) => {
-                              handleCategoryEnChange(e);
-                              // const selectedCategory = category.find(
-                              //   (cat) => cat.name_en === e.target.value
-                              // );
-                              // setSelectedArCategory(
-                              //   selectedCategory?.name_ar || ""
-                              // );
-                            }}
+                            defaultValue={selectedEnCategory}
+                            onChange={handleCategoryEnChange}
                           >
                             {category &&
                               category
                                 .filter((cat) => cat.status === true)
                                 .map((cat, i) => (
-                                  <option value={cat.name_en}>
+                                  <option value={cat?._id}>
                                     {cat.name_en}
                                   </option>
                                 ))}

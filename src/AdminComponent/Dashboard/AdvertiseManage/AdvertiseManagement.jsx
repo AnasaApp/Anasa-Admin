@@ -95,10 +95,11 @@ const AdvertiseManagement = () => {
     await SearchVendor({ search: searchKey3 }).then((res) => {
       if (!res.error) {
         let data = res?.data.results?.vendor;
-        const optionList = data?.map((item, index) => ({
+        const optionList = data?.filter(item => item.status === true)?.map((item, index) => ({
           value: item?._id._id,
           label: item?._id.full_name,
         }));
+        console.log(optionList)
         optionList.sort((a, b) => a.label.localeCompare(b.label));
         setOptionsNewVendors(optionList);
       }
@@ -110,8 +111,7 @@ const AdvertiseManagement = () => {
       if (!res.error) {
         let data = res?.data.results?.categories;
         console.log(data);
-        console.log(data);
-        const optionList = data?.map((item, index) => ({
+        const optionList = data?.filter(item => item.status === true)?.map((item, index) => ({
           value: item?._id,
           label: item?.name_en,
         }));
@@ -125,7 +125,7 @@ const AdvertiseManagement = () => {
       if (!res.error) {
         let data = res?.data.results?.categories;
         console.log(data);
-        const optionList = data?.map((item, index) => ({
+        const optionList = data?.filter(item => item.status === true)?.map((item, index) => ({
           value: item?._id,
           label: item?.name_en,
         }));

@@ -124,12 +124,12 @@ function App() {
               path="/Admin/Dashboard/Promo-Management"
               element={<PromoManagement />}
             />
-            <Route
+            {/* <Route
               path="/Admin/Dashboard/Event-Management"
               element={<EventManagement />}
-            />
+            /> */}
             <Route
-              path="/Admin/Dashboard/Event-Management1"
+              path="/Admin/Dashboard/Event-Management"
               element={<EVM />}
             />
             <Route
