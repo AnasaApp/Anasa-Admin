@@ -570,6 +570,37 @@ export async function EditEventDetails(id, eventData) {
   }
 }
 
+export async function importVendorServices(formData) {
+  try {
+    const { data } = await appHttpService.post(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/importServices`,
+      formData
+    );
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      // console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: error?.response?.data?.results?.errors[0],
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+      console.log(error)
+    }
+    return { error };
+  }
+}
+
 export async function AllEventRequest(formData) {
   try {
     const { data } = await appHttpService.post(
@@ -1104,7 +1135,7 @@ export async function SearchUser(formData) {
 }
 
 export async function UpdateServices(id, formData) {
-  try{
+  try {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/editServices` + "/" + id,
       formData
@@ -1119,8 +1150,7 @@ export async function UpdateServices(id, formData) {
       });
     }
     return { data };
-  }
-  catch (error) {
+  } catch (error) {
     if (error.response) {
       // console.log(error?.response);
       Swal.fire({
@@ -1653,7 +1683,7 @@ export async function EditCommission(formData, id) {
     //   formData
     // );
     // console.log(data);
-    let data = false
+    let data = false;
     if (data?.error) {
       Swal.fire({
         title: data?.message,
@@ -2399,7 +2429,7 @@ export async function Buyers() {
 
 export async function SendPushNotify(formData, id) {
   try {
-    console.log(formData, id)
+    console.log(formData, id);
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/addNotification`,
       formData

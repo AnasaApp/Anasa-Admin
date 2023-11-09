@@ -1344,3 +1344,9 @@ div.dataTables_wrapper div.dataTables_paginate {
 .radio input[type='radio']:checked:before {
   background: #e25829;
 }
+
+.react-calendar__navigation{
+  background-color: #e25829;
+  color: white !important;
+  border-radius: 0 0 10px 10px;
+}

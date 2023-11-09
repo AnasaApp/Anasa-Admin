@@ -7,6 +7,7 @@ import {
   getSubCategory,
   getVendorDetails,
   getVendorServices,
+  importVendorServices,
   vendorServiceStatus,
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
@@ -147,6 +148,7 @@ const Services = () => {
 
   const onFileSelection = (e, key) => {
     const selectedFile = e.target.files[0];
+    // setFiles(selectedFile);
     setFiles({ ...files, [key]: selectedFile });
   };
 
@@ -154,12 +156,27 @@ const Services = () => {
     e.preventDefault();
     if (!files || !files.upload_file) {
       alert("Please select a file to upload.");
-      return;
+      return false;
     }
-
+    console.log("Vendor id ", id?.id);
     const formData = new FormData();
-    formData.append("excelFile", files.upload_file);
-    console.log(formData);
+    formData.append("vendorId", id?.id);
+    formData.append("file", files.upload_file);
+
+    const { data } = await importVendorServices(formData);
+    console.warn(data);
+    if (!data.error) {
+      Swal.fire({
+        title: data.message,
+        icon: "success",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+      document.getElementById("reset_mass_ass_form").click()
+      GetVendorServices();
+    } else if (data.error) {
+      console.log(data);
+    }
   };
 
   const handleEditFinish = async (id, e) => {
@@ -284,6 +301,11 @@ const Services = () => {
                     <div className="col-4">
                       <button className="comman_btn" type="submit">
                         Submit
+                      </button>
+                    </div>
+                    <div className="col-4 d-none">
+                      <button id="reset_mass_ass_form" type="reset">
+                        Reset
                       </button>
                     </div>
                   </form>

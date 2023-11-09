@@ -37,7 +37,7 @@ import BookingDetails from "./AdminComponent/Dashboard/bookingManage/BookingDeta
 import Payout from "./AdminComponent/Dashboard/Payout";
 import ServicesManage from "./AdminComponent/Dashboard/ServicesManage/Services";
 import EventManagement from "./AdminComponent/Dashboard/EventManage/EventManagement";
-import EVM from "./AdminComponent/Dashboard/EventManage/EVM";
+// import EVM from "./AdminComponent/Dashboard/EventManage/EVM";
 
 function App() {
   const queryClient = new QueryClient();
@@ -124,14 +124,14 @@ function App() {
               path="/Admin/Dashboard/Promo-Management"
               element={<PromoManagement />}
             />
-            {/* <Route
-              path="/Admin/Dashboard/Event-Management"
-              element={<EventManagement />}
-            /> */}
             <Route
               path="/Admin/Dashboard/Event-Management"
-              element={<EVM />}
+              element={<EventManagement />}
             />
+            {/* <Route
+              path="/Admin/Dashboard/Event-Management1"
+              element={<EVM />}
+            /> */}
             <Route
               path="/Admin/Dashboard/Adds-Management"
               element={<AdvertiseManagement />}

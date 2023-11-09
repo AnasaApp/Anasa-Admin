@@ -74,12 +74,12 @@ const HelpSupport = () => {
     }
   };
 
-  const scrollToBottom = () => {
+  const scrollToBottom = async() => {
     if (chatpartMainRef.current) {
       chatpartMainRef.current.scrollTop = chatpartMainRef.current.scrollHeight;
     }
   };
-  const VScrollToBottom = () => {
+  const VScrollToBottom = async() => {
     if (VchatpartMainRef.current) {
       VchatpartMainRef.current.scrollTop = VchatpartMainRef.current.scrollHeight;
     }
@@ -119,7 +119,7 @@ const HelpSupport = () => {
     setNewMessage("");
     let msg = data?.results?.reply?.reply?.slice(-1);
     setChat((chat) => [...chat, msg[0]]);
-    scrollToBottom();
+    await scrollToBottom();
   };
   const sendMessageV = async () => {
     if(!newMessageV || newMessageV === null || newMessageV === ''){
@@ -136,7 +136,7 @@ const HelpSupport = () => {
     }
     const { data } = await SendMessageBuy({ message: newMessageV }, VenId);
     setNewMessageV("");
-    VScrollToBottom();
+    await VScrollToBottom();
 
     let msg = data?.results?.reply?.reply?.slice(-1);
     setChatV((chatV) => [...chatV, msg[0]]);

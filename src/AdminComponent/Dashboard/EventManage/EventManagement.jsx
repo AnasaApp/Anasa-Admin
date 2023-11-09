@@ -7,16 +7,15 @@ import { Link } from "react-router-dom";
 import {
   AddEventDetails,
   AllEventRequest,
+  EditEventDetails,
   GetEventReqInfo,
   getServices,
 } from "../../httpServices/dashHttpService";
 import Select from "react-select";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+
+import DateTimePicker from "react-datetime-picker";
 import dayjs from "dayjs";
 
 const EventManagement = () => {
@@ -35,11 +34,12 @@ const EventManagement = () => {
   const [selectedService, setSelectedService] = useState(""); // for edit option
   const [selectedPackages, setSelectedPackages] = useState(""); // for edit option
 
-  const [startDateTime, setStartDateTime] = useState(null);
-  const [endDateTime, setEndDateTime] = useState(null);
   const [budgetCost, setBudgetCost] = useState();
   const [totalAmount, setTotalAmount] = useState();
   const [eventName, setEventName] = useState();
+
+  const [startDate, setStartDateTime] = useState(new Date());
+  const [endDate, setEndDateTime] = useState(new Date());
 
   const [formValues, setFormValues] = useState([
     {
@@ -63,7 +63,7 @@ const EventManagement = () => {
   }, [searchKey]);
 
   const getBarClick = (val) => {
-    console.log(val);
+    // console.log(val);
     setSideBar(val);
   };
 
@@ -148,8 +148,18 @@ const EventManagement = () => {
         returnData.address = address;
         returnData.desc = list?.description;
         returnData.buyer = list?.buyer?.full_name;
+        const startTime = list?.startTime;
+
+        let formattedTime;
+        if (/^\d{2}:\d{2}:\d{2}$/.test(startTime)) {
+          // If the startTime is in "HH:mm:ss" format, convert it to "h:mm A"
+          formattedTime = moment(startTime, "HH:mm:ss").format("h:mm A");
+        } else {
+          // If the startTime is already in "h:mm A" format, keep it as-is
+          formattedTime = startTime;
+        }
         returnData.date =
-          moment(list?.startDate).format("L") + ":" + list?.startTime;
+          moment(list?.startDate).format("L") + " : " + formattedTime;
         returnData.status = list?.status;
         returnData.action = (
           <>
@@ -186,12 +196,15 @@ const EventManagement = () => {
     setEventId(id);
     const { data } = await GetEventReqInfo(id);
     if (!data.error) {
-      console.log(data);
-      let startDate = data?.results?.event.startDate;
-      let endDate = data?.results?.event.endDate;
-      let startTime = data?.results?.event.startTime;
-      let endTime = data?.results?.event.endTime;
-      formatDateTime(startDate, startTime, endDate, endTime);
+      // console.log(data);
+      let startDate = data?.results?.event?.startDate;
+      let endDate = data?.results?.event?.endDate;
+      let startTime = data?.results?.event?.startTime;
+      let endTime = data?.results?.event?.endTime;
+
+      console.log(moment(startDate).format("YYYY-MM-DDTHH:mm:ss"))
+      setStartDateTime(moment.utc(startDate).format("YYYY-MM-DDTHH:mm:ss"));
+      setEndDateTime(moment.utc(endDate).format("YYYY-MM-DDTHH:mm:ss"));
 
       setBudgetCost(data?.results?.event?.budget_cost);
       setTotalAmount(data?.results?.event?.totalAmount);
@@ -204,6 +217,8 @@ const EventManagement = () => {
       });
     }
   };
+
+  // console.warn(eventInfo);
 
   const createOptionsServices = async (id) => {
     setSelectedServices(id);
@@ -223,7 +238,7 @@ const EventManagement = () => {
     });
   };
 
-  console.log(packages);
+  // console.log(packages);
 
   const onEditSave = async () => {
     const { data } = await AddEventDetails(
@@ -345,45 +360,57 @@ const EventManagement = () => {
     setEdit(true);
   };
 
-  function formatDateTime(startDate, startTime, endDate, endTime) {
-    console.log(startDate, endDate, endTime);
-    let startDateTime = dayjs(startDate);
-    let startTimeParsed = dayjs(startTime, "hh:mm A");
-    startDateTime = startDateTime.set("hour", startTimeParsed.hour());
-    startDateTime = startDateTime.set("minute", startTimeParsed.minute());
+  // function formatDateTime(startDate, startTime, endDate, endTime) {
+  //   // Convert date and time strings into moment objects
+  //   console.log(startDate)
+  //   // const startDateTime = dayjs(`${startDate}`, "YYYY-MM-DD HH:mm");
+  //   // const endDateTime = dayjs(`${endDate}`, "YYYY-MM-DD HH:mm");
 
-    let endDateTime = dayjs(endDate);
-    let endTimeParsed = dayjs(endTime, "hh:mm A");
-    endDateTime = endDateTime.set("hour", endTimeParsed.hour());
-    endDateTime = endDateTime.set("minute", endTimeParsed.minute());
+  //   setStartDateTime(startDate);
+  //   setEndDateTime(endDate);
+  // }
 
-    let formattedStartDateTime = startDateTime.format("YYYY-MM-DDTHH:mm");
-    let formattedEndDateTime = endDateTime.format("YYYY-MM-DDTHH:mm");
+  const extractTimeFromDateTime = (dateTimeString) => {
+    let time = dateTimeString.split("T")[1].split("+")[0];
+    return time;
+  };
 
-    setStartDateTime(formattedStartDateTime);
-    setEndDateTime(formattedEndDateTime);
-  }
-
-  const updateEvent = (e) => {
+  const updateEvent = async (e) => {
     e.preventDefault();
+    const id = eventInfo?._id;
 
-    alert("Hello")
-    const Sdate = new Date(startDateTime);
-    const Edate = new Date(endDateTime);
-    let startDate = Sdate.toISOString().split("T")[0];
-    let startTime = Sdate.toISOString().split("T")[1].slice(0, 5);
-    let endDate = Edate.toISOString().split("T")[0];
-    let endTime = Edate.toISOString().split("T")[1].slice(0, 5);
+    let StartTime = extractTimeFromDateTime(moment(startDate).format());
+    let EndTime = extractTimeFromDateTime(moment(endDate).format());
 
-    let formData = new FormData();
-    formData.append("startDate", startDate);
-    formData.append("startTime", startTime);
-    formData.append("endDate", endDate);
-    formData.append("endTime", endTime);
-    console.log(formData)
-    console.log(startDate, startTime, endDate, totalAmount);
-  }
+    let eventData = {
+      startDate: moment(startDate).format("YYYY-MM-DDTHH:mm:ss"),
+      startTime: StartTime,
+      endDate: moment(endDate).format("YYYY-MM-DDTHH:mm:ss"),
+      endTime: EndTime,
+    };
 
+
+    console.log(eventData)
+
+    const { data } = await EditEventDetails(id, eventData);
+    if (!data.error) {
+      Swal.fire({
+        text: "Event Time Changed",
+        icon: "success",
+        confirmButtonText: "Okay",
+      });
+      document.getElementById("closed").click();
+      getAllEvents();
+    }
+  };
+
+  //   let handleEventChange = (i, e) => {
+  //     console.log(i, e.target.value);
+  //     let newFormValues = { ...eventInfo };
+  //     newFormValues.packages[i][e.target.name] = e.target.value;
+  //     console.warn(newFormValues);
+  //     setEventInfo(newFormValues);
+  //   };
   // console.warn(eventInfo);
 
   return (
@@ -658,7 +685,11 @@ const EventManagement = () => {
                 data-bs-dismiss="modal"
                 aria-label="Close"
                 id="closed"
-                onClick={() => setEdit(false)}
+                onClick={() => {
+                  setEdit(false);
+                  setSelectedService("");
+                  setSelectedPackages("");
+                }}
               />
             </div>
             <div className="modal-body">
@@ -697,9 +728,12 @@ const EventManagement = () => {
                     defaultValue={eventInfo?.event_location?.city}
                   />
                 </div>
-                {(eventInfo?.packages || [])?.map((element, index) => (
-                  <div className="form-group mb-0 col-12 border-bottom">
-                    <div className="row" key={index}>
+                {(eventInfo?.packages || []).map((element, index) => (
+                  <div
+                    className="form-group mb-0 col-12 border-bottom"
+                    key={index}
+                  >
+                    <div className="row">
                       <div className="form-group col-6 mt-3">
                         <label htmlFor="">Service</label>
                         <input
@@ -723,7 +757,7 @@ const EventManagement = () => {
                     </div>
                   </div>
                 ))}
-                <div className="form-group col-6 mt-3">
+                {/* <div className="form-group col-6 mt-3">
                   <label htmlFor="">Budget Price</label>
                   <input
                     type="text"
@@ -744,31 +778,27 @@ const EventManagement = () => {
                     value={totalAmount}
                     onChange={(e) => setTotalAmount(e.target.value)}
                   />
-                </div>
+                </div> */}
                 {/* TIME */}
                 <div className="form-group col-6 mt-3">
-                  <label htmlFor="">Select Start Date & Time</label>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DemoContainer components={["DateTimePicker"]}>
-                      <DateTimePicker
-                        value={dayjs(startDateTime)}
-                        onChange={(newValue) => setStartDateTime(newValue)}
-                        disabled={!edit}
-                      />
-                    </DemoContainer>
-                  </LocalizationProvider>
+                  <label htmlFor="">Start Date & Time</label>
+                  <DateTimePicker
+                    onChange={setStartDateTime}
+                    value={startDate}
+                    disabled={!edit}
+                    required={true}
+                    className="w-100"
+                  />
                 </div>
                 <div className="form-group col-6 mt-3">
-                  <label htmlFor="">Select End Date & Time</label>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DemoContainer components={["DateTimePicker"]}>
-                      <DateTimePicker
-                        value={dayjs(endDateTime)}
-                        onChange={(newValue) => setEndDateTime(newValue)}
-                        disabled={!edit}
-                      />
-                    </DemoContainer>
-                  </LocalizationProvider>
+                  <label htmlFor="">End Date & Time</label>
+                  <DateTimePicker
+                    onChange={setEndDateTime}
+                    value={endDate}
+                    disabled={!edit}
+                    required={true}
+                    className="w-100"
+                  />
                 </div>
                 <div className="form-group mb-0 col-12 text-center mt-3">
                   <button
