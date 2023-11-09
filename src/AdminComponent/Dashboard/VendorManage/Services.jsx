@@ -172,7 +172,7 @@ const Services = () => {
         confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
-      document.getElementById("reset_mass_ass_form").click()
+      document.getElementById("reset_mass_add_form").click()
       GetVendorServices();
     } else if (data.error) {
       console.log(data);
@@ -304,7 +304,7 @@ const Services = () => {
                       </button>
                     </div>
                     <div className="col-4 d-none">
-                      <button id="reset_mass_ass_form" type="reset">
+                      <button id="reset_mass_add_form" type="reset">
                         Reset
                       </button>
                     </div>
