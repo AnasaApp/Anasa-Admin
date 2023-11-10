@@ -186,6 +186,7 @@ const Services = () => {
     } finally {
       setLoading(false);
       document.getElementById("reset_mass_add_form").click();
+      setFiles([])
       GetVendorServices();
     }
   };
