@@ -174,8 +174,6 @@ const Services = () => {
       });
       document.getElementById("reset_mass_add_form").click()
       GetVendorServices();
-    } else if (data.error) {
-      console.log(data);
     }
   };
 
