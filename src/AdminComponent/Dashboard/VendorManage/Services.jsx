@@ -13,6 +13,8 @@ import {
 import Sidebar from "../Sidebar";
 import Swal from "sweetalert2";
 
+import logo from "../../../assets/img/logo.png";
+
 const Services = () => {
   const [vendorService, setVendorService] = useState();
   const [slide, setSlide] = useState("VM");
@@ -36,6 +38,7 @@ const Services = () => {
   const [categoryId, setCategoryId] = useState();
 
   const [subCat_Id, setSubCat_Id] = useState();
+  const [loading, setLoading] = useState(false);
 
   let id = useParams();
   // console.log(id);
@@ -68,7 +71,7 @@ const Services = () => {
       setSubCategory(data?.results?.subCategories);
       setSelectedArSubCategory(data?.results?.subCategories[0]?.name_ar || " ");
       setSubCat_Id(data?.results?.subCategories[0]?._id);
-    } else{
+    } else {
       setSelectedArSubCategory();
       setSelectedEnSubCategory();
     }
@@ -159,24 +162,29 @@ const Services = () => {
 
   const handleFileSubmit = async (e) => {
     e.preventDefault();
-    if (!files || !files.upload_file) {
-      alert("Please select a file to upload.");
-      return false;
-    }
-    console.log("Vendor id ", id?.id);
-    const formData = new FormData();
-    formData.append("vendorId", id?.id);
-    formData.append("file", files.upload_file);
+    setLoading(true);
+    try {
+      if (!files || !files.upload_file) {
+        alert("Please select a file to upload.");
+        return false;
+      }
+      const formData = new FormData();
+      formData.append("vendorId", id?.id);
+      formData.append("file", files.upload_file);
 
-    const { data } = await importVendorServices(formData);
-    console.warn(data);
-    if (!data.error) {
-      Swal.fire({
-        title: data.message,
-        icon: "success",
-        confirmButtonText: "Okay",
-        confirmButtonColor: "#e25829",
-      });
+      const { data } = await importVendorServices(formData);
+      if (!data.error) {
+        Swal.fire({
+          title: data.message,
+          icon: "success",
+          confirmButtonText: "Okay",
+          confirmButtonColor: "#e25829",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
       document.getElementById("reset_mass_add_form").click();
       GetVendorServices();
     }
@@ -191,7 +199,7 @@ const Services = () => {
     console.log("description_en", descriptionNameEn);
     console.log("description_ar", descriptionNameAr);
     console.log("categoryId", category_id?._id);
-    console.log("subCategoryId", subCat_Id ? subCat_Id : '');
+    console.log("subCategoryId", subCat_Id ? subCat_Id : "");
 
     const formData = new FormData();
     formData.append("name_en", serviceNameEn);
@@ -199,7 +207,7 @@ const Services = () => {
     formData.append("description_en", descriptionNameEn);
     formData.append("description_ar", descriptionNameAr);
     formData.append("categoryId", category_id?._id);
-    formData.append("subCategoryId", subCat_Id ? subCat_Id : '');
+    formData.append("subCategoryId", subCat_Id ? subCat_Id : "");
     formData.append("price", price);
     let { data } = await UpdateServices(id, formData);
     if (!data.error) {
@@ -217,6 +225,14 @@ const Services = () => {
   return (
     <div className={sideBar === "click" ? "expanded_main" : "admin_main"}>
       <Sidebar slide={slide} getBarClick={getBarClick} />
+      {loading ? (
+        <div className="loading">
+          <div id="spinner-container">
+            <div id="spinner"></div>
+            <img id="image" src={logo} alt="Your Image" />
+          </div>
+        </div>
+      ) : null}
       <div className="admin_panel_data height_adjust">
         <div className="row service-management justify-content-center">
           <div className="col-12">
