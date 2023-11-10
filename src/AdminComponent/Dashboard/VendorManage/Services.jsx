@@ -33,6 +33,7 @@ const Services = () => {
   const [descriptionNameEn, setDescriptionNameEn] = useState();
   const [descriptionNameAr, setDescriptionNameAr] = useState();
   const [price, setPrice] = useState();
+  const [categoryId, setCategoryId] = useState();
 
   const [subCat_Id, setSubCat_Id] = useState();
 
@@ -63,11 +64,13 @@ const Services = () => {
   const getAllSubCategory = async (categoryId) => {
     console.log(categoryId);
     const { data } = await getSubCategory({ categoryId });
-    setSubCategory(data?.results?.subCategories);
-    console.log(data);
     if (data?.results?.subCategories) {
+      setSubCategory(data?.results?.subCategories);
       setSelectedArSubCategory(data?.results?.subCategories[0]?.name_ar || " ");
       setSubCat_Id(data?.results?.subCategories[0]?._id);
+    } else{
+      setSelectedArSubCategory();
+      setSelectedEnSubCategory();
     }
   };
   const getBarClick = (val) => {
@@ -82,6 +85,7 @@ const Services = () => {
 
   const handleEdit = async (item) => {
     let categoryId = item?.category?._id;
+    console.log(categoryId);
     if (categoryId) {
       await getAllSubCategory(categoryId);
     } else {
@@ -90,18 +94,20 @@ const Services = () => {
 
     setModalVisible(true);
     setDataToEdit(item);
+    setCategoryId(item?.category?._id);
     setServiceNameEn(item?.name_en);
     setServiceNameAr(item?.name_ar);
     setDescriptionNameAr(item?.description_ar);
     setDescriptionNameEn(item?.description_en);
     setPrice(item?.price);
-    // setSelectedEnCategory(item?.category?.name_en);
+    setSelectedEnCategory(item?.category?.name_en);
     setSelectedEnSubCategory(item?.subCategory?.name_en || "");
     setSelectedArSubCategory(item?.subCategory?.name_ar || "");
   };
 
   const handleCategoryEnChange = (e) => {
     let value = e.target.value;
+    setCategoryId(value);
     const selectedCategoryId = value;
     if (category && category.length > 0) {
       const selectedCategory = category.find(
@@ -114,8 +120,8 @@ const Services = () => {
         setSelectedEnCategory(selectedCategory?.name_en);
       } else {
         setSubCategory([]);
-        setSelectedEnSubCategory("");
-        setSelectedArSubCategory("");
+        setSelectedEnSubCategory();
+        setSelectedArSubCategory();
       }
     }
   };
@@ -126,7 +132,6 @@ const Services = () => {
     let selectedSubCategory = subCategory.find(
       (subCat) => subCat?.name_en === value
     );
-    console.log(selectedSubCategory);
     setSelectedArSubCategory(selectedSubCategory.name_ar || "");
     setSubCat_Id(selectedSubCategory?._id);
   };
@@ -172,25 +177,29 @@ const Services = () => {
         confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
-      document.getElementById("reset_mass_add_form").click()
+      document.getElementById("reset_mass_add_form").click();
       GetVendorServices();
     }
   };
 
   const handleEditFinish = async (id, e) => {
     e.preventDefault();
-    let category_id = category.find(
-      (cat) => selectedEnCategory === cat.name_en
-    );
+    let category_id = category.find((cat) => categoryId === cat?._id);
+
+    console.log("name_en", serviceNameEn);
+    console.log("name_ar", serviceNameAr);
+    console.log("description_en", descriptionNameEn);
+    console.log("description_ar", descriptionNameAr);
+    console.log("categoryId", category_id?._id);
+    console.log("subCategoryId", subCat_Id ? subCat_Id : '');
+
     const formData = new FormData();
     formData.append("name_en", serviceNameEn);
     formData.append("name_ar", serviceNameAr);
     formData.append("description_en", descriptionNameEn);
     formData.append("description_ar", descriptionNameAr);
     formData.append("categoryId", category_id?._id);
-    if (subCat_Id) {
-      formData.append("subCategoryId", subCat_Id);
-    }
+    formData.append("subCategoryId", subCat_Id ? subCat_Id : '');
     formData.append("price", price);
     let { data } = await UpdateServices(id, formData);
     if (!data.error) {
@@ -528,9 +537,11 @@ const Services = () => {
                             className="form-control w-100"
                             name="category_en"
                             id="category_en"
-                            defaultValue={selectedEnCategory}
                             onChange={handleCategoryEnChange}
                           >
+                            <option value={dataToEdit?.category?._id}>
+                              {dataToEdit?.category?.name_en}
+                            </option>
                             {category &&
                               category
                                 .filter((cat) => cat.status === true)

@@ -219,7 +219,7 @@ const MarketingOffers = () => {
     await AddCombo({
       name_en: data?.combo_en,
       name_ar: data?.combo_ar,
-      discount: data?.discount,
+      comboPrice: data?.discount,
       validFrom: data?.dateFrom,
       validTo: data?.dateTo,
       image: files,
@@ -414,7 +414,7 @@ const MarketingOffers = () => {
                   </div>
 
                   <div className="form-group col-4">
-                    <label htmlFor="">Amount</label>
+                    <label htmlFor="">Discount</label>
                     <input
                       type="number"
                       className={classNames("form-control", {
