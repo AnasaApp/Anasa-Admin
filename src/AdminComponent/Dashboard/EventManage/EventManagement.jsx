@@ -9,7 +9,9 @@ import {
   AllEventRequest,
   EditEventDetails,
   GetEventReqInfo,
+  getServiceAmount,
   getServices,
+  updateServiceAmount,
 } from "../../httpServices/dashHttpService";
 import Select from "react-select";
 import { useForm } from "react-hook-form";
@@ -41,6 +43,10 @@ const EventManagement = () => {
   const [startDate, setStartDateTime] = useState(new Date());
   const [endDate, setEndDateTime] = useState(new Date());
 
+  const [serviceCharge, setServiceCharge] = useState();
+  const [serviceAmount, setServiceAmount] = useState();
+  const [serviceId, setServiceId] = useState();
+
   const [formValues, setFormValues] = useState([
     {
       service: "",
@@ -57,6 +63,7 @@ const EventManagement = () => {
 
   useEffect(() => {
     getAllEvents();
+    getServicesAmount();
   }, []);
   useEffect(() => {
     createOptionsServices();
@@ -192,6 +199,12 @@ const EventManagement = () => {
     }
   };
 
+  const getServicesAmount = async () => {
+    let { data } = await getServiceAmount();
+    setServiceId(data?.results?.service[0]?._id)
+    setServiceCharge(data?.results?.service[0]?.amount);
+  };
+
   const manageEvent = async (id) => {
     setEventId(id);
     const { data } = await GetEventReqInfo(id);
@@ -202,7 +215,7 @@ const EventManagement = () => {
       let startTime = data?.results?.event?.startTime;
       let endTime = data?.results?.event?.endTime;
 
-      console.log(moment(startDate).format("YYYY-MM-DDTHH:mm:ss"))
+      console.log(moment(startDate).format("YYYY-MM-DDTHH:mm:ss"));
       setStartDateTime(moment.utc(startDate).format("YYYY-MM-DDTHH:mm:ss"));
       setEndDateTime(moment.utc(endDate).format("YYYY-MM-DDTHH:mm:ss"));
 
@@ -389,8 +402,7 @@ const EventManagement = () => {
       endTime: EndTime,
     };
 
-
-    console.log(eventData)
+    console.log(eventData);
 
     const { data } = await EditEventDetails(id, eventData);
     if (!data.error) {
@@ -401,6 +413,23 @@ const EventManagement = () => {
       });
       document.getElementById("closed").click();
       getAllEvents();
+    }
+  };
+
+  const handleServiceCharge = async (e) => {
+    e.preventDefault();
+    console.log(serviceAmount, serviceId);
+    let {data} = await updateServiceAmount(serviceId, serviceAmount)
+    console.log(data)
+    if(!data.error){
+      Swal.fire({
+        text: "Service Charge Updated Successfully",
+        icon: "success",
+        confirmButtonText: "Okay",
+      });
+      document.getElementById("resetServiceModal").click();
+      document.getElementById("updateServiceChargeClose").click();
+      await getServicesAmount()
     }
   };
 
@@ -418,6 +447,74 @@ const EventManagement = () => {
       <Sidebar slide={slide} getBarClick={getBarClick} />
       <div className="admin_panel_data height_adjust">
         <div className="row buyers-details justify-content-center">
+          <div className="tab-pane fade show mb-4 w-50">
+            <div className="bg-white rounded d-flex justify-content-between align-items-center px-4 py-3 position-relative">
+              <p className="mb-0 pb-0 fs-5">Service Charge</p>
+              <p className="mb-0 pb-0 pe-5">{serviceCharge}</p>
+              <button
+                data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop"
+                type="button"
+                className="position-absolute top-0 end-0 border-0 bg-white"
+              >
+                <i className="fa-solid fa-pen"></i>
+              </button>
+              <div
+                class="modal fade"
+                id="staticBackdrop"
+                data-bs-backdrop="static"
+                data-bs-keyboard="false"
+                tabindex="-1"
+                aria-labelledby="staticBackdropLabel"
+                aria-hidden="true"
+              >
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="staticBackdropLabel">
+                        Update Service Charge
+                      </h5>
+                      <button
+                        type="button"
+                        id="updateServiceChargeClose"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                      ></button>
+                    </div>
+                    <div class="modal-body">
+                      <form onSubmit={handleServiceCharge}>
+                        <div className="form-group col-12">
+                          <label htmlFor="" className="mb-2">
+                            Amount
+                          </label>
+                          <input
+                            type="number"
+                            className="form-control"
+                            placeholder="Enter amount to withdraw"
+                            defaultValue={serviceCharge}
+                            onChange={(e) => setServiceAmount(e.target.value)}
+                          />
+                        </div>
+                        <button
+                          type="reset"
+                          id="resetServiceModal"
+                          className="d-none"
+                          data-bs-dismiss="modal"
+                        >
+                          Reset
+                        </button>
+                        <button type="submit" className="comman_btn mt-3">
+                          Update
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="col-12">
             <div className="row mx-0">
               <div className="col-12 design_outter_comman shadow">
