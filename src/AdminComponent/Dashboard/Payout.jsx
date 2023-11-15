@@ -3,6 +3,7 @@ import {
   AllVendors,
   editWallet,
   GetVendorWallet,
+  vendorWithdraw,
 } from "../httpServices/dashHttpService";
 import Sidebar from "./Sidebar";
 import moment from "moment";
@@ -19,6 +20,9 @@ const Payout = () => {
   const [vendorId, setVendorId] = useState();
   const [wallet, setWallet] = useState();
   const [value, setValue] = useState();
+  const [remainingAmount, setRemainingAmount] = useState();
+  const [withdrawAmount, setWithdrawAmount] = useState();
+
   useEffect(() => {
     getVendors();
   }, []);
@@ -75,13 +79,61 @@ const Payout = () => {
     rows: [],
   });
 
+  const [payout, setPayout] = useState({
+    columns: [
+      {
+        label: "Date",
+        field: "date",
+        // sort: "asc",
+        maxWidth: 50,
+      },
+      {
+        label: "Total Amount",
+        field: "amount",
+        // sort: "asc",
+        maxWidth: 100,
+      },
+      {
+        label: "Remaining Amount",
+        field: "remainingAmount",
+        // sort: "asc",
+        maxWidth: 150,
+      },
+      {
+        label: "Total Withdrawal",
+        field: "withdrawalAmount",
+        // sort: "asc",
+        maxWidth: 150,
+      },
+      {
+        label: "Pending Amount",
+        field: "pendingAmount",
+        // sort: "asc",
+        maxWidth: 50,
+      },
+    ],
+    rows: [],
+  });
+
   const manageVendor = async (id) => {
     setVendorId(id);
     const { data } = await GetVendorWallet(id);
+    const newRows = [];
     if (!data.error) {
       console.log(data);
+      let values = data?.results?.wallet;
       setWallet(data?.results.wallet);
+      const returnData = {};
+      returnData.date = moment(values.withdrawlDate).format("L");
+      returnData.amount = values?.totalAmount;
+      returnData.remainingAmount = values?.remainingBalance;
+      returnData.withdrawalAmount = values?.withdrawlAmount;
+      returnData.pendingAmount = values?.pendingAmount;
+      setWithdrawAmount(values?.remainingBalance)
+      setRemainingAmount(values?.remainingBalance)
+      newRows.push(returnData);
     }
+    setPayout({ ...payout, rows: newRows });
   };
   const getVendors = async () => {
     const { data } = await AllVendors({
@@ -117,26 +169,62 @@ const Payout = () => {
       setApproved({ ...approved, rows: newRows });
     }
   };
-  const onEdit = async (data) => {
-    console.log(data);
-    await editWallet({ amount: value, vendorId: vendorId }).then((res) => {
+  // const onEdit = async (data) => {
+  //   console.log(data);
+  //   await editWallet({ amount: value, vendorId: vendorId }).then((res) => {
+  //     if (!res.data.error) {
+  //       document.getElementById("closedEdit").click();
+  //       getVendors();
+  //       setValue("");
+  //       Swal.fire({
+  //         title: "Updated Successfully!",
+  //         icon: "success",
+  //         confirmButtonText: "Okay",
+  //         confirmButtonColor: "#e25829",
+  //       });
+  //     }
+  //   });
+  // };
+
+  const getBarClick = (val) => {
+    console.log(val);
+    setSideBar(val);
+  };
+
+  const handleWithdraw = async (e, amount) => {
+    e.preventDefault();
+    console.log(amount)
+    if (withdrawAmount === 0 || withdrawAmount === null) {
+      Swal.fire({
+        text: "Please Enter Amount",
+        icon: "warning",
+        confirmButtonText: "Okay",
+      });
+      return false;
+    } else if (amount > remainingAmount) {
+      Swal.fire({
+        text: "Amount is greater than Requested",
+        icon: "warning",
+        confirmButtonText: "Okay",
+      });
+      return false;
+    }
+    console.log(amount)
+
+    await editWallet({ amount, vendorId }).then((res) => {
       if (!res.data.error) {
-        document.getElementById("closedEdit").click();
-        getVendors();
-        setValue("");
+        console.warn(res)
+        document.getElementById("closeEdits").click();
         Swal.fire({
           title: "Updated Successfully!",
           icon: "success",
           confirmButtonText: "Okay",
           confirmButtonColor: "#e25829",
         });
+        getVendors();
+        setWithdrawAmount()
       }
     });
-  };
-
-  const getBarClick = (val) => {
-    console.log(val);
-    setSideBar(val);
   };
   return (
     <div className={sideBar === "click" ? "expanded_main" : "admin_main"}>
@@ -217,74 +305,81 @@ const Payout = () => {
               />
             </div>
             <div className="modal-body">
-              <form
-                className="form-design px-3 py-2 help-support-form row  justify-content-center"
-                action=""
-                onSubmit={handleSubmit2(onEdit)}
+              <div className="row">
+                <div className="col-12 comman_table_design px-0">
+                  <div className="table-responsive payout">
+                    <MDBDataTable
+                      bordered
+                      displayEntries={false}
+                      hover
+                      data={payout}
+                      noBottomColumns
+                    />
+                    {/* <div className="d-flex justify-content-center">
+                      <button className="comman_btn">Withdraw Now</button>
+                    </div> */}
+                  </div>
+                </div>
+              </div>
+              
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                className="comman_btn"
+                data-bs-toggle="modal"
+                data-bs-target="#open_withdraw_modal"
+                data-bs-dismiss="modal"
               >
-                <div className="form-group col-6">
-                  <label htmlFor="">Total Amount</label>
-                  <input
-                    type="text"
-                    className={classNames("form-control", {
-                      "is-invalid": errors2.combo_en_edit,
-                    })}
-                    name="amount"
-                    defaultValue={wallet?.totalAmount}
-                    disabled
-                  />
-                </div>
-                <div className="form-group col-6">
-                  <label htmlFor="">Pending Amount</label>
-                  <input
-                    type="text"
-                    className={classNames("form-control", {
-                      "is-invalid": errors2.combo_en_edit,
-                    })}
-                    name="amount"
-                    defaultValue={wallet?.pendingAmount}
-                    disabled
-                  />
-                </div>
-                <div className="form-group col-6">
-                  <label htmlFor="">Withdrawl Amount</label>
+                Withdraw
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="modal fade"
+        id="open_withdraw_modal"
+        aria-hidden="true"
+        aria-labelledby="open_withdraw_modal"
+        tabindex="-1"
+      >
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="open_withdraw_modal">
+                Withdraw
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                id="closeEdits"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <form
+                id="withdrawForm"
+                onSubmit={(e) => handleWithdraw(e, withdrawAmount)}
+              >
+                <p>Available amount : {remainingAmount} </p>
+                <div className="form-group col-12">
+                  <label htmlFor="" className="my-2">
+                    Withdraw Amount
+                  </label>
                   <input
                     type="number"
                     className="form-control"
-                    name="combo_ar_edit_ar"
-                    value={value}
-                    onChange={(e) => {
-                      setValue(e.target.value);
-                      if (e.target.value > wallet?.totalAmount) {
-                        Swal.fire({
-                          title: "Warning!",
-                          text: "Withdrawl Amount Should be less than Total Amount",
-                          icon: "warning",
-                          confirmButtonText: "Okay",
-                        });
-                        setValue(wallet?.totalAmount);
-                      }
-                    }}
+                    placeholder="Enter amount to withdraw"
+                    defaultValue={remainingAmount}
+                    onChange={(e) => setWithdrawAmount(e.target.value)}
                   />
-                  {errors2.combo_ar_edit_ar && (
-                    <small className="errorText mx-1">
-                      {errors2.combo_ar_edit_ar.message}
-                    </small>
-                  )}
                 </div>
 
-                <div className="form-group mb-0 col-12 text-center mt-3">
+                <div className="d-flex justify-content-center my-3">
                   <button className="comman_btn" type="submit">
                     Withdraw
-                  </button>
-                </div>
-                <div className="form-group mb-0 col-12 text-center mt-3">
-                  <button
-                    className="comman_btn d-none"
-                    type="reset"
-                    id="ResetSSS"
-                  >
-                    Reset
                   </button>
                 </div>
               </form>
