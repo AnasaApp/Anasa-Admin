@@ -604,7 +604,7 @@ const HelpSupport = () => {
                         <div className="row">
                           <MessageBox
                             position={
-                              item?.replyBy === "Buyer" ? "right" : "left"
+                              item?.replyBy === "Admin" ? "left" : "right"
                             }
                             type={"text"}
                             title={item?.replyBy}

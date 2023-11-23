@@ -177,7 +177,8 @@ const PromoManagement = () => {
                 className="comman_btn table_viewbtn mx-1"
                 data-bs-toggle="modal"
                 data-bs-target="#staticBackdrop22"
-                onClick={() => handleView(list?._id)}>
+                onClick={() => handleView(list?._id)}
+              >
                 Edit
               </a>
               {/* <a className="comman_btn2 table_viewbtn" onClick={DeleteCode}>
@@ -196,13 +197,14 @@ const PromoManagement = () => {
 
   const onSubmit = async (data) => {
     let formData = new FormData();
+    console.log(data);
 
     formData.append("name_en", data?.promo_code_en);
     formData.append("name_ar", data?.promo_code_ar);
     formData.append("discount", data?.discount);
     formData.append("validFrom", data?.dateFrom);
     formData.append("validTo", data?.dateTo);
-    formData.append("image", files[0]);
+    formData.append("image", files?.upload_video);
     // formData.append("selectedUsers",userTypes === "specific" &&
     // selectedUsers.usersSelected?.map((item) => item?.value),)
     await AddPromoCode(formData).then((res) => {
@@ -222,6 +224,15 @@ const PromoManagement = () => {
 
   const onEdit = async (data) => {
     console.log(data);
+    if (data.EditDiscount > 100) {
+      Swal.fire({
+        title: "Enter value between 0 to 100",
+        icon: "error",
+        confirmButtonText: "Ok",
+        confirmButtonColor: "#e25829",
+      });
+      return false;
+    }
     let formData = new FormData();
     formData.append("name_en", data?.promo_code_en_edit);
     formData.append("name_ar", data?.promo_code_ar_edit);
@@ -311,7 +322,8 @@ const PromoManagement = () => {
                 <form
                   className="form-design py-4 px-3 help-support-form row  justify-content-between"
                   action=""
-                  onSubmit={handleSubmit(onSubmit)}>
+                  onSubmit={handleSubmit(onSubmit)}
+                >
                   <div className="form-group col-4">
                     <label htmlFor="">Promo Code (En)</label>
                     <input
@@ -322,6 +334,10 @@ const PromoManagement = () => {
                       name="promo_code_en"
                       {...register("promo_code_en", {
                         required: "*Promo code is required!",
+                        pattern: {
+                          value: /^(?!\s+$).+/,
+                          message: "Only space is not allowed",
+                        },
                       })}
                     />
                     {errors.promo_code_en && (
@@ -343,7 +359,9 @@ const PromoManagement = () => {
                       {...register("promo_code_ar", {
                         required: "*Promo code is required!",
                         pattern: {
-                          value: /^[\u0621-\u064A\u0660-\u0669 ]+$/,
+                          // value: /^[\u0621-\u064A\u0660-\u0669 ]+$/,
+                          value:
+                            /^(?!^\s+$)([\u0621-\u064A\u0660-\u0669\s!"#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]+)$/,
                           message: "Only Arabic Characters are allowed!",
                         },
                       })}
@@ -362,7 +380,7 @@ const PromoManagement = () => {
                     </label>{" "}
                     <input
                       type="file"
-                      className="form-control"
+                      className="form-control ms-2 w-100 ps-4"
                       accept="image/*"
                       name="upload_video"
                       id="upload_video"
@@ -436,7 +454,8 @@ const PromoManagement = () => {
                       className="comman_btn d-none"
                       type="reset"
                       id="ResetPromo"
-                      onClick={() => setSelectedUsers({ usersSelected: [] })}>
+                      onClick={() => setSelectedUsers({ usersSelected: [] })}
+                    >
                       Reset
                     </button>
                   </div>
@@ -489,7 +508,8 @@ const PromoManagement = () => {
         data-bs-keyboard="false"
         tabIndex={-1}
         aria-labelledby="staticBackdropLabel"
-        aria-hidden="true">
+        aria-hidden="true"
+      >
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content border-0">
             <div className="modal-header">
@@ -512,7 +532,8 @@ const PromoManagement = () => {
                 className="form-design px-3 py-2 help-support-form row  justify-content-center"
                 action=""
                 onSubmit={handleSubmit2(onEdit)}
-                noValidate>
+                noValidate
+              >
                 <div className="form-group col-6 choose_file position-relative">
                   <span>Promo Code Image </span>{" "}
                   <label htmlFor="upload_video_combo">
@@ -541,6 +562,10 @@ const PromoManagement = () => {
                     defaultValue={editData?.name_en}
                     {...register2("promo_code_en_edit", {
                       required: "*Promo code is required!",
+                      pattern: {
+                        value: /^(?!\s+$).+/,
+                        message: "Only space is not allowed",
+                      },
                     })}
                   />
                   {errors2.promo_code_en_edit && (
@@ -553,6 +578,7 @@ const PromoManagement = () => {
                   <label htmlFor="">Promo Code(Ar)</label>
                   <input
                     type="text"
+                    dir="rtl"
                     defaultValue={editData?.name_ar}
                     className={classNames("form-control", {
                       "is-invalid": errors2.promo_code_ar_edit,
@@ -560,6 +586,11 @@ const PromoManagement = () => {
                     name="promo_code_ar_edit"
                     {...register2("promo_code_ar_edit", {
                       required: "*Promo code is required!",
+                      pattern: {
+                        value:
+                          /^(?!^\s+$)([\u0621-\u064A\u0660-\u0669\s!"#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]+)$/,
+                        message: "Only Arabic Characters are allowed!",
+                      },
                     })}
                   />
                   {errors2.promo_code_ar_edit && (
@@ -628,7 +659,8 @@ const PromoManagement = () => {
                   <button
                     className="comman_btn d-none"
                     type="reset"
-                    id="resetModal">
+                    id="resetModal"
+                  >
                     reset
                   </button>
                 </div>

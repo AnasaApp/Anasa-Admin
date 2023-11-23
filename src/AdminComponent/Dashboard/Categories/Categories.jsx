@@ -271,6 +271,8 @@ const Categories = () => {
       getAllCat();
       setFiles([]);
       document?.getElementById("Reset").click();
+      setCroppedImage(null)
+      setSelectedImage(null)
       Swal.fire({
         title: "New Category Added!",
         icon: "success",
@@ -427,8 +429,9 @@ const Categories = () => {
                                   {...register("Category_name_ar", {
                                     required: "Category Name is required!",
                                     pattern: {
-                                      value:
-                                        /^[\u0621-\u064A\u0660-\u0669, ]+$/,
+                                      // value:
+                                      //   /^[\u0621-\u064A\u0660-\u0669, ]+$/,
+                                      value: /^[،\u0621-\u064A\u0660-\u06690-9\s!"#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]+$/u,
                                       message:
                                         "Only Arabic Characters are allowed!",
                                     },

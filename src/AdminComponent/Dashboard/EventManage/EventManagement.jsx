@@ -11,6 +11,7 @@ import {
   GetEventReqInfo,
   getServiceAmount,
   getServices,
+  partyApproval,
   updateServiceAmount,
 } from "../../httpServices/dashHttpService";
 import Select from "react-select";
@@ -46,6 +47,7 @@ const EventManagement = () => {
   const [serviceCharge, setServiceCharge] = useState();
   const [serviceAmount, setServiceAmount] = useState();
   const [serviceId, setServiceId] = useState();
+  const [isLoading, setIsLoading] = useState(false)
 
   const [formValues, setFormValues] = useState([
     {
@@ -172,23 +174,33 @@ const EventManagement = () => {
           <>
             <Link
               className={
-                list?.status === "Completed"
+                list?.status === "ReadyForPayment"
+                  ? "green_btn"
+                  : list?.status === "Completed"
                   ? " comman_btn table_viewbtn"
                   : "comman_btn2 table_viewbtn"
               }
               data-bs-toggle="modal"
               data-bs-target={
-                list?.status === "Completed"
+                list?.status === "ReadyForPayment"
+                  ? "#staticBackdrop50"
+                  : list?.status === "Completed"
                   ? "#staticBackdrop50"
                   : "#staticBackdrop49"
               }
               onClick={() =>
-                list?.status === "Completed"
+                list?.status === "ReadyForPayment"
+                  ? manageEvent(list?._id)
+                  : list?.status === "Completed"
                   ? manageEvent(list?._id)
                   : manageEvent(list?._id)
               }
             >
-              {list?.status === "Completed" ? "View Plan" : "Add Plan"}
+              {list?.status === "ReadyForPayment"
+                ? "Approve"
+                : list?.status === "Completed"
+                ? "View Plan"
+                : "Add Plan"}
             </Link>
           </>
         );
@@ -201,15 +213,32 @@ const EventManagement = () => {
 
   const getServicesAmount = async () => {
     let { data } = await getServiceAmount();
-    setServiceId(data?.results?.service[0]?._id)
+    setServiceId(data?.results?.service[0]?._id);
     setServiceCharge(data?.results?.service[0]?.amount);
   };
 
+  const approveParty = async (e, id) => {
+    e.preventDefault()
+    console.log(id);
+    const { data } = await partyApproval(id);
+    if (!data.error) {
+      Swal.fire({
+        text: data.message,
+        icon: "success",
+        confirmButtonText: "Okay",
+      });
+      getAllEvents();
+    }
+  };
+
   const manageEvent = async (id) => {
+    setIsLoading(true)
     setEventId(id);
     const { data } = await GetEventReqInfo(id);
+    console.warn(data);
     if (!data.error) {
       // console.log(data);
+      setIsLoading(false)
       let startDate = data?.results?.event?.startDate;
       let endDate = data?.results?.event?.endDate;
       let startTime = data?.results?.event?.startTime;
@@ -395,6 +424,18 @@ const EventManagement = () => {
     let StartTime = extractTimeFromDateTime(moment(startDate).format());
     let EndTime = extractTimeFromDateTime(moment(endDate).format());
 
+    if (startDate > endDate) {
+      Swal.fire({
+        icon: "warning",
+        text: "Please select valid end date",
+        position: "top-end",
+        showConfirmButton: false,
+        timerProgressBar: true,
+        timer: 3000,
+        toast: true,
+      });
+    }
+
     let eventData = {
       startDate: moment(startDate).format("YYYY-MM-DDTHH:mm:ss"),
       startTime: StartTime,
@@ -419,9 +460,9 @@ const EventManagement = () => {
   const handleServiceCharge = async (e) => {
     e.preventDefault();
     console.log(serviceAmount, serviceId);
-    let {data} = await updateServiceAmount(serviceId, serviceAmount)
-    console.log(data)
-    if(!data.error){
+    let { data } = await updateServiceAmount(serviceId, serviceAmount);
+    console.log(data);
+    if (!data.error) {
       Swal.fire({
         text: "Service Charge Updated Successfully",
         icon: "success",
@@ -429,9 +470,12 @@ const EventManagement = () => {
       });
       document.getElementById("resetServiceModal").click();
       document.getElementById("updateServiceChargeClose").click();
-      await getServicesAmount()
+      await getServicesAmount();
     }
   };
+
+  const maxDate = new Date();
+  maxDate.setFullYear(maxDate.getFullYear() + 2);
 
   //   let handleEventChange = (i, e) => {
   //     console.log(i, e.target.value);
@@ -708,7 +752,7 @@ const EventManagement = () => {
                       </div>
                       <div className="form-group col-2  mt-5">
                         <button
-                          className="comman_btn "
+                          className={formValues?.length <= 1 ? "d-none" : "comman_btn"}
                           style={{ padding: "5px 20px" }}
                           type="button"
                           disabled={formValues?.length <= 1 ? true : false}
@@ -768,14 +812,18 @@ const EventManagement = () => {
               <h5 className="modal-title" id="staticBackdropLabel">
                 View Plan Details
               </h5>
-              <button
-                style={{ marginLeft: "60%" }}
-                type="button"
-                className="comman_btn border border-light py-1 px-4 ml-auto"
-                onClick={(e) => sendEventInfo(e, eventInfo)}
-              >
-                Edit
-              </button>
+              {eventInfo?.status === "Completed" ? (
+                <button
+                  style={{ marginLeft: "60%" }}
+                  type="button"
+                  className="comman_btn border border-light py-1 px-4 ml-auto"
+                  onClick={(e) => sendEventInfo(e, eventInfo)}
+                >
+                  Edit
+                </button>
+              ) : (
+                ""
+              )}
               <button
                 type="button"
                 className="btn-close"
@@ -801,7 +849,7 @@ const EventManagement = () => {
                     type="text"
                     className="form-control"
                     name="amount"
-                    defaultValue={eventInfo?.eventName}
+                    value={eventInfo?.eventName}
                     disabled
                   />
                 </div>
@@ -811,7 +859,7 @@ const EventManagement = () => {
                     type="text"
                     className="form-control"
                     name="amount"
-                    defaultValue={eventInfo?.buyer?.full_name}
+                    value={eventInfo?.buyer?.full_name}
                     disabled
                   />
                 </div>{" "}
@@ -822,7 +870,7 @@ const EventManagement = () => {
                     className="form-control"
                     name="address"
                     disabled
-                    defaultValue={eventInfo?.event_location?.city}
+                    value={eventInfo?.event_location?.city}
                   />
                 </div>
                 {(eventInfo?.packages || []).map((element, index) => (
@@ -885,6 +933,7 @@ const EventManagement = () => {
                     disabled={!edit}
                     required={true}
                     className="w-100"
+                    maxDate={maxDate}
                   />
                 </div>
                 <div className="form-group col-6 mt-3">
@@ -895,6 +944,7 @@ const EventManagement = () => {
                     disabled={!edit}
                     required={true}
                     className="w-100"
+                    maxDate={maxDate}
                   />
                 </div>
                 <div className="form-group mb-0 col-12 text-center mt-3">
@@ -906,6 +956,19 @@ const EventManagement = () => {
                     Reset
                   </button>
                 </div>
+                {eventInfo?.status === "ReadyForPayment" ? (
+                  <div className="form-group mb-0 col-12 text-center mt-3">
+                    <button
+                      className="comman_btn green_btn rounded-pill py-3 px-5"
+                      type="button"
+                      onClick={(e) => approveParty(e, eventInfo?._id)}
+                    >
+                      Approve
+                    </button>
+                  </div>
+                ) : (
+                  ""
+                )}
                 {edit && (
                   <div className="form-group mb-0 col-12 text-center mt-3">
                     <button

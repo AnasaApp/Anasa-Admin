@@ -203,7 +203,7 @@ const Payout = () => {
       return false;
     } else if (amount > remainingAmount) {
       Swal.fire({
-        text: "Amount is greater than Requested",
+        text: "Amount is greater than Available",
         icon: "warning",
         confirmButtonText: "Okay",
       });

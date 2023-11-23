@@ -129,6 +129,7 @@ const ApprovedView = () => {
   const getVendor = async () => {
     let id = location?.state?.id;
     const { data } = await getVendorDetails(id, { status: "APPROVED" });
+    console.log(data)
     setVendor(data?.results.vendor);
   };
   const GetVendorBooking = async () => {

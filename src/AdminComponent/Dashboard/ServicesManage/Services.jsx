@@ -264,6 +264,7 @@ const ServicesManage = () => {
                     <label htmlFor="">Service Name(Ar)</label>
                     <input
                       type="text"
+                      dir="rtl"
                       className="form-control"
                       name="serviceName_en"
                       defaultValue={newData?.name_ar}

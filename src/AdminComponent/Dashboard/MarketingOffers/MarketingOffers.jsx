@@ -38,7 +38,7 @@ const MarketingOffers = () => {
   const [subCategoryData, setSubCategoryData] = useState();
   const [offers, setAllOffers] = useState([]);
   const [offerId, setOfferId] = useState();
- 
+
   const [offerData, setOfferData] = useState();
   const [vendors, setVendors] = useState([]);
   const [selectVendor, setSelectVendor] = useState();
@@ -139,10 +139,14 @@ const MarketingOffers = () => {
         const returnData = {};
         returnData.sn = index + 1 + ".";
         returnData.name_en = list?.name_en;
-        returnData.name_ar = list?.name_ar;
+        returnData.name_ar = (
+          <span lang="ar" dir="rtl">
+            {list?.name_ar}
+          </span>
+        );
         returnData.category = list?.type[0].category?.name_en;
         returnData.vendor = list?.type[0].vendor?.full_name;
-        returnData.number = list?.discount;
+        returnData.number = list?.comboPrice;
         returnData.service = list?.type[0].service?.name_en;
         returnData.action = (
           <>
@@ -216,6 +220,17 @@ const MarketingOffers = () => {
   console.log(formValues, "f");
 
   const onSubmit = async (data) => {
+    console.log(data);
+    if(!formValues[0]?.category || !formValues[0]?.vendor || !formValues[0]?.service){
+      Swal.fire({
+        title: "Error!",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+        text:"Category, Vendor or Service are empty, Please choose",
+      })
+      return false;
+    }
     await AddCombo({
       name_en: data?.combo_en,
       name_ar: data?.combo_ar,
@@ -386,7 +401,9 @@ const MarketingOffers = () => {
                       {...register("combo_ar", {
                         required: "*Combo Name is required!",
                         pattern: {
-                          value: /^[\u0600-\u06FF,\u0600-\u06FF, ]*$/,
+                          // value: /^[\u0600-\u06FF,\u0600-\u06FF, ]*$/,
+                          value:
+                            /^[،\u0621-\u064A\u0660-\u06690-9\s!"#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]+$/u,
                           message: "Only Arabic Characters are allowed!",
                         },
                       })}
@@ -489,9 +506,13 @@ const MarketingOffers = () => {
                             <option selected="" value="">
                               Select Category
                             </option>
-                            {allCategories?.filter(cat => cat.status === true)?.map((item) => (
-                              <option value={item?._id}>{item?.name_en}</option>
-                            ))}
+                            {allCategories
+                              ?.filter((cat) => cat.status === true)
+                              ?.map((item) => (
+                                <option value={item?._id}>
+                                  {item?.name_en}
+                                </option>
+                              ))}
                           </select>
                         </div>
                         {console.log(formValues)}
@@ -720,6 +741,7 @@ const MarketingOffers = () => {
                   <label htmlFor="">Combo Name (Ar)</label>
                   <input
                     type="text"
+                    dir="rtl"
                     className={classNames("form-control", {
                       "is-invalid": errors2.combo_ar_edit_ar,
                     })}

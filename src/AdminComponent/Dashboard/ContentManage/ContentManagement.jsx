@@ -51,10 +51,33 @@ const ContentManagement = () => {
     setTermEdit(newFormValues);
   };
   const handleChangePrivacy = (e, key) => {
-    let newFormValues = [...privacyEdit];
-    newFormValues[0][key] = e.target.value;
-    setPrivacyEdit(newFormValues);
+    if (key === "description_ar") {
+      const arabicRegex = /^[\u0600-\u06FF\s]+$/;
+
+      if (!arabicRegex.test(e.target.value)) {
+        e.preventDefault();
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "warning",
+          title: "Please enter only Arabic characters for the description!",
+          showConfirmButton: false,
+          timerProgressBar: true,
+          timer: 3000,
+        });
+        return false;
+      } else {
+        let newFormValues = [...privacyEdit];
+        newFormValues[0][key] = e.target.value;
+        setPrivacyEdit(newFormValues);
+      }
+    } else {
+      let newFormValues = [...privacyEdit];
+      newFormValues[0][key] = e.target.value;
+      setPrivacyEdit(newFormValues);
+    }
   };
+
   const saveAboutUs = async (e) => {
     e.preventDefault();
     const { data } = await EditAbout(
@@ -211,11 +234,12 @@ const ContentManagement = () => {
                               data-bs-target="#staticBackdrop4"
                               className="edit_content_btn comman_btn"
                               href="javscript:;"
+                              dir="rtl"
                             >
-                              <i className="far fa-edit me-2" />
-                              Edit
+                              <i className="far fa-edit ms-2" />
+                              يحرر
                             </a>
-                            <p>{about?.description_ar}</p>
+                            <p dir="rtl">{about?.description_ar}</p>
                           </div>
                         </div>
                       </div>
@@ -244,17 +268,19 @@ const ContentManagement = () => {
                         </div>
                         <div className="col-6">
                           <div className="row content_management_box text-end">
-                            <h2>{term?.title}</h2>
+                            {/* <h2>{term?.title}</h2> */}
+                            <h2>تي إن سي</h2>
                             <a
                               data-bs-toggle="modal"
                               data-bs-target="#staticBackdrop5"
                               className="edit_content_btn comman_btn"
                               href="javscript:;"
+                              dir="rtl"
                             >
-                              <i className="far fa-edit me-2" />
-                              Edit
+                              <i className="far fa-edit ms-2" />
+                              يحرر
                             </a>
-                            <p>{term?.description_ar}</p>
+                            <p dir="rtl">{term?.description_ar}</p>
                           </div>
                         </div>
                       </div>
@@ -283,17 +309,19 @@ const ContentManagement = () => {
                         </div>
                         <div className="col-6">
                           <div className="row content_management_box text-end">
-                            <h2>{privacy?.title}</h2>
+                            {/* <h2>{privacy?.title}</h2> */}
+                            <h2>سياسة الخصوصية</h2>
                             <a
                               data-bs-toggle="modal"
                               data-bs-target="#staticBackdrop6"
                               className="edit_content_btn comman_btn"
                               href="javscript:;"
+                              dir="rtl"
                             >
-                              <i className="far fa-edit me-2" />
-                              Edit
+                              <i className="far fa-edit ms-2" />
+                              يحرر
                             </a>
-                            <p>{privacy?.description_ar}</p>
+                            <p dir="rtl">{privacy?.description_ar}</p>
                           </div>
                         </div>
                       </div>
@@ -390,7 +418,7 @@ const ContentManagement = () => {
             <div className="modal-content border-0">
               <div className="modal-header">
                 <h5 className="modal-title" id="staticBackdropLabel">
-                  Edit
+                  يحرر
                 </h5>
                 <button
                   type="button"
@@ -408,21 +436,27 @@ const ContentManagement = () => {
                 <div className="content_box">
                   <form className="form-design p-3" action="#">
                     <div className="form-group col-12">
-                      <label htmlFor="">Heading</label>
+                      <label className="text-end" dir="rtl" htmlFor="">
+                        عنوان
+                      </label>
                       <input
                         type="text"
+                        dir="rtl"
                         className="form-control"
-                        defaultValue="ABOUT US"
+                        defaultValue="معلومات عنا"
                         name="title"
                         disabled
                         // onChange={(e) => handleChangeAbout(e, "title")}
                       />
                     </div>
                     <div className="form-group col-12">
-                      <label htmlFor="">Content</label>
+                      <label className="text-end" dir="rtl" htmlFor="">
+                        محتوى
+                      </label>
                       <textarea
                         className="form-control"
                         id=""
+                        dir="rtl"
                         style={{ height: 150 }}
                         defaultValue={about?.description_ar}
                         name="description_ar"
@@ -431,7 +465,7 @@ const ContentManagement = () => {
                     </div>
                     <div className="form-group mb-0 col-auto">
                       <button className="comman_btn2" onClick={saveAboutUs}>
-                        Save
+                        يحفظ
                       </button>
                       <button
                         className="comman_btn2 d-none"
@@ -534,7 +568,7 @@ const ContentManagement = () => {
             <div className="modal-content border-0">
               <div className="modal-header">
                 <h5 className="modal-title" id="staticBackdropLabel">
-                  Edit
+                  يحرر
                 </h5>
                 <button
                   type="button"
@@ -552,19 +586,25 @@ const ContentManagement = () => {
                 <div className="content_box">
                   <form className="form-design p-3" action="#">
                     <div className="form-group col-12">
-                      <label htmlFor="">Heading</label>
+                      <label className="text-end" dir="rtl" htmlFor="">
+                        عنوان
+                      </label>
                       <input
                         type="text"
+                        dir="rtl"
                         className="form-control"
-                        defaultValue="معلومات عنا"
+                        defaultValue="تي إن سي"
                         disabled
                       />
                     </div>
                     <div className="form-group col-12">
-                      <label htmlFor="">Content</label>
+                      <label className="text-end" dir="rtl" htmlFor="">
+                        محتوى
+                      </label>
                       <textarea
                         className="form-control"
                         id=""
+                        dir="rtl"
                         style={{ height: 150 }}
                         defaultValue={term?.description_ar}
                         name="description_ar"
@@ -573,7 +613,7 @@ const ContentManagement = () => {
                     </div>
                     <div className="form-group mb-0 col-auto">
                       <button className="comman_btn2" onClick={saveTerm}>
-                        Save
+                        يحفظ
                       </button>
                     </div>
                     <button
@@ -676,7 +716,7 @@ const ContentManagement = () => {
             <div className="modal-content border-0">
               <div className="modal-header">
                 <h5 className="modal-title" id="staticBackdropLabel">
-                  Edit
+                  يحرر
                 </h5>
                 <button
                   type="button"
@@ -694,19 +734,25 @@ const ContentManagement = () => {
                 <div className="content_box">
                   <form className="form-design p-3" action="#">
                     <div className="form-group col-12">
-                      <label htmlFor="">Heading</label>
+                      <label className="text-end" dir="rtl" htmlFor="">
+                        عنوان
+                      </label>
                       <input
                         type="text"
+                        dir="rtl"
                         className="form-control"
-                        defaultValue="معلومات عنا"
+                        defaultValue="خصوصية"
                         disabled
                       />
                     </div>
                     <div className="form-group col-12">
-                      <label htmlFor="">Content</label>
+                      <label className="text-end" dir="rtl" htmlFor="">
+                        محتوى
+                      </label>
                       <textarea
                         className="form-control"
                         id=""
+                        dir="rtl"
                         style={{ height: 150 }}
                         defaultValue={privacy?.description_ar}
                         name="description_ar"
@@ -716,8 +762,13 @@ const ContentManagement = () => {
                       />
                     </div>
                     <div className="form-group mb-0 col-auto">
-                      <button className="comman_btn2" onClick={savePrivacy}>
-                        Save
+                      <button
+                        dir="rtl"
+                        lang="ar"
+                        className="comman_btn2"
+                        onClick={savePrivacy}
+                      >
+                        يحفظ
                       </button>
                       <button
                         className="comman_btn2 d-none"

@@ -13,7 +13,7 @@ import {
 import Sidebar from "../Sidebar";
 import Swal from "sweetalert2";
 
-import logo from "../../../assets/img/logo.png";
+import Loader from "../Loader";
 
 const Services = () => {
   const [vendorService, setVendorService] = useState();
@@ -165,7 +165,15 @@ const Services = () => {
     setLoading(true);
     try {
       if (!files || !files.upload_file) {
-        alert("Please select a file to upload.");
+        Swal.fire({
+          icon: "error",
+          title: "Please choose a file",
+          position: "top-end",
+          showConfirmButton: false,
+          timerProgressBar: true,
+          timer: 3000,
+          toast: true,
+        });
         return false;
       }
       const formData = new FormData();
@@ -186,7 +194,7 @@ const Services = () => {
     } finally {
       setLoading(false);
       document.getElementById("reset_mass_add_form").click();
-      setFiles([])
+      setFiles([]);
       GetVendorServices();
     }
   };
@@ -226,14 +234,7 @@ const Services = () => {
   return (
     <div className={sideBar === "click" ? "expanded_main" : "admin_main"}>
       <Sidebar slide={slide} getBarClick={getBarClick} />
-      {loading ? (
-        <div className="loading">
-          <div id="spinner-container">
-            <div id="spinner"></div>
-            <img id="image" src={logo} alt="Your Image" />
-          </div>
-        </div>
-      ) : null}
+      {loading ? <Loader /> : null}
       <div className="admin_panel_data height_adjust">
         <div className="row service-management justify-content-center">
           <div className="col-12">

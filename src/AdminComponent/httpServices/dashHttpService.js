@@ -631,7 +631,6 @@ export async function importVendorServices(formData) {
     if (error.response) {
       // console.log(error?.response);
       Swal.fire({
-        title: "Error!",
         text: error?.response?.data?.results?.errors[0],
         icon: "error",
         confirmButtonText: "Okay",
@@ -679,6 +678,35 @@ export async function GetEventReqInfo(id) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/viewRequest` + "/" + id
     );
     // console.log(data);
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      // console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
+export async function partyApproval(id) {
+  try {
+    const { data } = await appHttpService.get(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/approveForPayment` + "/" + id
+    );
+    console.log(data);
     if (data?.error) {
       Swal.fire({
         title: data?.message,

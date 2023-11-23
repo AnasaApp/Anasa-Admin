@@ -495,6 +495,23 @@ input::-webkit-inner-spin-button {
   border-radius: 50px;
 }
 
+.green_btn{
+  background-color: #28b93b !important;
+  color: #fff !important;
+  border: 1px dashed #28b93b !important;
+  transition: 0.3s all;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 11px;
+  display: inline-block;
+  border-radius: 5px;
+}
+.green_btn:hover{
+  background-color: white !important;
+  color: #28b93b !important;
+
+}
+
 .comman_btn:hover {
   background-color: #fff !;
   border-color: #4f73af !;
@@ -1398,4 +1415,8 @@ z-index: 55555;
 .fa-pen{
   color: #e25829;
   outline: none;
+}
+
+.rce-mbox{
+  width: 300px;
 }

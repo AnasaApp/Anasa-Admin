@@ -256,6 +256,7 @@ const SubCategories = ({ cate }) => {
   };
 
   const onSubmit = async (data) => {
+    console.log(data)
     const formData = new FormData();
     formData.append("name_en", data?.sub_category?.trim());
     formData.append("name_ar", data?.sub_category_ar?.trim());
@@ -275,6 +276,8 @@ const SubCategories = ({ cate }) => {
         confirmButtonColor: "#e25829",
       });
       setFiles([]);
+      setCroppedImage(null)
+      setSelectedImage(null)
     }
   };
 
@@ -343,7 +346,7 @@ const SubCategories = ({ cate }) => {
                   required: "Category is required!",
                 })}
               >
-                <option selected="">Select Category</option>
+                <option selected="" value=''>Select Category</option>
                 {(allCategories || [])
                   ?.filter((cat) => cat.status === true)
                   .map((item, index) => (
@@ -398,7 +401,8 @@ const SubCategories = ({ cate }) => {
                 {...register("sub_category_ar", {
                   required: "Sub Category(ar) Name is required!",
                   pattern: {
-                    value: /^[\u0621-\u064A\u0660-\u0669,{.'"!_-} ]+$/,
+                    // value: /^[\u0621-\u064A\u0660-\u0669,{.'"!_-} ]+$/,
+                    value: /^[،\u0621-\u064A\u0660-\u06690-9\s!"#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]+$/u,
                     message: "Only Arabic Characters are allowed!",
                   },
                   maxLength: {
@@ -429,7 +433,7 @@ const SubCategories = ({ cate }) => {
               </label>{" "}
               <input
                 type="file"
-                className="form-control mx-2"
+                className="form-control mx-2 ps-4"
                 defaultValue=""
                 name="upload_cat_img"
                 accept=".jpg, .jpeg, .png"

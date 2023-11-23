@@ -153,6 +153,18 @@ const CommissionManagement = () => {
 
   const saveCommission = async (e) => {
     e.preventDefault();
+    if(formEditData?.commission > 100){
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: "Please enter between 0 to 100",
+        showConfirmButton: false,
+        timerProgressBar: true,
+        timer: 3000,
+      });
+      return false;
+    }
 
     const { data } = await EditCommission(
       {
@@ -241,6 +253,17 @@ const CommissionManagement = () => {
                         let newData = { ...formData };
                         newData.commission = e.target.value;
                         setFormData(newData);
+                        if (e.target.value > 100) {
+                          Swal.fire({
+                            toast: true,
+                            position: "top-end",
+                            icon: "error",
+                            title: "Please enter between 0 to 100",
+                            showConfirmButton: false,
+                            timerProgressBar: true,
+                            timer: 3000,
+                          });
+                        }
                       }}
                     />
                   </div>
