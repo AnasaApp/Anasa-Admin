@@ -174,7 +174,7 @@ const Categories = () => {
           </div>
         );
         returnData.name_en = list?.name_en;
-        returnData.name_ar = list?.name_ar;
+        returnData.name_ar = <span dir="ltr" lang="ar">{list?.name_ar}</span>;
         returnData.date = moment(list?.createdAt).format("L");
         returnData.status = (
           <>
@@ -464,7 +464,7 @@ const Categories = () => {
                                 </label>
                                 <input
                                   type="file"
-                                  className="form-control mx-2"
+                                  className="form-control mx-2 ms-3"
                                   defaultValue=""
                                   accept="image/*"
                                   name="upload_video"

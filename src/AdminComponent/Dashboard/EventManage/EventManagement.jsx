@@ -47,7 +47,7 @@ const EventManagement = () => {
   const [serviceCharge, setServiceCharge] = useState();
   const [serviceAmount, setServiceAmount] = useState();
   const [serviceId, setServiceId] = useState();
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
   const [formValues, setFormValues] = useState([
     {
@@ -174,33 +174,41 @@ const EventManagement = () => {
           <>
             <Link
               className={
-                list?.status === "ReadyForPayment"
+                list?.status === "Pending"
                   ? "green_btn"
+                  : list?.status === "Paid"
+                  ? " comman_btn2 table_viewbtn"
                   : list?.status === "Completed"
-                  ? " comman_btn table_viewbtn"
-                  : "comman_btn2 table_viewbtn"
+                  ? "comman_btn table_viewbtn"
+                  : "d- none"
+
               }
               data-bs-toggle="modal"
               data-bs-target={
-                list?.status === "ReadyForPayment"
+                list?.status === "Pending"
                   ? "#staticBackdrop50"
+                  : list?.status === "Paid"
+                  ? "#staticBackdrop49"
                   : list?.status === "Completed"
-                  ? "#staticBackdrop50"
-                  : "#staticBackdrop49"
+                  ? "#staticBackdrop50" : ""
               }
               onClick={() =>
-                list?.status === "ReadyForPayment"
+                list?.status === "Pending"
+                  ? manageEvent(list?._id)
+                  : list?.status === "Paid"
                   ? manageEvent(list?._id)
                   : list?.status === "Completed"
                   ? manageEvent(list?._id)
-                  : manageEvent(list?._id)
+                  : ''
               }
             >
-              {list?.status === "ReadyForPayment"
+              {list?.status === "Pending"
                 ? "Approve"
+                : list?.status === "Paid"
+                ? "Add Plan"
                 : list?.status === "Completed"
                 ? "View Plan"
-                : "Add Plan"}
+                : ""}
             </Link>
           </>
         );
@@ -218,7 +226,7 @@ const EventManagement = () => {
   };
 
   const approveParty = async (e, id) => {
-    e.preventDefault()
+    e.preventDefault();
     console.log(id);
     const { data } = await partyApproval(id);
     if (!data.error) {
@@ -228,17 +236,18 @@ const EventManagement = () => {
         confirmButtonText: "Okay",
       });
       getAllEvents();
+      document.getElementById("closed").click();
     }
   };
 
   const manageEvent = async (id) => {
-    setIsLoading(true)
+    setIsLoading(true);
     setEventId(id);
     const { data } = await GetEventReqInfo(id);
     console.warn(data);
     if (!data.error) {
       // console.log(data);
-      setIsLoading(false)
+      setIsLoading(false);
       let startDate = data?.results?.event?.startDate;
       let endDate = data?.results?.event?.endDate;
       let startTime = data?.results?.event?.startTime;
@@ -424,7 +433,14 @@ const EventManagement = () => {
     let StartTime = extractTimeFromDateTime(moment(startDate).format());
     let EndTime = extractTimeFromDateTime(moment(endDate).format());
 
-    if (startDate > endDate) {
+    let eventData = {
+      startDate: moment(startDate).format("YYYY-MM-DDTHH:mm:ss"),
+      startTime: StartTime,
+      endDate: moment(endDate).format("YYYY-MM-DDTHH:mm:ss"),
+      endTime: EndTime,
+    };
+
+    if (eventData.startDate > eventData.endDate) {
       Swal.fire({
         icon: "warning",
         text: "Please select valid end date",
@@ -434,27 +450,21 @@ const EventManagement = () => {
         timer: 3000,
         toast: true,
       });
+      return false;
     }
-
-    let eventData = {
-      startDate: moment(startDate).format("YYYY-MM-DDTHH:mm:ss"),
-      startTime: StartTime,
-      endDate: moment(endDate).format("YYYY-MM-DDTHH:mm:ss"),
-      endTime: EndTime,
-    };
 
     console.log(eventData);
 
-    const { data } = await EditEventDetails(id, eventData);
-    if (!data.error) {
-      Swal.fire({
-        text: "Event Time Changed",
-        icon: "success",
-        confirmButtonText: "Okay",
-      });
-      document.getElementById("closed").click();
-      getAllEvents();
-    }
+    // const { data } = await EditEventDetails(id, eventData);
+    // if (!data.error) {
+    //   Swal.fire({
+    //     text: "Event Time Changed",
+    //     icon: "success",
+    //     confirmButtonText: "Okay",
+    //   });
+    //   document.getElementById("closed").click();
+    //   getAllEvents();
+    // }
   };
 
   const handleServiceCharge = async (e) => {
@@ -752,7 +762,9 @@ const EventManagement = () => {
                       </div>
                       <div className="form-group col-2  mt-5">
                         <button
-                          className={formValues?.length <= 1 ? "d-none" : "comman_btn"}
+                          className={
+                            formValues?.length <= 1 ? "d-none" : "comman_btn"
+                          }
                           style={{ padding: "5px 20px" }}
                           type="button"
                           disabled={formValues?.length <= 1 ? true : false}
@@ -956,7 +968,7 @@ const EventManagement = () => {
                     Reset
                   </button>
                 </div>
-                {eventInfo?.status === "ReadyForPayment" ? (
+                {eventInfo?.status === "Pending" ? (
                   <div className="form-group mb-0 col-12 text-center mt-3">
                     <button
                       className="comman_btn green_btn rounded-pill py-3 px-5"

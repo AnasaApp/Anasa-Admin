@@ -95,11 +95,13 @@ const AdvertiseManagement = () => {
     await SearchVendor({ search: searchKey3 }).then((res) => {
       if (!res.error) {
         let data = res?.data.results?.vendor;
-        const optionList = data?.filter(item => item.status === true)?.map((item, index) => ({
-          value: item?._id._id,
-          label: item?._id.full_name,
-        }));
-        console.log(optionList)
+        const optionList = data
+          ?.filter((item) => item.status === true)
+          ?.map((item, index) => ({
+            value: item?._id._id,
+            label: item?._id.full_name,
+          }));
+        console.log(optionList);
         optionList.sort((a, b) => a.label.localeCompare(b.label));
         setOptionsNewVendors(optionList);
       }
@@ -111,10 +113,12 @@ const AdvertiseManagement = () => {
       if (!res.error) {
         let data = res?.data.results?.categories;
         console.log(data);
-        const optionList = data?.filter(item => item.status === true)?.map((item, index) => ({
-          value: item?._id,
-          label: item?.name_en,
-        }));
+        const optionList = data
+          ?.filter((item) => item.status === true)
+          ?.map((item, index) => ({
+            value: item?._id,
+            label: item?.name_en,
+          }));
         optionList.sort((a, b) => a.label.localeCompare(b.label));
         setOptionsCate(optionList);
       }
@@ -125,10 +129,12 @@ const AdvertiseManagement = () => {
       if (!res.error) {
         let data = res?.data.results?.categories;
         console.log(data);
-        const optionList = data?.filter(item => item.status === true)?.map((item, index) => ({
-          value: item?._id,
-          label: item?.name_en,
-        }));
+        const optionList = data
+          ?.filter((item) => item.status === true)
+          ?.map((item, index) => ({
+            value: item?._id,
+            label: item?.name_en,
+          }));
         optionList.sort((a, b) => a.label.localeCompare(b.label));
         setOptionsNewCate(optionList);
       }
@@ -154,6 +160,21 @@ const AdvertiseManagement = () => {
       });
     }
   };
+
+  useEffect(() => {
+    setSelectedUsers({
+      usersSelected: [],
+    });
+    setSelectedNewVendor({
+      newVendorSelected: [],
+    });
+    setSelectedNewCate({
+      newCateSelected: [],
+    });
+    setSelectedCate({
+      cateSelected: [],
+    });
+  }, [type])
   const handleChange = (selected) => {
     setSelectedUsers({
       usersSelected: selected,
@@ -209,7 +230,37 @@ const AdvertiseManagement = () => {
   };
   const saveAdd = async (e) => {
     e.preventDefault();
-    console.log(selectedCate?.cateSelected?.map((item) => item?.value));
+    // console.log(selectedCate?.cateSelected?.map((item) => item?.value));
+    console.log(selectedUsers);
+    console.log(selectedNewVendor);
+    console.log(selectedCate);
+    console.log(selectedNewCate.newCateSelected.length);
+    console.log(type);
+    if (
+      (type === "TC" && selectedCate.cateSelected.length < 1) ||
+      (type === "NC" && selectedNewCate.newCateSelected.length < 1)
+    ) {
+      Swal.fire({
+        title: "Please Select Category",
+        icon: "warning",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+      return false;
+    } else if (
+      (type === "TV" && selectedUsers.usersSelected.length < 1) ||
+      (type === "NV" && selectedNewVendor.newVendorSelected.length < 1)
+    ) {
+      console.log(selectedUsers);
+      console.log(selectedNewVendor);
+      Swal.fire({
+        title: "Please Select Vendors",
+        icon: "warning",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+      return false;
+    }
     await AddAddvertise({
       vendor:
         (type === "TV" &&

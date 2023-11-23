@@ -193,23 +193,22 @@ const Payout = () => {
 
   const handleWithdraw = async (e, amount) => {
     e.preventDefault();
-    console.log(amount)
-    if (withdrawAmount === 0 || withdrawAmount === null) {
+    console.log(withdrawAmount)
+    if (withdrawAmount < 1 || withdrawAmount === null) {
       Swal.fire({
-        text: "Please Enter Amount",
+        text: "Please Enter Withdarwal Amount",
         icon: "warning",
         confirmButtonText: "Okay",
       });
       return false;
-    } else if (amount > remainingAmount) {
+    } else if (withdrawAmount > remainingAmount) {
       Swal.fire({
-        text: "Amount is greater than Available",
+        text: "Withdrawal amount is greater than available amount",
         icon: "warning",
         confirmButtonText: "Okay",
       });
       return false;
     }
-    console.log(amount)
 
     await editWallet({ amount, vendorId }).then((res) => {
       if (!res.data.error) {
@@ -356,6 +355,7 @@ const Payout = () => {
                 data-bs-dismiss="modal"
                 aria-label="Close"
                 id="closeEdits"
+                onClick={() => setWithdrawAmount(0)}
               ></button>
             </div>
             <div class="modal-body">
@@ -372,7 +372,7 @@ const Payout = () => {
                     type="number"
                     className="form-control"
                     placeholder="Enter amount to withdraw"
-                    defaultValue={remainingAmount}
+                    value={withdrawAmount}
                     onChange={(e) => setWithdrawAmount(e.target.value)}
                   />
                 </div>

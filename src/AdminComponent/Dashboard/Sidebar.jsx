@@ -14,6 +14,7 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
 
   let token = localStorage.getItem("token-admin");
   let AdminData = JSON.parse(localStorage.getItem("token-admin-data"));
+  let Admin = JSON.parse(localStorage.getItem("AdminSave"));
 
   // console.log(AdminData);
   if (token === null) {
@@ -32,7 +33,7 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
   const Logout = () => {
     localStorage.removeItem("token-admin");
     navigate("/Admin/Login");
-    window.location.reload()
+    window.location.reload();
   };
 
   return (
@@ -325,23 +326,23 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
                 to="/Admin/Dashboard/Notifications-Management"
               >
                 <i className="fas fa-bell" />
-                <span>1</span>
+                <span></span>
               </Link>
               <div className="dropdown">
                 <button
-                  className="btn btn-secondary p-2"
+                style={{height:"50px", width:"50px", borderRadius:"50%"}}
+                  className="btn btn-secondary p-2 position-relative top-0"
                   type="button"
                   id="dropdownMenuButton1"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
                   <img
-                    width={40}
+                    className="position-absolute top-0 start-0 rounded-circle w-100 h-100 "
                     src={
-                      // AdminData?.image
-                      //   ? AdminData?.image
-                      //   :
-                      require("../../assets/img/Nupload.jpg")
+                      Admin?.image
+                        ? Admin?.image
+                        : require("../../assets/img/Nupload.jpg")
                     }
                     alt=""
                   />

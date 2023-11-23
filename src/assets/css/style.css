@@ -960,6 +960,7 @@ strong.booking_head {
 .preview_image {
   max-width: 755px !important;
   border: 2px solid #000000;
+  border-radius: 15px ;
 }
 .Pending-view_img img {
   max-width: 100%;

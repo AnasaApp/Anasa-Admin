@@ -140,7 +140,8 @@ const ApprovedView = () => {
     if (!data.error) {
       let values = data?.results.bookings;
       console.log(values);
-      values?.map((list, index) => {
+      let newVal = values.sort((a,b) => new moment(b.createdAt).format('YYYYMMDD') - new moment(a.createdAt).format('YYYYMMDD'))
+      newVal?.map((list, index) => {
         const returnData = {};
         returnData.sn = index + 1 + ".";
         returnData.id = list?.bookingID;
@@ -172,7 +173,8 @@ const ApprovedView = () => {
     if (!data.error) {
       let values = data?.results.transaction;
       console.log(values);
-      values?.map((list, index) => {
+      let newVal = values.sort((a,b) => new moment(b.createdAt).format('YYYYMMDD') - new moment(a.createdAt).format('YYYYMMDD'))
+      newVal?.map((list, index) => {
         const returnData = {};
         returnData.sn = index + 1 + ".";
         returnData.id = list?.transactionID;
@@ -584,7 +586,7 @@ const ApprovedView = () => {
             <div class="modal-body">
               <img
                 src={vendor?.trade_licence_copy}
-                className="preview_image"
+                className="preview_image w-100"
                 id="preview_images"></img>
             </div>
             <div class="modal-footer">
