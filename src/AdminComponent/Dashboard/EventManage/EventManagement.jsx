@@ -455,16 +455,16 @@ const EventManagement = () => {
 
     console.log(eventData);
 
-    // const { data } = await EditEventDetails(id, eventData);
-    // if (!data.error) {
-    //   Swal.fire({
-    //     text: "Event Time Changed",
-    //     icon: "success",
-    //     confirmButtonText: "Okay",
-    //   });
-    //   document.getElementById("closed").click();
-    //   getAllEvents();
-    // }
+    const { data } = await EditEventDetails(id, eventData);
+    if (!data.error) {
+      Swal.fire({
+        text: "Event Time Changed",
+        icon: "success",
+        confirmButtonText: "Okay",
+      });
+      document.getElementById("closed").click();
+      getAllEvents();
+    }
   };
 
   const handleServiceCharge = async (e) => {
