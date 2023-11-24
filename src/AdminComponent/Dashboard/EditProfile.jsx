@@ -8,6 +8,7 @@ const EditProfile = () => {
   const [name, setName] = useState("");
   const [files, setFiles] = useState([]);
   let Admin = JSON.parse(localStorage.getItem("AdminSave"));
+  let AdminData = JSON.parse(localStorage.getItem("token-admin-data"));
   console.log(Admin);
 
   const [sideBar, setSideBar] = useState();
@@ -33,6 +34,7 @@ const EditProfile = () => {
         confirmButtonColor: "#e25829",
       });
     localStorage.setItem("AdminSave", JSON.stringify(data.results.admin));
+    localStorage.setItem("token-admin-data", JSON.stringify(data.results.admin));
     }
   };
 
@@ -72,8 +74,8 @@ const EditProfile = () => {
                           className="profile-pic"
                           id="profile"
                           src={
-                            Admin?.image
-                              ? Admin?.image
+                            AdminData?.image
+                              ? AdminData?.image
                               : require("../../assets/img/Nupload.jpg")
                           }
                         />
@@ -98,7 +100,7 @@ const EditProfile = () => {
                     <input
                       type="text"
                       className="form-control"
-                      defaultValue={Admin?.name}
+                      defaultValue={AdminData?.name}
                       name="name"
                       id="name"
                       onChange={(e) => setName(e.target.value)}

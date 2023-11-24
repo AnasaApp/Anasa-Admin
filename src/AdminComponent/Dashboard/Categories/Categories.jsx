@@ -35,6 +35,8 @@ const Categories = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageName, setImageName] = useState(null);
+  const [errorEn, setErrorEn] = useState(false);
+  const [errorAr, setErrorAr] = useState(false);
 
   // crop //
   const [croppedImage, setCroppedImage] = useState(null);
@@ -137,9 +139,8 @@ const Categories = () => {
     const newRows = [];
     if (!data.error) {
       let values = data?.results?.categories;
-      values.sort((a, b) =>
-        a.status === true ? -1 : b.status === true ? 1 : 0
-      );
+      values.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      values.sort((a, b) => (a.status === b.status ? 0 : a.status ? -1 : 1));
       // console.log(values);
       values?.map((list, index) => {
         const returnData = {};
@@ -174,7 +175,11 @@ const Categories = () => {
           </div>
         );
         returnData.name_en = list?.name_en;
-        returnData.name_ar = <span dir="ltr" lang="ar">{list?.name_ar}</span>;
+        returnData.name_ar = (
+          <span dir="ltr" lang="ar">
+            {list?.name_ar}
+          </span>
+        );
         returnData.date = moment(list?.createdAt).format("L");
         returnData.status = (
           <>
@@ -271,8 +276,8 @@ const Categories = () => {
       getAllCat();
       setFiles([]);
       document?.getElementById("Reset").click();
-      setCroppedImage(null)
-      setSelectedImage(null)
+      setCroppedImage(null);
+      setSelectedImage(null);
       Swal.fire({
         title: "New Category Added!",
         icon: "success",
@@ -280,6 +285,30 @@ const Categories = () => {
         confirmButtonColor: "#e25829",
       });
     }
+  };
+
+  const pattern = /^(?!\s)[^\d]*(?:\s[^\d]+)*$/;
+
+  const changeEnCat = (e) => {
+    const inputValue = e.target.value;
+
+    if (!pattern.test(inputValue)) {
+      setErrorEn(true);
+    } else {
+      setErrorEn(false);
+    }
+    setEditCatEn(inputValue);
+  };
+
+  const changeArCat = (e) => {
+    const inputValue = e.target.value;
+
+    if (!pattern.test(inputValue)) {
+      setErrorAr(true);
+    } else {
+      setErrorAr(false);
+    }
+    setEditCatAr(inputValue);
   };
 
   const editCategory = async (id) => {
@@ -291,7 +320,10 @@ const Categories = () => {
 
   const saveCategories = async (e) => {
     e.preventDefault();
-    console.log(croppedImage, editCatEn, editCatAr);
+    // console.log(croppedImage, editCatEn, editCatAr);
+    if(errorAr || errorEn){
+      return false
+    }
     const formData = new FormData();
     formData.append("name_en", editCatEn);
     formData.append("name_ar", editCatAr);
@@ -395,6 +427,11 @@ const Categories = () => {
                                   name="Category_name"
                                   {...register("Category_name", {
                                     required: "Category Name is required!",
+                                    pattern: {
+                                      value: /^(?!\s)[^\d]*(?:\s[^\d]+)*$/,
+                                      message:
+                                        "Spaces at the start & numbers are not allowed",
+                                    },
                                     // pattern: {
                                     //   value:
                                     //     /^[A-Za-z\s]{1,}[\.]{0,1}[A-Za-z\s]{0,}$/,
@@ -429,12 +466,22 @@ const Categories = () => {
                                   {...register("Category_name_ar", {
                                     required: "Category Name is required!",
                                     pattern: {
-                                      // value:
-                                      //   /^[\u0621-\u064A\u0660-\u0669, ]+$/,
-                                      value: /^[،\u0621-\u064A\u0660-\u06690-9\s!"#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]+$/u,
+                                      value:
+                                        /^(?!\s)([\u0621-\u064A\u0660-\u0669\s!"#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]+)$/,
                                       message:
-                                        "Only Arabic Characters are allowed!",
+                                        "Spaces at the start, numbers, or non-Arabic characters are not allowed",
                                     },
+                                    // pattern: {
+                                    //   value: /^(?!\s)[^\d\s]*$/,
+                                    //   message: "Spaces at the start or numbers are not allowed",
+                                    // },
+                                    // pattern: {
+                                    //   // value:
+                                    //   //   /^[\u0621-\u064A\u0660-\u0669, ]+$/,
+                                    //   value: /^(?!^\s+$)([\u0621-\u064A\u0660-\u0669\s!"#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]+)$/,
+                                    //   message:
+                                    //     "Only Arabic Characters are allowed!",
+                                    // },
                                     maxLength: {
                                       value: 50,
                                       message: "Max length is 50 characters!",
@@ -587,8 +634,9 @@ const Categories = () => {
                       editedCategories?.name_en ? editedCategories?.name_en : ""
                     }
                     className="form-control"
-                    onChange={(e) => setEditCatEn(e.target.value)}
+                    onChange={(e) => changeEnCat(e)}
                   />
+                  {errorEn && <span className="error">* Spaces at the start & numbers are not allowed</span>}
                 </div>
                 <div className="form-group col-6">
                   <label htmlFor="">Category Name (Ar)</label>
@@ -598,8 +646,9 @@ const Categories = () => {
                     dir="rtl"
                     defaultValue={editedCategories?.name_ar}
                     className="form-control"
-                    onChange={(e) => setEditCatAr(e.target.value)}
+                    onChange={(e) => changeArCat(e)}
                   />
+                  {errorAr && <span className="error">* Spaces at the start & numbers are not allowed</span> }
                 </div>
                 <div className="form-group mb-0 col-auto mt-3">
                   <button className="comman_btn" onClick={saveCategories}>

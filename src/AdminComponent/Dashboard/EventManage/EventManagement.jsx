@@ -169,7 +169,7 @@ const EventManagement = () => {
         }
         returnData.date =
           moment(list?.startDate).format("L") + " : " + formattedTime;
-        returnData.status = list?.status;
+          returnData.status = list?.status === "ReadyForPayment" ? "Ready For Payment" : list?.status ;
         returnData.action = (
           <>
             <Link
@@ -946,6 +946,7 @@ const EventManagement = () => {
                     required={true}
                     className="w-100"
                     maxDate={maxDate}
+                    // minDate={moment().toDate()}
                   />
                 </div>
                 <div className="form-group col-6 mt-3">
@@ -957,6 +958,7 @@ const EventManagement = () => {
                     required={true}
                     className="w-100"
                     maxDate={maxDate}
+                    // minDate={moment().toDate()}
                   />
                 </div>
                 <div className="form-group mb-0 col-12 text-center mt-3">

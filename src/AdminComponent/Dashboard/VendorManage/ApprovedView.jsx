@@ -12,6 +12,7 @@ import {
 import Sidebar from "../Sidebar";
 import moment from "moment";
 import { MDBDataTable } from "mdbreact";
+import { countries } from "country-data";
 
 const ApprovedView = () => {
   const [slide, setSlide] = useState("VM");
@@ -20,6 +21,7 @@ const ApprovedView = () => {
   const [vendorBooking, setVendorBooking] = useState();
   const [values, setValues] = useState({ from: "", to: "" });
   const [transaction, setTransaction] = useState();
+  const [countryName, setCountryName] = useState();
   const navigate = useNavigate();
   let location = useLocation();
   useEffect(() => {
@@ -129,7 +131,16 @@ const ApprovedView = () => {
   const getVendor = async () => {
     let id = location?.state?.id;
     const { data } = await getVendorDetails(id, { status: "APPROVED" });
-    console.log(data)
+    console.log(data);
+    const countryCode = data?.results?.vendor?.country_code;
+    if (countryCode) {
+      const countryData = countries.all;
+      const country = Object.values(countryData).find((country) => {
+        return country.countryCallingCodes.includes(`+${countryCode}`);
+      });
+      const countryName = country ? country.name : "Country Not Found";
+      setCountryName(countryName);
+    }
     setVendor(data?.results.vendor);
   };
   const GetVendorBooking = async () => {
@@ -140,7 +151,11 @@ const ApprovedView = () => {
     if (!data.error) {
       let values = data?.results.bookings;
       console.log(values);
-      let newVal = values.sort((a,b) => new moment(b.createdAt).format('YYYYMMDD') - new moment(a.createdAt).format('YYYYMMDD'))
+      let newVal = values.sort(
+        (a, b) =>
+          new moment(b.createdAt).format("YYYYMMDD") -
+          new moment(a.createdAt).format("YYYYMMDD")
+      );
       newVal?.map((list, index) => {
         const returnData = {};
         returnData.sn = index + 1 + ".";
@@ -173,7 +188,11 @@ const ApprovedView = () => {
     if (!data.error) {
       let values = data?.results.transaction;
       console.log(values);
-      let newVal = values.sort((a,b) => new moment(b.createdAt).format('YYYYMMDD') - new moment(a.createdAt).format('YYYYMMDD'))
+      let newVal = values.sort(
+        (a, b) =>
+          new moment(b.createdAt).format("YYYYMMDD") -
+          new moment(a.createdAt).format("YYYYMMDD")
+      );
       newVal?.map((list, index) => {
         const returnData = {};
         returnData.sn = index + 1 + ".";
@@ -288,15 +307,16 @@ const ApprovedView = () => {
                     </div>
                     <h4 className="user_name">{vendor?.full_name}</h4>
                   </div>
-                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
+                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
-                      <span>Mobile Number:</span>
+                      <span>Shop Address:</span>
                       <div className="col">
-                        <strong>{vendor?.phone_number}</strong>
+                        <strong>{vendor?.shop_address}</strong>
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
+
+                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Shop Name:</span>
                       <div className="col">
@@ -309,6 +329,14 @@ const ApprovedView = () => {
                       <span>Email Id:</span>
                       <div className="col">
                         <strong>{vendor?.email}</strong>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
+                    <div className="row view-inner-box border mx-0 w-100">
+                      <span>Mobile Number:</span>
+                      <div className="col">
+                        <strong>{vendor?.phone_number}</strong>
                       </div>
                     </div>
                   </div>
@@ -354,9 +382,17 @@ const ApprovedView = () => {
                   </div>
                   <div className="col-md-4 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
-                      <span>Country:</span>
+                      <span>Country Code:</span>
                       <div className="col">
                         <strong>{vendor?.country_code}</strong>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
+                    <div className="row view-inner-box border mx-0 w-100">
+                      <span>Country Name:</span>
+                      <div className="col">
+                        <strong>{countryName}</strong>
                       </div>
                     </div>
                   </div>
@@ -379,7 +415,8 @@ const ApprovedView = () => {
                                 class="fa fa-eye preview_icon"
                                 onClick={() =>
                                   preview(vendor?.trade_licence_copy)
-                                }></i>
+                                }
+                              ></i>
                             ) : null}
                             {vendor?.trade_licence_copy ? (
                               <i
@@ -411,9 +448,8 @@ const ApprovedView = () => {
                             {vendor?.signed_contract ? (
                               <i
                                 class="fa fa-eye preview_icon"
-                                onClick={() =>
-                                  preview(vendor?.signed_contract)
-                                }></i>
+                                onClick={() => preview(vendor?.signed_contract)}
+                              ></i>
                             ) : null}
                             {vendor?.signed_contract ? (
                               <i
@@ -441,7 +477,8 @@ const ApprovedView = () => {
                     <div className="row view-inner-box border mx-0 w-100">
                       <div className="col">
                         <Link
-                          to={`/Admin/Dashboard/Vendor-Management/Services/${vendor?._id}`}>
+                          to={`/Admin/Dashboard/Vendor-Management/Services/${vendor?._id}`}
+                        >
                           <strong>Go to Listed Services</strong>
                         </Link>
                       </div>
@@ -475,7 +512,8 @@ const ApprovedView = () => {
               <div className="col-12">
                 <form
                   className="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"
-                  action="">
+                  action=""
+                >
                   <div className="form-group mb-0 col-5">
                     <label htmlFor="">From</label>
                     <input
@@ -505,7 +543,8 @@ const ApprovedView = () => {
                     <button
                       className="comman_btn2 d-none"
                       type="reset"
-                      id="Resets">
+                      id="Resets"
+                    >
                       Search
                     </button>
                   </div>
@@ -564,7 +603,8 @@ const ApprovedView = () => {
         class="btn btn-primary d-none"
         id="preview_modal"
         data-bs-toggle="modal"
-        data-bs-target="#exampleModal">
+        data-bs-target="#exampleModal"
+      >
         Launch demo modal
       </button>
       <div
@@ -572,7 +612,8 @@ const ApprovedView = () => {
         id="exampleModal"
         tabindex="-1"
         aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+        aria-hidden="true"
+      >
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header comman_modal">
@@ -581,19 +622,22 @@ const ApprovedView = () => {
                 type="button"
                 class="btn-close"
                 data-bs-dismiss="modal"
-                aria-label="Close"></button>
+                aria-label="Close"
+              ></button>
             </div>
             <div class="modal-body">
               <img
                 src={vendor?.trade_licence_copy}
                 className="preview_image w-100"
-                id="preview_images"></img>
+                id="preview_images"
+              ></img>
             </div>
             <div class="modal-footer">
               <button
                 type="button"
                 class="comman_btn2 "
-                data-bs-dismiss="modal">
+                data-bs-dismiss="modal"
+              >
                 Close
               </button>
             </div>
@@ -608,7 +652,8 @@ const ApprovedView = () => {
         data-bs-keyboard="false"
         tabIndex={-1}
         aria-labelledby="staticBackdropLabel"
-        aria-hidden="true">
+        aria-hidden="true"
+      >
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content border-0">
             <div className="modal-header">
@@ -625,7 +670,8 @@ const ApprovedView = () => {
             <div className="modal-body">
               <form
                 className="form-design px-3 py-2 help-support-form row align-items-end justify-content-center"
-                action="">
+                action=""
+              >
                 <div className="form-group col-6">
                   <label htmlFor="">Total Payout</label>
                   <input

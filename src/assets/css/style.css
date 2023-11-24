@@ -1421,3 +1421,8 @@ z-index: 55555;
 .rce-mbox{
   width: 300px;
 }
+
+.error{
+  font-size: 12px;
+  color: rgb(166, 35, 35);
+}

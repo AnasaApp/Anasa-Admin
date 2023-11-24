@@ -27,6 +27,8 @@ const AddUser = () => {
   const onSave = async (data) => {
     setLoader(true);
 
+    console.log(data?.country_code)
+
     const formData = new FormData();
     formData.append("shop_cover_image", files?.shop_cover_image);
     formData.append("full_name", data?.full_name.trim());
@@ -42,18 +44,18 @@ const AddUser = () => {
     formData.append("email", data?.email.trim());
     formData.append("signed_contract", files?.signed_contract);
     formData.append("trade_licence_copy", files?.trade_licence_copy);
-    await AddVendor(formData).then((res) => {
-      console.log(res.data);
-      if (res.data.message === "Vendor Created Successfully") {
-        Swal.fire({
-          title: "Vendor Created Successfully!",
-          icon: "success",
-          confirmButtonText: "Ok",
-          confirmButtonColor: "#e25829",
-        });
-        navigate("/Admin/Dashboard/Vendor-Management");
-      }
-    });
+    // await AddVendor(formData).then((res) => {
+    //   console.log(res.data);
+    //   if (res.data.message === "Vendor Created Successfully") {
+    //     Swal.fire({
+    //       title: "Vendor Created Successfully!",
+    //       icon: "success",
+    //       confirmButtonText: "Ok",
+    //       confirmButtonColor: "#e25829",
+    //     });
+    //     navigate("/Admin/Dashboard/Vendor-Management");
+    //   }
+    // });
   };
   const getBarClick = (val) => {
     console.log(val);

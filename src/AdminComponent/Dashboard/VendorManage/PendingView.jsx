@@ -30,6 +30,34 @@ const PendingView = () => {
   const onSubmit = async (info) => {
     let id = location?.state?.id;
 
+    const checkboxes = [
+      info.tradeLicenceCopy,
+      info.signedContract,
+      info.locality,
+      info.shopAddress,
+      info.shopName,
+      info.city,
+      info.Country,
+      info.serviceableRadius,
+      info.reason,
+      info.customerContactNumber,
+      info.phoneNumber,
+      info.vendorName,
+    ];
+    
+    const atLeastOneCheckboxSelected = checkboxes.some((checkbox) => checkbox);
+    
+    if (!atLeastOneCheckboxSelected) {
+      Swal.fire({
+        title: "Error!",
+        text: "Please select at least one checkbox.",
+        icon: "error",
+        confirmButtonText: "Ok",
+        confirmButtonColor: "#e25829",
+      });
+
+      return false;
+    }
     const { data } = await RejectVender(id, {
       trade_licence_copy: info?.tradeLicenceCopy,
       signed_contract: info?.signedContract,
@@ -312,7 +340,7 @@ const PendingView = () => {
             <div class="modal-body">
               <img
                 src={vendor?.trade_licence_copy}
-                className="preview_image"
+                className="preview_image w-100"
                 id="preview_images"
               ></img>
             </div>
@@ -376,11 +404,11 @@ const PendingView = () => {
                                 type="checkbox"
                                 name="vendorName"
                                 {...register("vendorName")}
-                                id="flexCheckDefault"
+                                id="flexCheckDefaultFirst"
                               />
                               <label
                                 class="form-check-label mx-1"
-                                for="flexCheckDefault"
+                                for="flexCheckDefaultFirst"
                               >
                                 Vendor Name
                               </label>
@@ -393,11 +421,11 @@ const PendingView = () => {
                                 type="checkbox"
                                 name="shopName"
                                 {...register("shopName")}
-                                id="flexCheckDefault"
+                                id="flexCheckDefault1"
                               />
                               <label
                                 class="form-check-label mx-1"
-                                for="flexCheckDefault"
+                                for="flexCheckDefault1"
                               >
                                 Shop Name
                               </label>
@@ -410,11 +438,11 @@ const PendingView = () => {
                                 type="checkbox"
                                 name="shopAddress"
                                 {...register("shopAddress")}
-                                id="flexCheckDefault"
+                                id="flexCheckDefault2"
                               />
                               <label
                                 class="form-check-label mx-1"
-                                for="flexCheckDefault"
+                                for="flexCheckDefault2"
                               >
                                 Shop Address
                               </label>
@@ -427,11 +455,11 @@ const PendingView = () => {
                                 type="checkbox"
                                 name="city"
                                 {...register("city")}
-                                id="flexCheckDefault"
+                                id="flexCheckDefault3"
                               />
                               <label
                                 class="form-check-label mx-1"
-                                htmlFor="flexCheckDefault"
+                                htmlFor="flexCheckDefault3"
                               >
                                 City
                               </label>
@@ -444,11 +472,11 @@ const PendingView = () => {
                                 type="checkbox"
                                 name="phoneNumber"
                                 {...register("phoneNumber")}
-                                id="flexCheckDefault"
+                                id="flexCheckDefault4"
                               />
                               <label
                                 class="form-check-label mx-1"
-                                for="flexCheckDefault"
+                                for="flexCheckDefault4"
                               >
                                 Mobile Number
                               </label>
@@ -461,11 +489,11 @@ const PendingView = () => {
                                 type="checkbox"
                                 name="locality"
                                 {...register("locality")}
-                                id="flexCheckDefault"
+                                id="flexCheckDefault5"
                               />
                               <label
                                 class="form-check-label mx-1"
-                                for="flexCheckDefault"
+                                for="flexCheckDefault5"
                               >
                                 Locality
                               </label>
@@ -482,11 +510,11 @@ const PendingView = () => {
                                 type="checkbox"
                                 name="Country"
                                 {...register("Country")}
-                                id="flexCheckDefault"
+                                id="flexCheckDefault67"
                               />
                               <label
                                 class="form-check-label mx-1"
-                                for="flexCheckDefault"
+                                for="flexCheckDefault67"
                               >
                                 Country
                               </label>
@@ -499,11 +527,11 @@ const PendingView = () => {
                                 type="checkbox"
                                 name="serviceableRadius"
                                 {...register("serviceableRadius")}
-                                id="flexCheckDefault"
+                                id="flexCheckDefault7"
                               />
                               <label
                                 class="form-check-label mx-1"
-                                for="flexCheckDefault"
+                                for="flexCheckDefault7"
                               >
                                 Serviceable Radius
                               </label>
@@ -516,11 +544,11 @@ const PendingView = () => {
                                 type="checkbox"
                                 name="tradeLicenceCopy"
                                 {...register("tradeLicenceCopy")}
-                                id="flexCheckDefault"
+                                id="flexCheckDefault8"
                               />
                               <label
                                 class="form-check-label mx-1"
-                                htmlFor="flexCheckDefault"
+                                htmlFor="flexCheckDefault8"
                               >
                                 Trade Licence Copy
                               </label>
@@ -533,11 +561,11 @@ const PendingView = () => {
                                 type="checkbox"
                                 name="signedContract"
                                 {...register("signedContract")}
-                                id="flexCheckDefault"
+                                id="flexCheckDefault9"
                               />
                               <label
                                 class="form-check-label mx-1"
-                                for="flexCheckDefault"
+                                for="flexCheckDefault9"
                               >
                                 Signed Contract
                               </label>
@@ -550,11 +578,11 @@ const PendingView = () => {
                                 type="checkbox"
                                 name="customerContactNumber"
                                 {...register("CustomerContactNumber")}
-                                id="flexCheckDefault"
+                                id="flexCheckDefault10"
                               />
                               <label
                                 class="form-check-label mx-1"
-                                for="flexCheckDefault"
+                                for="flexCheckDefault10"
                               >
                                 Customer Contact Number
                               </label>

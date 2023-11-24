@@ -28,7 +28,7 @@ const AdminLogin = () => {
   const rememberMe = (data) => {
     localStorage.setItem("AdminSave", JSON.stringify(data));
   };
-  console.log(AdminData);
+  // console.log(AdminData);
 
   const onSubmit = async (data) => {
     rememberCheck && rememberMe(data);

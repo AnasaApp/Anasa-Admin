@@ -275,7 +275,7 @@ const MarketingOffers = () => {
     await editOffer(offerId, {
       name_ar: data?.combo_ar_edit_ar,
       name_en: data?.combo_en_edit,
-      discount: data?.Edit_Discount,
+      comboPrice: data?.Edit_Discount,
       validFrom: data?.dateFrom,
       validTo: data?.dateTo,
     }).then((res) => {
@@ -314,7 +314,7 @@ const MarketingOffers = () => {
     reset({
       combo_en_edit: date.name_en,
       combo_ar_edit_ar: date?.name_ar,
-      Edit_Discount: date?.discount,
+      Edit_Discount: date?.comboPrice,
       dateFrom: date?.validFrom?.slice(0, 10),
       dateTo: date?.validFrom?.slice(0, 10),
     });
@@ -750,8 +750,10 @@ const MarketingOffers = () => {
                     {...register2("combo_ar_edit_ar", {
                       required: "*Combo Name is required!",
                       pattern: {
-                        value: /^[\u0621-\u064A\u0660-\u0669, ]+$/,
-                        message: "Only Arabic Characters are allowed!",
+                        value:
+                          /^(?!\s)([\u0621-\u064A\u0660-\u0669\d\s!"#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]+)$/,
+                        message:
+                          "Spaces at the start, numbers, or non-Arabic characters are not allowed",
                       },
                     })}
                   />

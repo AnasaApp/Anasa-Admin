@@ -28,6 +28,9 @@ const SubCategories = ({ cate }) => {
   const [editSubCatAr, setEditSubCatAr] = useState("");
   const [editedImg, setEditedImg] = useState();
 
+  const [errorEn, setErrorEn] = useState(false);
+  const [errorAr, setErrorAr] = useState(false);
+
   // crop //
   const [croppedImage, setCroppedImage] = useState(null);
   const [edit, setEdit] = useState(false);
@@ -36,7 +39,6 @@ const SubCategories = ({ cate }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageName, setImageName] = useState(null);
-
 
   const [category, setCategory] = useState({
     columns: [
@@ -114,9 +116,11 @@ const SubCategories = ({ cate }) => {
     const newRows = [];
     if (!data.error) {
       let values = data?.results?.subCategories;
-      values.sort((a, b) =>
-        a.status === true ? -1 : b.status === true ? 1 : 0
-      );
+      // Sort by creation date (newest first)
+      values.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+      // Sort by status (true first)
+      values.sort((a, b) => (a.status === b.status ? 0 : a.status ? -1 : 1));
       console.log(values);
       values?.map((list, index) => {
         const returnData = {};
@@ -230,7 +234,7 @@ const SubCategories = ({ cate }) => {
     setFiles([]);
     setModalVisible(true);
     setEdit(true);
-    await editSubCategory(id)
+    await editSubCategory(id);
   };
   const onCrop = async () => {
     try {
@@ -255,8 +259,32 @@ const SubCategories = ({ cate }) => {
     }
   };
 
+  const pattern = /^(?!\s)[^\d]*(?:\s[^\d]+)*$/;
+
+  const changeEnSubCat = (e) => {
+    const inputValue = e.target.value;
+
+    if (!pattern.test(inputValue)) {
+      setErrorEn(true);
+    } else {
+      setErrorEn(false);
+    }
+    setEditSubCatEn(inputValue);
+  };
+
+  const changeArSubCat = (e) => {
+    const inputValue = e.target.value;
+
+    if (!pattern.test(inputValue)) {
+      setErrorAr(true);
+    } else {
+      setErrorAr(false);
+    }
+    setEditSubCatAr(inputValue);
+  };
+
   const onSubmit = async (data) => {
-    console.log(data)
+    console.log(data);
     const formData = new FormData();
     formData.append("name_en", data?.sub_category?.trim());
     formData.append("name_ar", data?.sub_category_ar?.trim());
@@ -276,23 +304,26 @@ const SubCategories = ({ cate }) => {
         confirmButtonColor: "#e25829",
       });
       setFiles([]);
-      setCroppedImage(null)
-      setSelectedImage(null)
+      setCroppedImage(null);
+      setSelectedImage(null);
     }
   };
 
   const editSubCategory = async (id) => {
-    console.log(id)
+    console.log(id);
     setCatId(id);
     const { data } = await getViewSubCategory(id);
-    setEditSubCatAr(data?.results?.subCategories?.name_ar)
-    setEditSubCatEn(data?.results?.subCategories?.name_en)
+    setEditSubCatAr(data?.results?.subCategories?.name_ar);
+    setEditSubCatEn(data?.results?.subCategories?.name_en);
     setEditedSubCategories(data?.results.subCategories);
   };
 
   const saveSubCategory = async (e) => {
     e.preventDefault();
     // console.log(first)
+    if(errorAr || errorEn){
+      return false;
+    }
     const formData = new FormData();
     formData.append("category", editCatEn);
     formData.append("name_ar", editSubCatAr);
@@ -346,7 +377,9 @@ const SubCategories = ({ cate }) => {
                   required: "Category is required!",
                 })}
               >
-                <option selected="" value=''>Select Category</option>
+                <option selected="" value="">
+                  Select Category
+                </option>
                 {(allCategories || [])
                   ?.filter((cat) => cat.status === true)
                   .map((item, index) => (
@@ -371,7 +404,10 @@ const SubCategories = ({ cate }) => {
                 name="sub_category"
                 {...register("sub_category", {
                   required: "Sub Category Name is required!",
-
+                  pattern: {
+                    value: /^(?!\s)[^\d]*(?:\s[^\d]+)*$/,
+                    message: "Spaces at the start & numbers are not allowed",
+                  },
                   maxLength: {
                     value: 50,
                     message: "Max length is 50 characters!",
@@ -401,10 +437,17 @@ const SubCategories = ({ cate }) => {
                 {...register("sub_category_ar", {
                   required: "Sub Category(ar) Name is required!",
                   pattern: {
-                    // value: /^[\u0621-\u064A\u0660-\u0669,{.'"!_-} ]+$/,
-                    value: /^[،\u0621-\u064A\u0660-\u06690-9\s!"#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]+$/u,
-                    message: "Only Arabic Characters are allowed!",
+                    value:
+                      /^(?!\s)([\u0621-\u064A\u0660-\u0669\s!"#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]+)$/,
+                    message:
+                      "Spaces at the start, numbers, or non-Arabic characters are not allowed",
                   },
+                  // pattern: {
+                  //   // value: /^[\u0621-\u064A\u0660-\u0669,{.'"!_-} ]+$/,
+                  //   value: /^(?![A-Za-z])[\u0621-\u064A\u0660-\u0669\s!"#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]+$/,
+                  //   message: "Only Arabic characters and specific symbols are allowed!",
+                  // },
+
                   maxLength: {
                     value: 50,
                     message: "Max length is 50 characters!",
@@ -556,8 +599,13 @@ const SubCategories = ({ cate }) => {
                     type="text"
                     defaultValue={editedSubCategories?.name_en}
                     className="form-control"
-                    onChange={(e) => setEditSubCatEn(e.target.value)}
+                    onChange={(e) => changeEnSubCat(e)}
                   />
+                  {errorEn && (
+                    <span className="error">
+                      * Spaces at the start & numbers are not allowed
+                    </span>
+                  )}
                 </div>
                 <div className="form-group col-6">
                   <label htmlFor="">Sub Category Name (Ar)</label>
@@ -567,8 +615,13 @@ const SubCategories = ({ cate }) => {
                     dir="rtl"
                     defaultValue={editedSubCategories?.name_ar}
                     className="form-control"
-                    onChange={(e) => setEditSubCatAr(e.target.value)}
+                    onChange={(e) => changeArSubCat(e)}
                   />
+                  {errorAr && (
+                    <span className="error">
+                      * Spaces at the start & numbers are not allowed
+                    </span>
+                  )}
                 </div>
                 <div className="form-group mb-0 col-auto mt-3">
                   <button className="comman_btn" onClick={saveSubCategory}>

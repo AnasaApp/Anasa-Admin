@@ -86,7 +86,7 @@ const OtpVerify = () => {
                               onClick={ResendOtp}
                               style={{ cursor: "pointer" }}
                             >
-                              Request again
+                              <b>Request again</b>
                             </span>
                           )}
                         </label>

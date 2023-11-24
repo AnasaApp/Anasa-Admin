@@ -7,6 +7,7 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
   const [SlideState, setSlideState] = useState("");
   const width = window.innerWidth;
   const [sideBar, setSideBar] = useState(width < 768 ? false : true);
+  const [signOutClicked, setSignOutClicked] = useState(false);
 
   useEffect(() => {
     setSlideState(slide);
@@ -17,24 +18,28 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
   let Admin = JSON.parse(localStorage.getItem("AdminSave"));
 
   // console.log(AdminData);
-  if (token === null) {
-    Swal.fire({
-      title: "PLease Login to Continue!",
-      text: "Login Expired!",
-      icon: "warning",
-      confirmButtonText: "Login",
-      confirmButtonColor: "#e25829",
-    }).then((res) => {
-      navigate("/Admin/Login");
-    });
-  }
-  // console.log(width);
 
   const Logout = () => {
     localStorage.removeItem("token-admin");
+    setSignOutClicked(true);
     navigate("/Admin/Login");
     window.location.reload();
   };
+
+  useEffect(() => {
+    if (token === null && !signOutClicked) {
+      Swal.fire({
+        title: "Please Login to Continue!",
+        text: "Login Expired!",
+        icon: "warning",
+        confirmButtonText: "Login",
+        confirmButtonColor: "#e25829",
+      }).then((res) => {
+        navigate("/Admin/Login");
+      });
+    }
+  }, [token, navigate, signOutClicked]);
+  console.log(width);
 
   return (
     <div>
@@ -326,11 +331,11 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
                 to="/Admin/Dashboard/Notifications-Management"
               >
                 <i className="fas fa-bell" />
-                <span></span>
+                <span>1</span>
               </Link>
               <div className="dropdown">
                 <button
-                style={{height:"50px", width:"50px", borderRadius:"50%"}}
+                  style={{ height: "50px", width: "50px", borderRadius: "50%" }}
                   className="btn btn-secondary p-2 position-relative top-0"
                   type="button"
                   id="dropdownMenuButton1"
@@ -340,8 +345,8 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
                   <img
                     className="position-absolute top-0 start-0 rounded-circle w-100 h-100 "
                     src={
-                      Admin?.image
-                        ? Admin?.image
+                      AdminData?.image
+                        ? AdminData?.image
                         : require("../../assets/img/Nupload.jpg")
                     }
                     alt=""
