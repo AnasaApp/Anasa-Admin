@@ -221,14 +221,18 @@ const MarketingOffers = () => {
 
   const onSubmit = async (data) => {
     console.log(data);
-    if(!formValues[0]?.category || !formValues[0]?.vendor || !formValues[0]?.service){
+    if (
+      !formValues[0]?.category ||
+      !formValues[0]?.vendor ||
+      !formValues[0]?.service
+    ) {
       Swal.fire({
         title: "Error!",
         icon: "error",
         confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
-        text:"Category, Vendor or Service are empty, Please choose",
-      })
+        text: "Category, Vendor or Service are empty, Please choose",
+      });
       return false;
     }
     await AddCombo({
@@ -583,7 +587,9 @@ const MarketingOffers = () => {
 
                         <div className="form-group col-1  mt-4">
                           <button
-                            className="comman_btn mt-2"
+                            className={`comman_btn mt-2 ${
+                              formValues?.length <= 1 ? "d-none" : "d-block"
+                            }`}
                             style={{ padding: "5px 20px" }}
                             type="button"
                             disabled={formValues?.length <= 1 ? true : false}

@@ -29,7 +29,8 @@ import AdvertiseManagement from "./AdminComponent/Dashboard/AdvertiseManage/Adve
 import MarketingOffers from "./AdminComponent/Dashboard/MarketingOffers/MarketingOffers";
 import Notification from "./AdminComponent/Dashboard/Notifications/Notification";
 import HelpSupport from "./AdminComponent/Dashboard/Help&Support/HelpSupport";
-import ContentManagement from "./AdminComponent/Dashboard/ContentManage/ContentManagement";
+// import ContentManagement from "./AdminComponent/Dashboard/ContentManage/ContentManagement";
+import CMS from "./AdminComponent/Dashboard/ContentManage/CMS";
 import Services from "./AdminComponent/Dashboard/VendorManage/Services";
 import EditProfile from "./AdminComponent/Dashboard/EditProfile";
 import UpdatePassword from "./AdminComponent/Dashboard/UpdatePassword";
@@ -152,9 +153,13 @@ function App() {
               path="/Admin/Dashboard/Help&Support-Management"
               element={<HelpSupport />}
             />
-            <Route
+            {/* <Route
               path="/Admin/Dashboard/Content-Management"
               element={<ContentManagement />}
+            /> */}
+            <Route
+              path="/Admin/Dashboard/Content-Management"
+              element={<CMS />}
             />
           </Routes>
         </Router>
