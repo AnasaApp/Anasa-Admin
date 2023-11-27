@@ -8,7 +8,7 @@ const CMS = () => {
   const [sideBar, setSideBar] = useState();
 
   const getBarClick = (val) => {
-    console.log(val);
+    // console.log(val);
     setSideBar(val);
   };
   return (

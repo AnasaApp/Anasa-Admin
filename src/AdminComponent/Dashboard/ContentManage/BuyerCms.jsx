@@ -32,7 +32,6 @@ const BuyerCms = () => {
     const buyerData = data?.results?.about?.find(
       (item) => item.type === "buyer"
     );
-    console.warn(buyerData);
     setAbout(buyerData);
   };
   const getTermConditions = async () => {
@@ -173,10 +172,7 @@ const BuyerCms = () => {
       document.getElementById("reset6").click();
     }
   };
-  const getBarClick = (val) => {
-    // console.log(val);
-    setSideBar(val);
-  };
+
   return (
     <>
       <div className="col-12 px-0">

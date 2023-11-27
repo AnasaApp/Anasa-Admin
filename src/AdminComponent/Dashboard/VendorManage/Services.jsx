@@ -7,13 +7,10 @@ import {
   getSubCategory,
   getVendorDetails,
   getVendorServices,
-  importVendorServices,
   vendorServiceStatus,
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
 import Swal from "sweetalert2";
-
-import Loader from "../Loader";
 
 const Services = () => {
   const [vendorService, setVendorService] = useState();
@@ -28,7 +25,6 @@ const Services = () => {
   const [selectedArSubCategory, setSelectedArSubCategory] = useState("");
   const [subCategory, setSubCategory] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [files, setFiles] = useState(null);
 
   const [serviceNameEn, setServiceNameEn] = useState();
   const [serviceNameAr, setServiceNameAr] = useState();
@@ -38,7 +34,6 @@ const Services = () => {
   const [categoryId, setCategoryId] = useState();
 
   const [subCat_Id, setSubCat_Id] = useState();
-  const [loading, setLoading] = useState(false);
 
   let id = useParams();
   // console.log(id);
@@ -55,17 +50,17 @@ const Services = () => {
 
   const GetVendorServices = async () => {
     const { data } = await getVendorServices(id?.id);
-    console.warn(data.results.services);
+    // console.warn(data.results.services);
     let values = data.results.services;
-    setVendorService(data?.results.services);
+    setVendorService(data?.results?.services);
   };
   const getAllCategory = async () => {
     const { data } = await AllCategory();
     setCategory(data?.results?.categories);
-    console.log(data?.results?.categories);
+    // console.log(data?.results?.categories);
   };
   const getAllSubCategory = async (categoryId) => {
-    console.log(categoryId);
+    // console.log(categoryId);
     const { data } = await getSubCategory({ categoryId });
     if (data?.results?.subCategories) {
       setSubCategory(data?.results?.subCategories);
@@ -88,7 +83,7 @@ const Services = () => {
 
   const handleEdit = async (item) => {
     let categoryId = item?.category?._id;
-    console.log(categoryId);
+    // console.log(categoryId);
     if (categoryId) {
       await getAllSubCategory(categoryId);
     } else {
@@ -139,10 +134,10 @@ const Services = () => {
     setSubCat_Id(selectedSubCategory?._id);
   };
   const changeVendorServiceStatus = async (id) => {
-    console.log(id);
+    // console.log(id);
     const { data } = await vendorServiceStatus(id);
     GetVendorServices();
-    console.log(data);
+    // console.log(data);
     Swal.fire({
       toast: true,
       position: "top-end",
@@ -154,61 +149,9 @@ const Services = () => {
     });
   };
 
-  const onFileSelection = (e, key) => {
-    const selectedFile = e.target.files[0];
-    // setFiles(selectedFile);
-    setFiles({ ...files, [key]: selectedFile });
-  };
-
-  const handleFileSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      if (!files || !files.upload_file) {
-        Swal.fire({
-          icon: "error",
-          title: "Please choose a file",
-          position: "top-end",
-          showConfirmButton: false,
-          timerProgressBar: true,
-          timer: 3000,
-          toast: true,
-        });
-        return false;
-      }
-      const formData = new FormData();
-      formData.append("vendorId", id?.id);
-      formData.append("file", files.upload_file);
-
-      const { data } = await importVendorServices(formData);
-      if (!data.error) {
-        Swal.fire({
-          title: data.message,
-          icon: "success",
-          confirmButtonText: "Okay",
-          confirmButtonColor: "#e25829",
-        });
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-      document.getElementById("reset_mass_add_form").click();
-      setFiles([]);
-      GetVendorServices();
-    }
-  };
-
   const handleEditFinish = async (id, e) => {
     e.preventDefault();
     let category_id = category.find((cat) => categoryId === cat?._id);
-
-    console.log("name_en", serviceNameEn);
-    console.log("name_ar", serviceNameAr);
-    console.log("description_en", descriptionNameEn);
-    console.log("description_ar", descriptionNameAr);
-    console.log("categoryId", category_id?._id);
-    console.log("subCategoryId", subCat_Id ? subCat_Id : "");
 
     const formData = new FormData();
     formData.append("name_en", serviceNameEn);
@@ -234,7 +177,6 @@ const Services = () => {
   return (
     <div className={sideBar === "click" ? "expanded_main" : "admin_main"}>
       <Sidebar slide={slide} getBarClick={getBarClick} />
-      {loading ? <Loader /> : null}
       <div className="admin_panel_data height_adjust">
         <div className="row service-management justify-content-center">
           <div className="col-12">
@@ -302,38 +244,6 @@ const Services = () => {
                   <div className="col-auto">
                     <h2>Service Details</h2>
                   </div>
-                </div>
-                <div className="form-group mb-0 col-12 mt-3 mx-2 choose_file position-relative">
-                  <form
-                    className="d-flex align-items-center justify-content-between"
-                    onSubmit={(e) => handleFileSubmit(e)}
-                  >
-                    <div className="col-6">
-                      <span className="mx-2">Add Mass Services</span>{" "}
-                      <label className="mt-1 " htmlFor="upload_file">
-                        <i className="fa fa-camera me-1 " />
-                        Choose File
-                      </label>
-                      <input
-                        className="form-control py-3 ms-2"
-                        type="file"
-                        accept=".xls, .xlsx"
-                        name="upload_file"
-                        id="upload_file"
-                        onChange={(e) => onFileSelection(e, "upload_file")}
-                      />
-                    </div>
-                    <div className="col-4">
-                      <button className="comman_btn" type="submit">
-                        Submit
-                      </button>
-                    </div>
-                    <div className="col-4 d-none">
-                      <button id="reset_mass_add_form" type="reset">
-                        Reset
-                      </button>
-                    </div>
-                  </form>
                 </div>
                 <div className="row mx-0 ">
                   {vendorService?.length ? (

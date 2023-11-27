@@ -101,7 +101,7 @@ const AdvertiseManagement = () => {
             value: item?._id._id,
             label: item?._id.full_name,
           }));
-        console.log(optionList);
+        // console.log(optionList);
         optionList.sort((a, b) => a.label.localeCompare(b.label));
         setOptionsNewVendors(optionList);
       }
@@ -112,7 +112,7 @@ const AdvertiseManagement = () => {
     await AllCategory().then((res) => {
       if (!res.error) {
         let data = res?.data.results?.categories;
-        console.log(data);
+        // console.log(data);
         const optionList = data
           ?.filter((item) => item.status === true)
           ?.map((item, index) => ({
@@ -128,7 +128,7 @@ const AdvertiseManagement = () => {
     await AllCategory().then((res) => {
       if (!res.error) {
         let data = res?.data.results?.categories;
-        console.log(data);
+        // console.log(data);
         const optionList = data
           ?.filter((item) => item.status === true)
           ?.map((item, index) => ({
@@ -142,7 +142,7 @@ const AdvertiseManagement = () => {
   };
 
   const DeleteAdd = async (id, typ) => {
-    console.log(id);
+    // console.log(id);
     const { data } = await DeleteAddvertise({
       type: typ,
       Id: id,
@@ -174,7 +174,7 @@ const AdvertiseManagement = () => {
     setSelectedCate({
       cateSelected: [],
     });
-  }, [type])
+  }, [type]);
   const handleChange = (selected) => {
     setSelectedUsers({
       usersSelected: selected,
@@ -216,6 +216,7 @@ const AdvertiseManagement = () => {
   const GetAddscate = async () => {
     await AllAdvertisement({ type: "category" }).then((res) => {
       setAllAddsCate(res?.data.results.advertisements);
+      // console.log(res?.data.results.advertisements);
     });
   };
   const GetAddsNewVendor = async () => {
@@ -231,11 +232,11 @@ const AdvertiseManagement = () => {
   const saveAdd = async (e) => {
     e.preventDefault();
     // console.log(selectedCate?.cateSelected?.map((item) => item?.value));
-    console.log(selectedUsers);
-    console.log(selectedNewVendor);
-    console.log(selectedCate);
-    console.log(selectedNewCate.newCateSelected.length);
-    console.log(type);
+    // console.log(selectedUsers);
+    // console.log(selectedNewVendor);
+    // console.log(selectedCate);
+    // console.log(selectedNewCate.newCateSelected.length);
+    // console.log(type);
     if (
       (type === "TC" && selectedCate.cateSelected.length < 1) ||
       (type === "NC" && selectedNewCate.newCateSelected.length < 1)
@@ -251,8 +252,8 @@ const AdvertiseManagement = () => {
       (type === "TV" && selectedUsers.usersSelected.length < 1) ||
       (type === "NV" && selectedNewVendor.newVendorSelected.length < 1)
     ) {
-      console.log(selectedUsers);
-      console.log(selectedNewVendor);
+      // console.log(selectedUsers);
+      // console.log(selectedNewVendor);
       Swal.fire({
         title: "Please Select Vendors",
         icon: "warning",
@@ -310,7 +311,7 @@ const AdvertiseManagement = () => {
   };
 
   const getBarClick = (val) => {
-    console.log(val);
+    // console.log(val);
     setSideBar(val);
   };
 
@@ -521,36 +522,42 @@ const AdvertiseManagement = () => {
                                       </tr>
                                     </thead>
                                     <tbody>
-                                      {allAdds[0]?.vendor?.map((item, ind) => (
-                                        <tr>
-                                          <td>{ind + 1}.</td>
-                                          <td>
-                                            <li>
-                                              {item?.full_name
-                                                ? item?.full_name
-                                                : "No results"}
-                                            </li>
-                                          </td>
-                                          <td>
-                                            <li>
-                                              {item?.email
-                                                ? item?.email
-                                                : "No results"}
-                                            </li>
-                                          </td>
-                                          <td>
-                                            <a
-                                              className="comman_btn2 table_viewbtn"
-                                              href="javascript:;"
-                                              onClick={() =>
-                                                DeleteAdd(item?._id, "vendor")
-                                              }
-                                            >
-                                              Delete
-                                            </a>
-                                          </td>
-                                        </tr>
-                                      ))}
+                                      {allAdds[0]?.vendor
+                                        ?.sort(
+                                          (a, b) =>
+                                            new Date(b.updatedAt) -
+                                            new Date(a.updatedAt)
+                                        )
+                                        ?.map((item, ind) => (
+                                          <tr>
+                                            <td>{ind + 1}.</td>
+                                            <td>
+                                              <li className="list-unstyled">
+                                                {item?.full_name
+                                                  ? item?.full_name
+                                                  : "No results"}
+                                              </li>
+                                            </td>
+                                            <td>
+                                              <li className="list-unstyled">
+                                                {item?.email
+                                                  ? item?.email
+                                                  : "No results"}
+                                              </li>
+                                            </td>
+                                            <td>
+                                              <a
+                                                className="comman_btn2 table_viewbtn"
+                                                href="javascript:;"
+                                                onClick={() =>
+                                                  DeleteAdd(item?._id, "vendor")
+                                                }
+                                              >
+                                                Delete
+                                              </a>
+                                            </td>
+                                          </tr>
+                                        ))}
                                     </tbody>
                                   </table>
                                 </div>
@@ -580,22 +587,31 @@ const AdvertiseManagement = () => {
                                       </tr>
                                     </thead>
                                     <tbody>
-                                      {allAddsCate[0]?.category?.map(
-                                        (item, ind) => (
-                                          <tr>
+                                      {allAddsCate[0]?.category
+                                        ?.sort(
+                                          (a, b) =>
+                                            new Date(b.updatedAt) -
+                                            new Date(a.updatedAt)
+                                        )
+                                        .map((item, ind) => (
+                                          <tr key={item._id}>
                                             <td>{ind + 1}</td>
                                             <td>
-                                              <li>{item?.name_en}</li>
+                                              <li className="list-unstyled">
+                                                {item?.name_en}
+                                              </li>
                                             </td>
                                             <td>
-                                              <li>{item?.name_ar}</li>
+                                              <li className="list-unstyled">
+                                                {item?.name_ar}
+                                              </li>
                                             </td>
                                             <td>
                                               <a
                                                 className="comman_btn2 table_viewbtn"
                                                 onClick={() =>
                                                   DeleteAdd(
-                                                    item?._id,
+                                                    item._id,
                                                     "category"
                                                   )
                                                 }
@@ -604,8 +620,7 @@ const AdvertiseManagement = () => {
                                               </a>
                                             </td>
                                           </tr>
-                                        )
-                                      )}
+                                        ))}
                                     </tbody>
                                   </table>
                                 </div>
@@ -636,18 +651,23 @@ const AdvertiseManagement = () => {
                                       </tr>
                                     </thead>
                                     <tbody>
-                                      {vendorAdds[0]?.vendor?.map(
-                                        (item, ind) => (
+                                      {vendorAdds[0]?.vendor
+                                        ?.sort(
+                                          (a, b) =>
+                                            new Date(b.updatedAt) -
+                                            new Date(a.updatedAt)
+                                        )
+                                        ?.map((item, ind) => (
                                           <tr>
                                             <td>{ind + 1}</td>
                                             <td>
-                                              <li>{item?.full_name}</li>
+                                              <li className="list-unstyled">{item?.full_name}</li>
                                             </td>
                                             <td>
-                                              <li>{item?.email}</li>
+                                              <li className="list-unstyled">{item?.email}</li>
                                             </td>
                                             <td>
-                                              <li>{item?.vendorID}</li>
+                                              <li className="list-unstyled">{item?.vendorID}</li>
                                             </td>
                                             <td>
                                               <a
@@ -663,8 +683,7 @@ const AdvertiseManagement = () => {
                                               </a>
                                             </td>
                                           </tr>
-                                        )
-                                      )}
+                                        ))}
                                     </tbody>
                                   </table>
                                 </div>
@@ -694,15 +713,20 @@ const AdvertiseManagement = () => {
                                       </tr>
                                     </thead>
                                     <tbody>
-                                      {categoryAdds[0]?.category?.map(
-                                        (item, ind) => (
+                                      {categoryAdds[0]?.category
+                                        ?.sort(
+                                          (a, b) =>
+                                            new Date(b.updatedAt) -
+                                            new Date(a.updatedAt)
+                                        )
+                                        ?.map((item, ind) => (
                                           <tr>
                                             <td>{ind + 1}</td>
                                             <td>
-                                              <li>{item?.name_en}</li>
+                                              <li className="list-unstyled">{item?.name_en}</li>
                                             </td>
                                             <td>
-                                              <li>{item?.name_ar}</li>
+                                              <li className="list-unstyled">{item?.name_ar}</li>
                                             </td>
                                             <td>
                                               <a
@@ -718,8 +742,7 @@ const AdvertiseManagement = () => {
                                               </a>
                                             </td>
                                           </tr>
-                                        )
-                                      )}
+                                        ))}
                                     </tbody>
                                   </table>
                                 </div>

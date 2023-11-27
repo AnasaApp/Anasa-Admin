@@ -5,16 +5,23 @@ import Swal from "sweetalert2";
 import {
   AllVendors,
   changeVendorStatus,
+  getVendorDetails,
+  importVendorServices,
   VendorsCount,
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
 import { MDBDataTable } from "mdbreact";
 import moment from "moment";
+import Loader from "../Loader";
 const VendorManagement = () => {
   const [slide, setSlide] = useState("VM");
   const navigate = useNavigate();
   const [sideBar, setSideBar] = useState();
   const [counters, setCounters] = useState();
+  const [vendordetails, setVendorDetails] = useState();
+  const [vendorId, setVendorId] = useState();
+  const [files, setFiles] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [values, setValues] = useState({ from: "", to: "" });
   let location = useLocation();
   const [approved, setApproved] = useState({
@@ -44,12 +51,12 @@ const VendorManagement = () => {
         sort: "asc",
         width: 100,
       },
-      {
-        label: "Payout",
-        field: "payout",
-        sort: "asc",
-        width: 100,
-      },
+      // {
+      //   label: "Payout",
+      //   field: "payout",
+      //   sort: "asc",
+      //   width: 100,
+      // },
       {
         label: "ADDED ON",
         field: "date",
@@ -234,7 +241,7 @@ const VendorManagement = () => {
         returnData.name = list?.full_name;
         returnData.email = list?.email;
         returnData.number = list?.phone_number;
-        returnData.payout = "5000";
+        // returnData.payout = "5000";
         returnData.date = moment(list?.createdAt).format("L");
         returnData.status = (
           <div className="check_toggle" key={list?._id}>
@@ -254,12 +261,23 @@ const VendorManagement = () => {
         returnData.action = (
           <>
             <Link
-              className="comman_btn2 table_viewbtn"
+              className="comman_btn2 table_viewbtn me-2"
               to="/Admin/Dashboard/Vendor-Management/Approved"
               state={{ id: list?._id }}
             >
               View
             </Link>
+            <button
+              className="green_btn table_viewbtn"
+              type="button"
+              data-bs-toggle="modal"
+              data-bs-target="#importServices"
+              onClick={() => {
+                vendorServicesModal(list?._id);
+              }}
+            >
+              Add Services
+            </button>
           </>
         );
         newRows.push(returnData);
@@ -303,6 +321,104 @@ const VendorManagement = () => {
       });
 
       setRejected({ ...rejected, rows: newRows });
+    }
+  };
+
+  const vendorServicesModal = async (id) => {
+    setLoading(true);
+    const { data } = await getVendorDetails(id, { status: "APPROVED" });
+    if (!data?.error) {
+      setLoading(false);
+    }
+    let values = data?.results?.vendor;
+    console.log(values);
+    setVendorId(values?._id);
+    setVendorDetails(
+      <>
+        <div className="row">
+          <div className="form-group col-6">
+            <label className="my-1" htmlFor="">
+              Name
+            </label>
+            <input
+              type="text"
+              className="form-control p-2"
+              name="amount"
+              value={values?.full_name}
+              disabled
+            />
+          </div>
+          <div className="form-group col-6">
+            <label className="my-1" htmlFor="">
+              Shop Name
+            </label>
+            <input
+              type="text"
+              className="form-control p-2"
+              name="amount"
+              value={values?.shop_name}
+              disabled
+            />
+          </div>
+          <div className="form-group mt-2 col-12">
+            <label className="my-1" htmlFor="">
+              Email
+            </label>
+            <input
+              type="text"
+              className="form-control p-2"
+              name="amount"
+              value={values?.email}
+              disabled
+            />
+          </div>
+        </div>
+      </>
+    );
+  };
+
+  const onFileSelection = (e, key) => {
+    const selectedFile = e.target.files[0];
+    setFiles({ ...files, [key]: selectedFile });
+  };
+
+  const handleFileSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      if (!files || !files.upload_file) {
+        Swal.fire({
+          icon: "error",
+          title: "Please choose a file",
+          position: "top-end",
+          showConfirmButton: false,
+          timerProgressBar: true,
+          timer: 3000,
+          toast: true,
+        });
+        return false;
+      }
+      const formData = new FormData();
+      formData.append("vendorId", vendorId);
+      formData.append("file", files.upload_file);
+
+      const { data } = await importVendorServices(formData);
+      if (!data.error) {
+        Swal.fire({
+          title: data.message,
+          icon: "success",
+          confirmButtonText: "Okay",
+          confirmButtonColor: "#e25829",
+        });
+        document.getElementById("close").click();
+        navigate(`/Admin/Dashboard/Vendor-Management/Services/${vendorId}`);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+      document.getElementById("reset_mass_add_form").click();
+      setFiles(null);
     }
   };
   const handleDate = (e) => {
@@ -788,6 +904,81 @@ const VendorManagement = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="modal fade"
+        id="importServices"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabindex="-1"
+        aria-labelledby="staticBackdropLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">
+                Import Mass Services
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                id="close"
+                onClick={() => setFiles(null)}
+              ></button>
+            </div>
+            <div class="modal-body">
+              {loading ? (
+                <div className="d-flex align-items-center justify-content-center">
+                  <Loader />
+                </div>
+              ) : (
+                vendordetails
+              )}
+              <div className="form-group mb-0 col-12 mt-3 choose_file position-relative">
+                <form className="row" onSubmit={(e) => handleFileSubmit(e)}>
+                  <div className="col-12">
+                    <span>Add Mass Services</span>
+                    <label className="mt-1" htmlFor="upload_file">
+                      <i className="fa fa-camera me-1 " />
+                      Choose File
+                    </label>
+                    <input
+                      className="form-control py-3 ps-4"
+                      type="file"
+                      accept=".xls, .xlsx"
+                      name="upload_file"
+                      id="upload_file"
+                      onChange={(e) => onFileSelection(e, "upload_file")}
+                    />
+                  </div>
+                  {/* <div className="col-12">
+                    <button className="comman_btn" type="submit">
+                      Submit
+                    </button>
+                  </div> */}
+                  <div className="col-4 d-none">
+                    <button id="reset_mass_add_form" type="reset">
+                      Reset
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                onClick={(e) => handleFileSubmit(e, vendordetails?._id)}
+                type="submit"
+                class="btn comman_btn rounded-pill"
+              >
+                Submit
+              </button>
             </div>
           </div>
         </div>

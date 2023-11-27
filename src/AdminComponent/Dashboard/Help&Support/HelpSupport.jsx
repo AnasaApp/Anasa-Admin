@@ -41,7 +41,7 @@ const HelpSupport = () => {
     if (status) {
       setBuyId(id);
       const { data } = await getViewBuyerSupport(id);
-      console.warn(data)
+      // console.warn(data)
       setChat(data?.results.message?.reply);
       setMainChat(data?.results.message);
     } else {
@@ -59,7 +59,7 @@ const HelpSupport = () => {
     if (status) {
       setVenId(id);
       const { data } = await getViewVendorSupport(id);
-      console.log(data)
+      // console.log(data)
       setChatV(data?.results.message?.reply);
       setMainChatV(data?.results.message);
     } else {
@@ -87,7 +87,7 @@ const HelpSupport = () => {
 
   const getBuyerSupport = async () => {
     const { data } = await SupportList({ page: 1, type: "Buyer" });
-    console.log(data)
+    // console.log(data)
     setBuyerSupport(data.results);
   };
 
@@ -148,7 +148,7 @@ const HelpSupport = () => {
   // };
 
   const TicketStatus = async (id) => {
-    console.log(id)
+    // console.log(id)
     const { data } = await changeBuyerTicketStatus(id);
     if (!data?.error) {
       Swal.fire({
@@ -164,7 +164,7 @@ const HelpSupport = () => {
   };
 
   const getBarClick = (val) => {
-    console.log(val);
+    // console.log(val);
     setSideBar(val);
   };
 
@@ -303,11 +303,11 @@ const HelpSupport = () => {
                                                   }}>
                                                   View
                                                 </a>
-                                                <a
+                                                {/* <a
                                                   className="comman_btn2 table_viewbtn bg-red"
                                                   href="javscript:;">
                                                   Delete
-                                                </a>
+                                                </a> */}
                                               </td>
                                             </tr>
                                           )
@@ -423,11 +423,11 @@ const HelpSupport = () => {
                                                 }>
                                                 View
                                               </a>
-                                              <a
+                                              {/* <a
                                                 className="comman_btn2 table_viewbtn bg-red"
                                                 href="javscript:;">
                                                 Delete
-                                              </a>
+                                              </a> */}
                                             </td>
                                           </tr>
                                         )
@@ -479,7 +479,7 @@ const HelpSupport = () => {
                     <div className="col-12 user_chat mb-3">
                       <div className="row">
                         <MessageBox
-                          position={"right"}
+                          position={"left"}
                           type={"text"}
                           title={mainChat?.buyer?.full_name}
                           text={mainChat?.concern}
@@ -489,7 +489,7 @@ const HelpSupport = () => {
                       {mainChat?.images?.map((item) => (
                         <div className="row mt-1">
                           <MessageBox
-                            position={"right"}
+                            position={"left"}
                             type={"photo"}
                             title={mainChat?.buyer?.full_name}
                             date={mainChat?.createdAt}
@@ -506,7 +506,7 @@ const HelpSupport = () => {
                         <div className="row">
                           <MessageBox
                             position={
-                              item?.replyBy === "Buyer" ? "right" : "left"
+                              item?.replyBy === "Admin" ? "right" : "left"
                             }
                             type={"text"}
                             title={item?.replyBy}
@@ -577,7 +577,7 @@ const HelpSupport = () => {
                     <div className="col-12 user_chat mb-3">
                       <div className="row">
                         <MessageBox
-                          position={"right"}
+                          position={"left"}
                           type={"text"}
                           title={mainChatV?.vendor?.full_name}
                           text={mainChatV?.concern}
@@ -587,7 +587,7 @@ const HelpSupport = () => {
                       {mainChatV?.images?.map((item) => (
                         <div className="row mt-1">
                           <MessageBox
-                            position={"right"}
+                            position={"left"}
                             type={"photo"}
                             title={mainChatV?.vendor?.full_name}
                             date={mainChatV?.createdAt}
@@ -604,7 +604,7 @@ const HelpSupport = () => {
                         <div className="row">
                           <MessageBox
                             position={
-                              item?.replyBy === "Admin" ? "left" : "right"
+                              item?.replyBy === "Admin" ? "right" : "left"
                             }
                             type={"text"}
                             title={item?.replyBy}

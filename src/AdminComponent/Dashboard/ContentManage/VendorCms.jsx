@@ -32,7 +32,6 @@ const VendorCms = () => {
     const buyerData = data?.results?.about?.find(
       (item) => item.type === "vendor"
     );
-    console.log(buyerData);
     setAbout(buyerData);
   };
   const getTermConditions = async () => {
@@ -174,10 +173,6 @@ const VendorCms = () => {
       document.getElementById("close16").click();
       document.getElementById("reset16").click();
     }
-  };
-  const getBarClick = (val) => {
-    // console.log(val);
-    setSideBar(val);
   };
   return (
     <>

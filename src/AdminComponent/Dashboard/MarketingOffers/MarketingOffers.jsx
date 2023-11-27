@@ -445,10 +445,15 @@ const MarketingOffers = () => {
                       {...register("discount", {
                         required: "*Discount % is required!",
                         maxLength: {
-                          value: 5,
+                          value: 4,
                           message: "*Max character Length is 5",
                         },
                       })}
+                      onInput={(e) => {
+                        if (e.target.value.length > 4) {
+                          e.target.value = e.target.value.slice(0, 4);
+                        }
+                      }}
                     />
                     {errors.discount && (
                       <small className="errorText mx-1">
@@ -818,6 +823,11 @@ const MarketingOffers = () => {
                     {...register2("Edit_Discount", {
                       required: "*Please Enter Discount",
                     })}
+                    onInput={(e) => {
+                      if (e.target.value.length > 4) {
+                        e.target.value = e.target.value.slice(0, 4);
+                      }
+                    }}
                     name="Edit_Discount"
                   />
                   {errors2.Edit_Discount && (

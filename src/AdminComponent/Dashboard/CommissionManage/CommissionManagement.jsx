@@ -73,7 +73,7 @@ const CommissionManagement = () => {
 
   const getAllCat = async () => {
     const { data } = await AllCategory();
-    console.log(data);
+    // console.log(data);
     setAllCategories(data?.results?.categories);
   };
   const getCommissions = async () => {
@@ -253,16 +253,11 @@ const CommissionManagement = () => {
                         let newData = { ...formData };
                         newData.commission = e.target.value;
                         setFormData(newData);
+                      }}
+                      onInput={(e) => {
                         if (e.target.value > 100) {
-                          Swal.fire({
-                            toast: true,
-                            position: "top-end",
-                            icon: "error",
-                            title: "Please enter between 0 to 100",
-                            showConfirmButton: false,
-                            timerProgressBar: true,
-                            timer: 3000,
-                          });
+                          alert("Enter value upto 100");
+                          e.target.value = 100;
                         }
                       }}
                     />
@@ -433,6 +428,12 @@ const CommissionManagement = () => {
                       let newData = { ...formEditData };
                       newData.commission = e.target.value;
                       setFormEditData(newData);
+                    }}
+                    onInput={(e) => {
+                      if (e.target.value > 100) {
+                        alert("Enter value upto 100");
+                        e.target.value = 100;
+                      }
                     }}
                   />
                 </div>

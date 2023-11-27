@@ -402,6 +402,12 @@ const PromoManagement = () => {
                           message: "Maximium 3 characters!",
                         },
                       })}
+                      onInput={(e) => {
+                        if (e.target.value > 100) {
+                          alert("Enter value upto 100");
+                          e.target.value = 100;
+                        }
+                      }}
                     />
                     {errors.discount && (
                       <small className="errorText mx-1">
@@ -611,6 +617,12 @@ const PromoManagement = () => {
                     {...register2("EditDiscount", {
                       required: "*Please Enter Discount!",
                     })}
+                    onInput={(e) => {
+                      if (e.target.value > 100) {
+                        alert("Enter value upto 100");
+                        e.target.value = 100;
+                      }
+                    }}
                   />
                   {errors2.EditDiscount && (
                     <small className="errorText mx-1">
