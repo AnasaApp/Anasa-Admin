@@ -22,6 +22,7 @@ const ApprovedView = () => {
   const [values, setValues] = useState({ from: "", to: "" });
   const [transaction, setTransaction] = useState();
   const [countryName, setCountryName] = useState();
+  const [shopAddress, setShopAddress] = useState();
   const navigate = useNavigate();
   let location = useLocation();
   useEffect(() => {
@@ -132,7 +133,17 @@ const ApprovedView = () => {
     let id = location?.state?.id;
     const { data } = await getVendorDetails(id, { status: "APPROVED" });
     console.log(data);
-    const countryCode = data?.results?.vendor?.country_code;
+    let values = data?.results?.vendor;
+    const countryCode = values?.country_code;
+    setShopAddress(
+      `${
+        values?.shop_name +
+        ", " +
+        values?.building_name +
+        ", " +
+        values?.locality
+      }`
+    );
     if (countryCode) {
       const countryData = countries.all;
       const country = Object.values(countryData).find((country) => {
@@ -141,7 +152,7 @@ const ApprovedView = () => {
       const countryName = country ? country.name : "Country Not Found";
       setCountryName(countryName);
     }
-    setVendor(data?.results.vendor);
+    setVendor(values);
   };
   const GetVendorBooking = async () => {
     let id = location?.state?.id;
@@ -311,7 +322,11 @@ const ApprovedView = () => {
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Shop Address:</span>
                       <div className="col">
-                        <strong>{vendor?.shop_address}</strong>
+                        <strong>
+                          {vendor?.shop_address
+                            ? vendor?.shop_address
+                            : shopAddress}
+                        </strong>
                       </div>
                     </div>
                   </div>

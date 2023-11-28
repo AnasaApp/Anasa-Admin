@@ -210,7 +210,7 @@ const Payout = () => {
       return false;
     }
 
-    await editWallet({ amount, vendorId }).then((res) => {
+    await editWallet({ amount:withdrawAmount, vendorId }).then((res) => {
       if (!res.data.error) {
         console.warn(res)
         document.getElementById("closeEdits").click();

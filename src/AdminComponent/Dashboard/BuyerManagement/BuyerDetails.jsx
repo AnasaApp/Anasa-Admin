@@ -32,10 +32,10 @@ const BuyerDetails = () => {
   const chatpartMainRef = useRef(null);
 
   const getBarClick = (val) => {
-    console.log(val);
+    // console.log(val);
     setSideBar(val);
   };
-  console.log(location.state?.id);
+  // console.log(location.state?.id);
   useEffect(() => {
     getBuyer();
     getBookings();
@@ -124,7 +124,7 @@ const BuyerDetails = () => {
 
   const handleMessage = (e) => {
     let text = e.target.value;
-    // console.log(text);
+    // // console.log(text);
     setNewMessage(text);
   };
 
@@ -149,10 +149,10 @@ const BuyerDetails = () => {
   };
 
   const ViewBuyerSupport = async (id) => {
-    console.log(id);
+    // console.log(id);
     setBuyId(id);
     const { data } = await getViewBuyerSupport(id);
-    console.warn(data);
+    // console.warn(data);
     setChat(data?.results.message?.reply);
     setMainChat(data?.results.message);
   };
@@ -484,12 +484,12 @@ const BuyerDetails = () => {
                                             >
                                               View
                                             </a>
-                                            <a
+                                            {/* <a
                                               className="comman_btn2 table_viewbtn bg-red"
                                               href="javscript:;"
                                             >
                                               Delete
-                                            </a>
+                                            </a> */}
                                           </td>
                                         </tr>
                                       ))}
@@ -543,7 +543,7 @@ const BuyerDetails = () => {
                     <div className="col-12 user_chat mb-3">
                       <div className="row">
                         <MessageBox
-                          position={"right"}
+                          position={"left"}
                           type={"text"}
                           title={mainChat?.buyer?.full_name}
                           text={mainChat?.concern}
@@ -553,7 +553,7 @@ const BuyerDetails = () => {
                       {mainChat?.images?.map((item) => (
                         <div className="row mt-1">
                           <MessageBox
-                            position={"right"}
+                            position={"left"}
                             type={"photo"}
                             title={mainChat?.vendor?.full_name}
                             date={mainChat?.createdAt}
@@ -570,7 +570,7 @@ const BuyerDetails = () => {
                         <div className="row">
                           <MessageBox
                             position={
-                              item?.replyBy === "Buyer" ? "right" : "left"
+                              item?.replyBy === "Admin" ? "right" : "left"
                             }
                             type={"text"}
                             title={item?.replyBy}

@@ -211,6 +211,7 @@ const AdvertiseManagement = () => {
   const GetAllAdds = async () => {
     await AllAdvertisement({ type: "vendor" }).then((res) => {
       setAllAdds(res?.data.results.advertisements);
+      console.log(res?.data.results.advertisements)
     });
   };
   const GetAddscate = async () => {

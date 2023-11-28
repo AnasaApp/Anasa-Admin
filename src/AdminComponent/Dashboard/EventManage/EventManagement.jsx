@@ -47,7 +47,6 @@ const EventManagement = () => {
   const [serviceCharge, setServiceCharge] = useState();
   const [serviceAmount, setServiceAmount] = useState();
   const [serviceId, setServiceId] = useState();
-  const [isLoading, setIsLoading] = useState(false);
 
   const [formValues, setFormValues] = useState([
     {
@@ -169,7 +168,10 @@ const EventManagement = () => {
         }
         returnData.date =
           moment(list?.startDate).format("L") + " : " + formattedTime;
-          returnData.status = list?.status === "ReadyForPayment" ? "Ready For Payment" : list?.status ;
+        returnData.status =
+          list?.status === "ReadyForPayment"
+            ? "Ready For Payment"
+            : list?.status;
         returnData.action = (
           <>
             <Link
@@ -180,8 +182,7 @@ const EventManagement = () => {
                   ? " comman_btn2 table_viewbtn"
                   : list?.status === "Completed"
                   ? "comman_btn table_viewbtn"
-                  : "d- none"
-
+                  : "d-none"
               }
               data-bs-toggle="modal"
               data-bs-target={
@@ -190,7 +191,8 @@ const EventManagement = () => {
                   : list?.status === "Paid"
                   ? "#staticBackdrop49"
                   : list?.status === "Completed"
-                  ? "#staticBackdrop50" : ""
+                  ? "#staticBackdrop50"
+                  : ""
               }
               onClick={() =>
                 list?.status === "Pending"
@@ -199,7 +201,7 @@ const EventManagement = () => {
                   ? manageEvent(list?._id)
                   : list?.status === "Completed"
                   ? manageEvent(list?._id)
-                  : ''
+                  : ""
               }
             >
               {list?.status === "Pending"
@@ -241,31 +243,43 @@ const EventManagement = () => {
   };
 
   const manageEvent = async (id) => {
-    setIsLoading(true);
+    console.log(id);
     setEventId(id);
-    const { data } = await GetEventReqInfo(id);
-    console.warn(data);
-    if (!data.error) {
-      // console.log(data);
-      setIsLoading(false);
-      let startDate = data?.results?.event?.startDate;
-      let endDate = data?.results?.event?.endDate;
-      let startTime = data?.results?.event?.startTime;
-      let endTime = data?.results?.event?.endTime;
+    try {
+      const { data } = await GetEventReqInfo(id);
+      if (!data.error) {
+        let startDate = moment(data?.results?.event?.startDate).format(
+          "YYYY-MM-DD"
+        );
+        let endDate = moment(data?.results?.event?.endDate).format(
+          "YYYY-MM-DD"
+        );
+        let startTime = moment(data?.results?.event?.startTime, [
+          "h:mm a",
+        ]).format("HH:mm:ss.SSS[Z]");
+        let endTime = moment(data?.results?.event?.endTime, ["h:mm a"]).format(
+          "HH:mm:ss.SSS[Z]"
+        );
 
-      console.log(moment(startDate).format("YYYY-MM-DDTHH:mm:ss"));
-      setStartDateTime(moment.utc(startDate).format("YYYY-MM-DDTHH:mm:ss"));
-      setEndDateTime(moment.utc(endDate).format("YYYY-MM-DDTHH:mm:ss"));
+        setStartDateTime(
+          moment.utc(`${startDate}T${startTime}`).format("YYYY-MM-DDTHH:mm:ss")
+        );
+        setEndDateTime(
+          moment.utc(`${endDate}T${endTime}`).format("YYYY-MM-DDTHH:mm:ss")
+        );
 
-      setBudgetCost(data?.results?.event?.budget_cost);
-      setTotalAmount(data?.results?.event?.totalAmount);
-      setEventName(data?.results?.event?.eventName);
+        setBudgetCost(data?.results?.event?.budget_cost);
+        setTotalAmount(data?.results?.event?.totalAmount);
+        setEventName(data?.results?.event?.eventName);
 
-      setEventInfo(data?.results?.event);
+        setEventInfo(data?.results?.event);
 
-      await getServices().then((res) => {
-        setServices(res?.data.results?.services);
-      });
+        await getServices().then((res) => {
+          setServices(res?.data.results?.services);
+        });
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 

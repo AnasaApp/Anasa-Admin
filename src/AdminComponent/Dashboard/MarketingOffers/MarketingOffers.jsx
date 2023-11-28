@@ -549,7 +549,7 @@ const MarketingOffers = () => {
                             ))}
                           </select>
                         </div>
-                        <div className="form-group col-3">
+                        <div className={`form-group ${formValues?.length <= 1 ? 'col-4' : "col-3"}`}>
                           <label htmlFor="">Select Service</label>
                           <select
                             className="form-select"
