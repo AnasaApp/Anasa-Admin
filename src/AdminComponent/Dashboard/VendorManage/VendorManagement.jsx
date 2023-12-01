@@ -21,7 +21,7 @@ const VendorManagement = () => {
   const [vendordetails, setVendorDetails] = useState();
   const [vendorId, setVendorId] = useState();
   const [files, setFiles] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [values, setValues] = useState({ from: "", to: "" });
   let location = useLocation();
   const [approved, setApproved] = useState({
@@ -196,6 +196,7 @@ const VendorManagement = () => {
     });
     const newRows = [];
     if (!data.error) {
+      setLoading(false);
       let values = data?.results?.vendors;
       console.log(values);
       values?.map((list, index) => {
@@ -748,15 +749,21 @@ const VendorManagement = () => {
                               <div className="row">
                                 <div className="col-12 comman_table_design px-0">
                                   <div className="table-responsive">
-                                    <MDBDataTable
-                                      bordered
-                                      displayEntries={false}
-                                      className="userData"
-                                      hover
-                                      data={approved}
-                                      noBottomColumns
-                                      sortable
-                                    />
+                                    {loading ? (
+                                      <div className="d-flex justify-content-center py-5">
+                                        <Loader />
+                                      </div>
+                                    ) : (
+                                      <MDBDataTable
+                                        bordered
+                                        displayEntries={false}
+                                        className="userData"
+                                        hover
+                                        data={approved}
+                                        noBottomColumns
+                                        sortable
+                                      />
+                                    )}
                                   </div>
                                 </div>
                               </div>

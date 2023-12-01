@@ -12,11 +12,13 @@ import AnimatedNumber from "react-animated-number/build/AnimatedNumber";
 import { Link } from "react-router-dom";
 import { MDBDataTable } from "mdbreact";
 import moment from "moment";
+import Loader from "./Loader";
 
 const Dashboard = () => {
   const [slide, setSlide] = useState("Dash");
   const [sideBar, setSideBar] = useState();
   const [recentOrders, setRecentOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
   const initialValue = 0.0;
 
   useEffect(() => {
@@ -76,6 +78,7 @@ const Dashboard = () => {
     const { data } = await RecentOrders();
     const newRows = [];
     if (!data.error) {
+      setLoading(false);
       let values = data?.results?.bookings;
       console.log(values);
       values?.map((list, index) => {
@@ -109,12 +112,9 @@ const Dashboard = () => {
     const dataEarning = await totalEarning();
     const dataVendor = await totalVendors();
     const dataOrder = await totalOrders();
-    console.log(dataEarning)
+    console.log(dataEarning);
     localStorage.setItem("buyers", dataBuyer?.data?.results.buyers);
-    localStorage.setItem(
-      "earning",
-      dataEarning?.data?.results?.total
-    );
+    localStorage.setItem("earning", dataEarning?.data?.results?.total);
     localStorage.setItem("vendor", dataVendor?.data?.results.vendors);
     localStorage.setItem("orders", dataOrder?.data?.results.orders);
   };
@@ -279,15 +279,21 @@ const Dashboard = () => {
                 <div className="row">
                   <div className="col-12 comman_table_design px-0">
                     <div className="table-responsive p-0  ">
-                      <MDBDataTable
-                        bordered
-                        displayEntries={false}
-                        className="mt-0"
-                        hover
-                        data={allBook}
-                        noBottomColumns
-                        sortable
-                      />
+                      {loading ? (
+                        <div className="d-flex justify-content-center py-5">
+                          <Loader />
+                        </div>
+                      ) : (
+                        <MDBDataTable
+                          bordered
+                          displayEntries={false}
+                          className="mt-0"
+                          hover
+                          data={allBook}
+                          noBottomColumns
+                          sortable
+                        />
+                      )}
                       {/* <table className="table mb-0">
                         <thead>
                           <tr>

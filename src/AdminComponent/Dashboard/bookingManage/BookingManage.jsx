@@ -11,6 +11,7 @@ import {
 import Sidebar from "../Sidebar";
 import { MDBDataTable } from "mdbreact";
 import moment from "moment";
+import Loader from "../Loader";
 
 const BookingManage = () => {
   const [slide, setSlide] = useState("BM");
@@ -20,6 +21,7 @@ const BookingManage = () => {
   const [cancelledBookings, setCancelledBookings] = useState([]);
   const [sideBar, setSideBar] = useState();
   const [counters, setCounters] = useState();
+  const [loading, setLoading] = useState(true);
 
   const [allBook, setAllBook] = useState({
     columns: [
@@ -186,6 +188,7 @@ const BookingManage = () => {
     const { data } = await AllBookings({ page: 1 });
     const newRows = [];
     if (!data.error) {
+      setLoading(false);
       let values = data?.results?.bookings;
       console.log(values);
       values?.map((list, index) => {
@@ -217,6 +220,7 @@ const BookingManage = () => {
     const { data } = await CompletedBookings({ page: 1 });
     const newRows = [];
     if (!data.error) {
+      setLoading(false);
       let values = data?.results?.bookings;
       console.log(values);
       values?.map((list, index) => {
@@ -249,6 +253,7 @@ const BookingManage = () => {
     const { data } = await CancelledBookings({ page: 1 });
     const newRows = [];
     if (!data.error) {
+      setLoading(false);
       let values = data?.results?.bookings;
       console.log(values);
       values?.map((list, index) => {
@@ -567,15 +572,21 @@ const BookingManage = () => {
                             <div className="row">
                               <div className="col-12 comman_table_design px-0">
                                 <div className="table-responsive p-0">
-                                  <MDBDataTable
-                                    bordered
-                                    displayEntries={false}
-                                    className="userData"
-                                    hover
-                                    data={allBook}
-                                    noBottomColumns
-                                    sortable
-                                  />
+                                  {loading ? (
+                                    <div className="d-flex justify-content-center py-5">
+                                      <Loader />
+                                    </div>
+                                  ) : (
+                                    <MDBDataTable
+                                      bordered
+                                      displayEntries={false}
+                                      className="userData"
+                                      hover
+                                      data={allBook}
+                                      noBottomColumns
+                                      sortable
+                                    />
+                                  )}
                                 </div>
                               </div>
                             </div>
@@ -635,15 +646,21 @@ const BookingManage = () => {
                             <div className="row">
                               <div className="col-12 comman_table_design px-0">
                                 <div className="table-responsive ">
-                                  <MDBDataTable
-                                    bordered
-                                    displayEntries={false}
-                                    className="userData"
-                                    hover
-                                    data={completeBook}
-                                    noBottomColumns
-                                    sortable
-                                  />
+                                  {loading ? (
+                                    <div className="d-flex justify-content-center py-5">
+                                      <Loader />
+                                    </div>
+                                  ) : (
+                                    <MDBDataTable
+                                      bordered
+                                      displayEntries={false}
+                                      className="userData"
+                                      hover
+                                      data={completeBook}
+                                      noBottomColumns
+                                      sortable
+                                    />
+                                  )}
                                 </div>
                               </div>
                             </div>
@@ -703,15 +720,21 @@ const BookingManage = () => {
                             <div className="row">
                               <div className="col-12 comman_table_design px-0">
                                 <div className="table-responsive p-0">
-                                  <MDBDataTable
-                                    bordered
-                                    displayEntries={false}
-                                    className="userData"
-                                    hover
-                                    data={cancelledBook}
-                                    noBottomColumns
-                                    sortable
-                                  />
+                                  {loading ? (
+                                    <div className="d-flex justify-content-center py-5">
+                                      <Loader />
+                                    </div>
+                                  ) : (
+                                    <MDBDataTable
+                                      bordered
+                                      displayEntries={false}
+                                      className="userData"
+                                      hover
+                                      data={cancelledBook}
+                                      noBottomColumns
+                                      sortable
+                                    />
+                                  )}
                                 </div>
                               </div>
                             </div>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 const Sidebar = ({ slide, getBarClick, getBar }) => {
@@ -60,9 +60,9 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
               ""
             )}
             <div className="sidebar_logo">
-              <a href="javscript:;">
+              <NavLink to="/Admin/Dashboard">
                 <img src={require("../../assets/img/logo.png")} alt="Logo" />{" "}
-              </a>
+              </NavLink>
             </div>
             <div className="sidebar_menus">
               <ul className="list-unstyled ps-1 m-0">
@@ -350,7 +350,7 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
                         : require("../../assets/img/Nupload.jpg")
                     }
                     alt=""
-                  />
+                  />Logo
                 </button>
                 <ul
                   className="dropdown-menu"

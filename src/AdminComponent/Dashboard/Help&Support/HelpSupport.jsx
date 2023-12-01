@@ -11,6 +11,7 @@ import {
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
 import { MessageBox } from "react-chat-elements";
+import Loader from "../Loader";
 
 const HelpSupport = () => {
   const chatpartMainRef = useRef(null);
@@ -27,6 +28,7 @@ const HelpSupport = () => {
   const [newMessageV, setNewMessageV] = useState("");
   const [buyId, setBuyId] = useState();
   const [VenId, setVenId] = useState();
+  const [loading, setLoading] = useState(false);
   // const ref = useRef(null);
   useEffect(() => {
     getBuyerSupport();
@@ -34,16 +36,20 @@ const HelpSupport = () => {
   }, []);
   useEffect(() => {
     scrollToBottom();
-    VScrollToBottom()
+    VScrollToBottom();
   }, [chat, chatV]);
 
   const ViewBuyerSupport = async (id, status) => {
+    setLoading(true);
     if (status) {
       setBuyId(id);
       const { data } = await getViewBuyerSupport(id);
       // console.warn(data)
-      setChat(data?.results.message?.reply);
-      setMainChat(data?.results.message);
+      if (!data.error) {
+        setLoading(false);
+        setChat(data?.results.message?.reply);
+        setMainChat(data?.results.message);
+      }
     } else {
       Swal.fire({
         title: "Ticket Closed!",
@@ -56,12 +62,16 @@ const HelpSupport = () => {
   };
 
   const VieWVendorSupport = async (id, status) => {
+    setLoading(true);
     if (status) {
       setVenId(id);
       const { data } = await getViewVendorSupport(id);
+      if (!data.error) {
+        setLoading(false);
+        setChatV(data?.results.message?.reply);
+        setMainChatV(data?.results.message);
+      }
       // console.log(data)
-      setChatV(data?.results.message?.reply);
-      setMainChatV(data?.results.message);
     } else {
       Swal.fire({
         title: "Ticket Closed!",
@@ -70,18 +80,19 @@ const HelpSupport = () => {
         confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
-      return false
+      return false;
     }
   };
 
-  const scrollToBottom = async() => {
+  const scrollToBottom = async () => {
     if (chatpartMainRef.current) {
       chatpartMainRef.current.scrollTop = chatpartMainRef.current.scrollHeight;
     }
   };
-  const VScrollToBottom = async() => {
+  const VScrollToBottom = async () => {
     if (VchatpartMainRef.current) {
-      VchatpartMainRef.current.scrollTop = VchatpartMainRef.current.scrollHeight;
+      VchatpartMainRef.current.scrollTop =
+        VchatpartMainRef.current.scrollHeight;
     }
   };
 
@@ -103,11 +114,11 @@ const HelpSupport = () => {
   };
 
   const sendMessage = async () => {
-    if(!newMessage || newMessage === null || newMessage === ''){
+    if (!newMessage || newMessage === null || newMessage === "") {
       Swal.fire({
         toast: true,
-        position: 'top-end',
-        icon: 'error',
+        position: "top-end",
+        icon: "error",
         title: "Message can not be empty",
         showConfirmButton: false,
         timerProgressBar: true,
@@ -122,11 +133,11 @@ const HelpSupport = () => {
     await scrollToBottom();
   };
   const sendMessageV = async () => {
-    if(!newMessageV || newMessageV === null || newMessageV === ''){
+    if (!newMessageV || newMessageV === null || newMessageV === "") {
       Swal.fire({
         toast: true,
-        position: 'top-end',
-        icon: 'error',
+        position: "top-end",
+        icon: "error",
         title: "Message can not be empty",
         showConfirmButton: false,
         timerProgressBar: true,
@@ -158,8 +169,8 @@ const HelpSupport = () => {
         confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
-      getBuyerSupport()
-      getVendorSupport()
+      getBuyerSupport();
+      getVendorSupport();
     }
   };
 
@@ -182,7 +193,8 @@ const HelpSupport = () => {
                     <ul
                       className="nav nav-tabs comman_tabs"
                       id="myTab"
-                      role="tablist">
+                      role="tablist"
+                    >
                       <li className="nav-item" role="presentation">
                         <button
                           className="nav-link active"
@@ -192,7 +204,8 @@ const HelpSupport = () => {
                           type="button"
                           role="tab"
                           aria-controls="home"
-                          aria-selected="true">
+                          aria-selected="true"
+                        >
                           Buyers
                         </button>
                       </li>
@@ -205,7 +218,8 @@ const HelpSupport = () => {
                           type="button"
                           role="tab"
                           aria-controls="profile"
-                          aria-selected="false">
+                          aria-selected="false"
+                        >
                           Vendor
                         </button>
                       </li>
@@ -215,7 +229,8 @@ const HelpSupport = () => {
                         className="tab-pane fade show active"
                         id="home"
                         role="tabpanel"
-                        aria-labelledby="home-tab">
+                        aria-labelledby="home-tab"
+                      >
                         <div className="row p-4 mx-0">
                           <div className="col-12 inner_design_comman border">
                             <div className="row comman_header justify-content-between">
@@ -300,7 +315,8 @@ const HelpSupport = () => {
                                                       item?.status
                                                     );
                                                     scrollToBottom();
-                                                  }}>
+                                                  }}
+                                                >
                                                   View
                                                 </a>
                                                 {/* <a
@@ -341,7 +357,8 @@ const HelpSupport = () => {
                         className="tab-pane fade"
                         id="profile"
                         role="tabpanel"
-                        aria-labelledby="profile-tab">
+                        aria-labelledby="profile-tab"
+                      >
                         <div className="row p-4 mx-0">
                           <div className="col-12 inner_design_comman border">
                             <div className="row comman_header justify-content-between">
@@ -411,16 +428,20 @@ const HelpSupport = () => {
                                             <td>
                                               <a
                                                 data-bs-toggle="modal"
-                                                data-bs-target={item?.status ? "#staticBackdrop2": ''}
+                                                data-bs-target={
+                                                  item?.status
+                                                    ? "#staticBackdrop2"
+                                                    : ""
+                                                }
                                                 className="comman_btn table_viewbtn"
-                                                onClick={() =>{
+                                                onClick={() => {
                                                   VieWVendorSupport(
                                                     item?._id,
                                                     item?.status
-                                                  )
-                                                  VScrollToBottom()
-                                                }
-                                                }>
+                                                  );
+                                                  VScrollToBottom();
+                                                }}
+                                              >
                                                 View
                                               </a>
                                               {/* <a
@@ -458,7 +479,8 @@ const HelpSupport = () => {
           data-bs-keyboard="false"
           tabIndex={-1}
           aria-labelledby="staticBackdropLabel"
-          aria-hidden="true">
+          aria-hidden="true"
+        >
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content border-0">
               <div className="modal-header">
@@ -472,54 +494,63 @@ const HelpSupport = () => {
                   aria-label="Close"
                 />
               </div>
-
-              <div className="modal-body py-4 " id="chat">
-                <div className="chatpart_main " id="chat2" ref={chatpartMainRef}>
-                  <div className="row mx-0 ">
-                    <div className="col-12 user_chat mb-3">
-                      <div className="row">
-                        <MessageBox
-                          position={"left"}
-                          type={"text"}
-                          title={mainChat?.buyer?.full_name}
-                          text={mainChat?.concern}
-                          date={mainChat?.createdAt}
-                        />
-                      </div>
-                      {mainChat?.images?.map((item) => (
-                        <div className="row mt-1">
-                          <MessageBox
-                            position={"left"}
-                            type={"photo"}
-                            title={mainChat?.buyer?.full_name}
-                            date={mainChat?.createdAt}
-                            data={{
-                              uri: item,
-                              width: 50,
-                            }}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                    {(chat || [])?.map((item) => (
+              {loading ? (
+                <div className="d-flex align-items-center justify-content-center py-4">
+                  <Loader />
+                </div>
+              ) : (
+                <div className="modal-body py-4 " id="chat">
+                  <div
+                    className="chatpart_main "
+                    id="chat2"
+                    ref={chatpartMainRef}
+                  >
+                    <div className="row mx-0 ">
                       <div className="col-12 user_chat mb-3">
                         <div className="row">
                           <MessageBox
-                            position={
-                              item?.replyBy === "Admin" ? "right" : "left"
-                            }
+                            position={"left"}
                             type={"text"}
-                            title={item?.replyBy}
-                            text={item?.message}
-                            date={item?.createdAt}
+                            title={mainChat?.buyer?.full_name}
+                            text={mainChat?.concern}
+                            date={mainChat?.createdAt}
                           />
                         </div>
+                        {mainChat?.images?.map((item) => (
+                          <div className="row mt-1">
+                            <MessageBox
+                              position={"left"}
+                              type={"photo"}
+                              title={mainChat?.buyer?.full_name}
+                              date={mainChat?.createdAt}
+                              data={{
+                                uri: item,
+                                width: 50,
+                              }}
+                            />
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                    {/* <div ref={ref}>_____</div> */}
+                      {(chat || [])?.map((item) => (
+                        <div className="col-12 user_chat mb-3">
+                          <div className="row">
+                            <MessageBox
+                              position={
+                                item?.replyBy === "Admin" ? "right" : "left"
+                              }
+                              type={"text"}
+                              title={item?.replyBy}
+                              text={item?.message}
+                              date={item?.createdAt}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                      {/* <div ref={ref}>_____</div> */}
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               <div className="modal-footer">
                 <form className="message_send row mx-0 w-100" action="">
@@ -540,7 +571,8 @@ const HelpSupport = () => {
                       onClick={(e) => {
                         e.preventDefault();
                         sendMessage();
-                      }}>
+                      }}
+                    >
                       <i className="fab fa-telegram-plane" />
                     </button>
                   </div>
@@ -556,7 +588,8 @@ const HelpSupport = () => {
           data-bs-keyboard="false"
           tabIndex={-1}
           aria-labelledby="staticBackdropLabel"
-          aria-hidden="true">
+          aria-hidden="true"
+        >
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content border-0">
               <div className="modal-header">
@@ -571,53 +604,63 @@ const HelpSupport = () => {
                 />
               </div>
 
-              <div className="modal-body py-4 " id="chat">
-                <div className="chatpart_main " id="chat2" ref={VchatpartMainRef}>
-                  <div className="row mx-0 ">
-                    <div className="col-12 user_chat mb-3">
-                      <div className="row">
-                        <MessageBox
-                          position={"left"}
-                          type={"text"}
-                          title={mainChatV?.vendor?.full_name}
-                          text={mainChatV?.concern}
-                          date={mainChatV?.createdAt}
-                        />
-                      </div>
-                      {mainChatV?.images?.map((item) => (
-                        <div className="row mt-1">
-                          <MessageBox
-                            position={"left"}
-                            type={"photo"}
-                            title={mainChatV?.vendor?.full_name}
-                            date={mainChatV?.createdAt}
-                            data={{
-                              uri: item,
-                              width: 50,
-                            }}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                    {(chatV || [])?.map((item) => (
+              {loading ? (
+                <div className="d-flex align-items-center justify-content-center py-4">
+                  <Loader />
+                </div>
+              ) : (
+                <div className="modal-body py-4 " id="chat">
+                  <div
+                    className="chatpart_main "
+                    id="chat2"
+                    ref={VchatpartMainRef}
+                  >
+                    <div className="row mx-0 ">
                       <div className="col-12 user_chat mb-3">
                         <div className="row">
                           <MessageBox
-                            position={
-                              item?.replyBy === "Admin" ? "right" : "left"
-                            }
+                            position={"left"}
                             type={"text"}
-                            title={item?.replyBy}
-                            text={item?.message}
-                            date={item?.createdAt}
+                            title={mainChatV?.vendor?.full_name}
+                            text={mainChatV?.concern}
+                            date={mainChatV?.createdAt}
                           />
                         </div>
+                        {mainChatV?.images?.map((item) => (
+                          <div className="row mt-1">
+                            <MessageBox
+                              position={"left"}
+                              type={"photo"}
+                              title={mainChatV?.vendor?.full_name}
+                              date={mainChatV?.createdAt}
+                              data={{
+                                uri: item,
+                                width: 50,
+                              }}
+                            />
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                    {/* <div ref={ref}></div> */}
+                      {(chatV || [])?.map((item) => (
+                        <div className="col-12 user_chat mb-3">
+                          <div className="row">
+                            <MessageBox
+                              position={
+                                item?.replyBy === "Admin" ? "right" : "left"
+                              }
+                              type={"text"}
+                              title={item?.replyBy}
+                              text={item?.message}
+                              date={item?.createdAt}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                      {/* <div ref={ref}></div> */}
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               <div className="modal-footer">
                 <form className="message_send row mx-0 w-100" action="">
@@ -638,7 +681,8 @@ const HelpSupport = () => {
                       onClick={(e) => {
                         e.preventDefault();
                         sendMessageV();
-                      }}>
+                      }}
+                    >
                       <i className="fab fa-telegram-plane" />
                     </button>
                   </div>
@@ -654,7 +698,8 @@ const HelpSupport = () => {
           data-bs-keyboard="false"
           tabIndex={-1}
           aria-labelledby="staticBackdropLabel"
-          aria-hidden="true">
+          aria-hidden="true"
+        >
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-body p-4">

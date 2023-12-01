@@ -11,10 +11,12 @@ import {
 import Sidebar from "../Sidebar";
 import { MDBDataTable } from "mdbreact";
 import moment from "moment";
+import Loader from "../Loader";
 
 const BuyerManage = () => {
   const [slide, setSlide] = useState("BuyM");
   const [sideBar, setSideBar] = useState();
+  const [loading, setLoading] = useState(true);
   const getBarClick = (val) => {
     console.log(val);
     setSideBar(val);
@@ -86,6 +88,7 @@ const BuyerManage = () => {
     const { data } = await getBuyers(formData);
     const newRows = [];
     if (!data.error) {
+      setLoading(false);
       let values = data?.results?.buyers;
       console.log(values);
       values?.map((list, index) => {
@@ -207,15 +210,22 @@ const BuyerManage = () => {
                 <div className="row">
                   <div className="col-12 comman_table_design px-0">
                     <div className="table-responsive ">
-                      <MDBDataTable
-                        bordered
-                        className="userData"
-                        hover
-                        displayEntries={false}
-                        data={users}
-                        noBottomColumns
-                        sortable
-                      />
+                      {loading ? (
+                        <div className="d-flex justify-content-center py-5">
+                          <Loader />
+                        </div>
+                      ) : (
+                        <MDBDataTable
+                          bordered
+                          className="userData"
+                          hover
+                          displayEntries={false}
+                          data={users}
+                          noBottomColumns
+                          sortable
+                        />
+                      )}
+
                       {/* <table className="table mb-0">
                         <thead>
                           <tr>
