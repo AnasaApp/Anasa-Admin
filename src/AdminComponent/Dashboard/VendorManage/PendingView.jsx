@@ -30,6 +30,19 @@ const PendingView = () => {
   const onSubmit = async (info) => {
     let id = location?.state?.id;
 
+    if(!info.reason){
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: "Please describe the reason",
+        showConfirmButton: false,
+        timerProgressBar: true,
+        timer: 3000,
+      });
+      return false;
+    }
+
     const checkboxes = [
       info.tradeLicenceCopy,
       info.signedContract,
@@ -39,17 +52,16 @@ const PendingView = () => {
       info.city,
       info.Country,
       info.serviceableRadius,
-      info.reason,
       info.customerContactNumber,
       info.phoneNumber,
       info.vendorName,
+      info.bankAcount,
     ];
     
     const atLeastOneCheckboxSelected = checkboxes.some((checkbox) => checkbox);
     
     if (!atLeastOneCheckboxSelected) {
       Swal.fire({
-        title: "Error!",
         text: "Please select at least one checkbox.",
         icon: "error",
         confirmButtonText: "Ok",
@@ -70,6 +82,8 @@ const PendingView = () => {
       reason: info?.reason,
       customer_contact_number: info?.customerContactNumber,
       phone_number: info?.phoneNumber,
+      vendor_name : info?.vendorName,
+      // bank_account: info?.bankAcount,
     });
     if (!data.error) {
       navigate("/Admin/Dashboard/Vendor-Management", { state: { rej: "abc" } });
@@ -85,6 +99,7 @@ const PendingView = () => {
   const getVendor = async () => {
     let id = location?.state?.id;
     const { data } = await getVendorDetails(id, { status: "PENDING" });
+    console.log(data.results.vendor)
     setVendor(data?.results.vendor);
   };
   const approveVendor = async () => {
@@ -224,6 +239,34 @@ const PendingView = () => {
                       </div>
                     </div>
                   </div>
+
+                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
+                    <div className="row view-inner-box border mx-0 w-100">
+                      <span>Bank Name:</span>
+                      <div className="col">
+                        <strong>{vendor?.bank_name}</strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
+                    <div className="row view-inner-box border mx-0 w-100">
+                      <span>Bank Account Number:</span>
+                      <div className="col">
+                        <strong>{vendor?.bank_account_num}</strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
+                    <div className="row view-inner-box border mx-0 w-100">
+                      <span>Bank Type:</span>
+                      <div className="col">
+                        <strong>{vendor?.bank_type}</strong>
+                      </div>
+                    </div>
+                  </div>
+                  
                   <div className="col-md-6 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Trade Licence copy:</span>
@@ -577,7 +620,7 @@ const PendingView = () => {
                                 class="form-check-input"
                                 type="checkbox"
                                 name="customerContactNumber"
-                                {...register("CustomerContactNumber")}
+                                {...register("customerContactNumber")}
                                 id="flexCheckDefault10"
                               />
                               <label
@@ -585,6 +628,23 @@ const PendingView = () => {
                                 for="flexCheckDefault10"
                               >
                                 Customer Contact Number
+                              </label>
+                            </div>
+                          </li>
+                          <li className="list-group-item">
+                            <div class="form-check">
+                              <input
+                                class="form-check-input"
+                                type="checkbox"
+                                name="bankAcount"
+                                {...register("bankAcount")}
+                                id="flexCheckDefault11"
+                              />
+                              <label
+                                class="form-check-label mx-1"
+                                for="flexCheckDefault11"
+                              >
+                                Bank Account Invalid/NA
                               </label>
                             </div>
                           </li>

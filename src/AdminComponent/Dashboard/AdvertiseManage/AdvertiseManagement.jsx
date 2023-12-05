@@ -222,6 +222,7 @@ const AdvertiseManagement = () => {
   };
   const GetAddsNewVendor = async () => {
     await AllAdvertisement({ type: "newVendor" }).then((res) => {
+      console.log(res?.data)
       setAddsVendor(res?.data.results.advertisements);
     });
   };

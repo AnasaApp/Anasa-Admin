@@ -248,6 +248,7 @@ const EventManagement = () => {
     try {
       const { data } = await GetEventReqInfo(id);
       if (!data.error) {
+        console.log(data);
         let startDate = moment(data?.results?.event?.startDate).format(
           "YYYY-MM-DD"
         );
