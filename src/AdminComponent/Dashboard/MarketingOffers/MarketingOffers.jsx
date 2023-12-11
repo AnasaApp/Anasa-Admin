@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import Select from "react-select";
+import Select, { useStateManager } from "react-select";
 import Swal from "sweetalert2";
 import {
   AddCombo,
@@ -42,6 +42,7 @@ const MarketingOffers = () => {
 
   const [offerData, setOfferData] = useState();
   const [vendors, setVendors] = useState([]);
+  const [test, setTest] = useState(Math.random())
   const [selectVendor, setSelectVendor] = useState();
   const [formValues, setFormValues] = useState([
     {
@@ -145,10 +146,11 @@ const MarketingOffers = () => {
             {list?.name_ar}
           </span>
         );
-        returnData.category = list?.type[0].category?.name_en;
-        returnData.vendor = list?.type[0].vendor?.full_name;
+        returnData.category = list?.type.map((item) => item?.category?.name_en).join(', ');
+        returnData.vendor = list?.type.map((item) => item?.vendor?.full_name).join(', ');
         returnData.number = list?.comboPrice;
-        returnData.service = list?.type[0].service?.name_en;
+        returnData.service = list?.type.map((item) => item?.service?.name_en).join(', ');
+
         returnData.action = (
           <>
             <a
@@ -204,6 +206,7 @@ const MarketingOffers = () => {
     }
   };
 
+  console.log(options2)
   const VendorsList = async (id, ind) => {
     setCategoryData(id);
     await GetVendorByCate(id).then((res) => {
@@ -334,6 +337,7 @@ const MarketingOffers = () => {
     let newFormValues = [...formValues];
     newFormValues[i][e.target.name] = e.target.value;
     setFormValues(newFormValues);
+    console.log(formValues, "lll")
 
     const filteredOptions = options2.filter((option) => option !== undefined);
     const totalPrice = filteredOptions.reduce((acc, next) => {
