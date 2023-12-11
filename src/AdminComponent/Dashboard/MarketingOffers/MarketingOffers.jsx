@@ -42,8 +42,7 @@ const MarketingOffers = () => {
 
   const [offerData, setOfferData] = useState();
   const [vendors, setVendors] = useState([]);
-  const [test, setTest] = useState(Math.random())
-  const [selectVendor, setSelectVendor] = useState();
+  const [services, setServices] = useState([]);
   const [formValues, setFormValues] = useState([
     {
       category: "",
@@ -146,10 +145,16 @@ const MarketingOffers = () => {
             {list?.name_ar}
           </span>
         );
-        returnData.category = list?.type.map((item) => item?.category?.name_en).join(', ');
-        returnData.vendor = list?.type.map((item) => item?.vendor?.full_name).join(', ');
+        returnData.category = list?.type
+          .map((item) => item?.category?.name_en)
+          .join(", ");
+        returnData.vendor = list?.type
+          .map((item) => item?.vendor?.full_name)
+          .join(", ");
         returnData.number = list?.comboPrice;
-        returnData.service = list?.type.map((item) => item?.service?.name_en).join(', ');
+        returnData.service = list?.type
+          .map((item) => item?.service?.name_en)
+          .join(", ");
 
         returnData.action = (
           <>
@@ -158,8 +163,7 @@ const MarketingOffers = () => {
               href="javascript:;"
               data-bs-toggle="modal"
               data-bs-target="#staticBackdrop"
-              onClick={() => handleView(list?._id)}
-            >
+              onClick={() => handleView(list?._id)}>
               Edit
             </a>
           </>
@@ -185,28 +189,24 @@ const MarketingOffers = () => {
     });
   };
 
-  const createOptionsServices = async (id) => {
-    setSelectVendor(id);
+  const createOptionsServices = async (id, ind) => {
     if (id) {
       await VendorServices(id).then((res) => {
         if (!res.error) {
           setSelectedServices({ servicesSelected: [] });
           let data = res?.data.results.services;
-          const optionList = data
-            ?.filter((itm, idx) => itm.vendor === id)
-            .map((item, index) => {
-              return item;
-            });
-          let packs = [...options2];
-          packs.push(optionList[0]);
-          console.log(packs, "jkj");
-          setOptions2(packs);
+          const optionList = data?.map((item, index) => {
+            return item;
+          });
+          let packs = [...services];
+          packs[ind] = optionList;
+          setServices(packs);
         }
       });
     }
   };
 
-  console.log(options2)
+  console.log(options2);
   const VendorsList = async (id, ind) => {
     setCategoryData(id);
     await GetVendorByCate(id).then((res) => {
@@ -337,7 +337,7 @@ const MarketingOffers = () => {
     let newFormValues = [...formValues];
     newFormValues[i][e.target.name] = e.target.value;
     setFormValues(newFormValues);
-    console.log(formValues, "lll")
+    console.log(formValues, "lll");
 
     const filteredOptions = options2.filter((option) => option !== undefined);
     const totalPrice = filteredOptions.reduce((acc, next) => {
@@ -394,8 +394,7 @@ const MarketingOffers = () => {
                 <form
                   className="form-design py-4 px-3 help-support-form row  justify-content-between"
                   action=""
-                  onSubmit={handleSubmit(onSubmit)}
-                >
+                  onSubmit={handleSubmit(onSubmit)}>
                   <div className="form-group col-4">
                     <label htmlFor="">Combo Name (En)</label>
                     <input
@@ -533,8 +532,7 @@ const MarketingOffers = () => {
                             onChange={(e) => {
                               handleChange(index, e);
                               VendorsList(e.target.value, index);
-                            }}
-                          >
+                            }}>
                             <option selected="" value="">
                               Select Category
                             </option>
@@ -557,9 +555,8 @@ const MarketingOffers = () => {
                             value={element.vendor || ""}
                             onChange={(e) => {
                               handleChange(index, e);
-                              createOptionsServices(e.target.value);
-                            }}
-                          >
+                              createOptionsServices(e.target.value, index);
+                            }}>
                             <option selected="" value="">
                               Select Vendor
                             </option>
@@ -571,50 +568,32 @@ const MarketingOffers = () => {
                             ))}
                           </select>
                         </div>
+
                         <div
                           className={`form-group ${
                             formValues?.length <= 1 ? "col-4" : "col-3"
-                          }`}
-                        >
+                          }`}>
                           <label htmlFor="">Select Service</label>
                           <select
                             className="form-select"
                             aria-label="Default select example"
                             name="service"
+                            id={index}
                             value={element.service || ""}
                             onChange={(e) => {
                               handleChange(index, e);
-                            }}
-                          >
+                            }}>
                             <option selected="" value="">
                               Select Service
                             </option>
-                            {options2
-                              ?.filter(
-                                (itm, id) => itm?.vendor === element?.vendor
-                              )
-                              .map((item) => (
-                                <option value={item?._id}>
-                                  {item?.name_en} - {item?.price}
-                                </option>
-                              ))}
+
+                            {services[index]?.map((item) => (
+                              <option value={item?._id}>
+                                {item?.name_en} - {item?.price}
+                              </option>
+                            ))}
                           </select>
                         </div>
-
-                        {/* <div className="form-group col-3">
-                          <label htmlFor="">Search Services</label>
-                          <Select
-                            defaultValue=""
-                            isMulti
-                            name="users"
-                            options={options2}
-                            className="basic-multi-select z-3"
-                            classNamePrefix="select"
-                            onChange={handleChange2}
-                            value={selectedServices?.servicesSelected}
-                            onInputChange={handleInputChange2}
-                          />
-                        </div> */}
 
                         <div className="form-group col-1  mt-4">
                           <button
@@ -624,8 +603,7 @@ const MarketingOffers = () => {
                             style={{ padding: "5px 20px" }}
                             type="button"
                             disabled={formValues?.length <= 1 ? true : false}
-                            onClick={() => removeFormFields(index)}
-                          >
+                            onClick={() => removeFormFields(index)}>
                             <i className="fa fa-minus mt-1 mx-1" />
                           </button>
                         </div>
@@ -651,8 +629,7 @@ const MarketingOffers = () => {
                   <div className="form-group mb-0 col-12 text-center mt-3">
                     <a
                       className="comman_btn mx-3 "
-                      onClick={() => addFormFields()}
-                    >
+                      onClick={() => addFormFields()}>
                       Add more +
                     </a>
                     <button className="comman_btn" type="submit">
@@ -661,8 +638,7 @@ const MarketingOffers = () => {
                     <button
                       className="comman_btn d-none"
                       id="Reset"
-                      type="reset"
-                    >
+                      type="reset">
                       Reset
                     </button>
                   </div>
@@ -743,8 +719,7 @@ const MarketingOffers = () => {
         data-bs-keyboard="false"
         tabIndex={-1}
         aria-labelledby="staticBackdropLabel"
-        aria-hidden="true"
-      >
+        aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content border-0">
             <div className="modal-header">
@@ -767,8 +742,7 @@ const MarketingOffers = () => {
               <form
                 className="form-design px-3 py-2 help-support-form row  justify-content-center"
                 action=""
-                onSubmit={handleSubmit2(onEdit)}
-              >
+                onSubmit={handleSubmit2(onEdit)}>
                 <div className="form-group col-6">
                   <label htmlFor="">Combo (En)</label>
                   <input
@@ -887,8 +861,7 @@ const MarketingOffers = () => {
                   <button
                     className="comman_btn d-none"
                     type="reset"
-                    id="ResetS"
-                  >
+                    id="ResetS">
                     Reset
                   </button>
                 </div>
