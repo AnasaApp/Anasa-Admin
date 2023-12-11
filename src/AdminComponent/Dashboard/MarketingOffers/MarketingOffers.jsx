@@ -48,6 +48,7 @@ const MarketingOffers = () => {
       category: "",
       vendor: "",
       service: "",
+      price: "",
     },
   ]);
   const {
@@ -127,11 +128,17 @@ const MarketingOffers = () => {
   }, []);
 
   useEffect(() => {
+    const calculatedTotal = calculateTotal();
+    setTotalPrice(calculatedTotal);
+  }, [formValues]);
+
+  useEffect(() => {
     createOptions();
   }, [searchKey]);
 
   const getAllOffers = async () => {
     const { data } = await AllOffers();
+    console.log(data)
     const newRows = [];
     if (!data.error) {
       let values = data.results?.offer;
@@ -163,7 +170,8 @@ const MarketingOffers = () => {
               href="javascript:;"
               data-bs-toggle="modal"
               data-bs-target="#staticBackdrop"
-              onClick={() => handleView(list?._id)}>
+              onClick={() => handleView(list?._id)}
+            >
               Edit
             </a>
           </>
@@ -201,6 +209,8 @@ const MarketingOffers = () => {
           let packs = [...services];
           packs[ind] = optionList;
           setServices(packs);
+          console.log(packs);
+          setOptions2(packs);
         }
       });
     }
@@ -333,17 +343,29 @@ const MarketingOffers = () => {
     setAllCategories(data?.results?.categories);
   };
 
-  let handleChange = (i, e) => {
+  // let handleChange = (i, e, price) => {
+  //   let newFormValues = [...formValues];
+  //   newFormValues[i][e.target.name] = e.target.value;
+  //   setFormValues(newFormValues);
+  //   console.log(formValues, "lll");
+
+  //   const filteredOptions = options2.filter((option) => option !== undefined);
+  //   const totalPrice = filteredOptions.reduce((acc, next) => {
+  //     return acc + parseFloat(next.price || 0);
+  //   }, 0);
+  //   setTotalPrice(totalPrice);
+  // };
+
+  let handleChange = (i, e, price) => {
     let newFormValues = [...formValues];
-    newFormValues[i][e.target.name] = e.target.value;
+    if (e.target.name === "price") {
+      newFormValues[i][e.target.name] = e.target.value;
+    } else {
+      newFormValues[i][e.target.name] = e.target.value;
+      newFormValues[i]["price"] = price;
+    }
     setFormValues(newFormValues);
     console.log(formValues, "lll");
-
-    const filteredOptions = options2.filter((option) => option !== undefined);
-    const totalPrice = filteredOptions.reduce((acc, next) => {
-      return acc + parseFloat(next.price || 0);
-    }, 0);
-    setTotalPrice(totalPrice);
   };
 
   const removeFormFields = (index) => {
@@ -373,6 +395,13 @@ const MarketingOffers = () => {
     ]);
   };
 
+  const calculateTotal = () => {
+    const total = formValues.reduce((acc, next) => {
+      return acc + (next?.price ? parseFloat(next?.price) : 0);
+    }, 0);
+    return total;
+  };
+
   const getBarClick = (val) => {
     console.log(val);
     setSideBar(val);
@@ -394,7 +423,8 @@ const MarketingOffers = () => {
                 <form
                   className="form-design py-4 px-3 help-support-form row  justify-content-between"
                   action=""
-                  onSubmit={handleSubmit(onSubmit)}>
+                  onSubmit={handleSubmit(onSubmit)}
+                >
                   <div className="form-group col-4">
                     <label htmlFor="">Combo Name (En)</label>
                     <input
@@ -532,7 +562,8 @@ const MarketingOffers = () => {
                             onChange={(e) => {
                               handleChange(index, e);
                               VendorsList(e.target.value, index);
-                            }}>
+                            }}
+                          >
                             <option selected="" value="">
                               Select Category
                             </option>
@@ -556,7 +587,8 @@ const MarketingOffers = () => {
                             onChange={(e) => {
                               handleChange(index, e);
                               createOptionsServices(e.target.value, index);
-                            }}>
+                            }}
+                          >
                             <option selected="" value="">
                               Select Vendor
                             </option>
@@ -572,7 +604,8 @@ const MarketingOffers = () => {
                         <div
                           className={`form-group ${
                             formValues?.length <= 1 ? "col-4" : "col-3"
-                          }`}>
+                          }`}
+                        >
                           <label htmlFor="">Select Service</label>
                           <select
                             className="form-select"
@@ -580,9 +613,17 @@ const MarketingOffers = () => {
                             name="service"
                             id={index}
                             value={element.service || ""}
+                            // onChange={(e) => {
+                            //   handleChange(index, e);
+                            // }}
                             onChange={(e) => {
-                              handleChange(index, e);
-                            }}>
+                              const selectedPrice =
+                                services[index]?.find(
+                                  (item) => item?._id === e.target.value
+                                )?.price || 0; // Fetch the price of the selected service
+                              handleChange(index, e, selectedPrice); // Pass the price to handleChange
+                            }}
+                          >
                             <option selected="" value="">
                               Select Service
                             </option>
@@ -603,18 +644,14 @@ const MarketingOffers = () => {
                             style={{ padding: "5px 20px" }}
                             type="button"
                             disabled={formValues?.length <= 1 ? true : false}
-                            onClick={() => removeFormFields(index)}>
+                            onClick={() => removeFormFields(index)}
+                          >
                             <i className="fa fa-minus mt-1 mx-1" />
                           </button>
                         </div>
                       </div>
                     </div>
                   ))}
-
-                  {totalPrice === 0 ? (
-                    ""
-                  ) : (
-                    <>
                       <hr />
                       <div>
                         <div className="d-flex align-items-center justify-content-between">
@@ -623,13 +660,12 @@ const MarketingOffers = () => {
                         </div>
                       </div>
                       <hr />
-                    </>
-                  )}
 
                   <div className="form-group mb-0 col-12 text-center mt-3">
                     <a
                       className="comman_btn mx-3 "
-                      onClick={() => addFormFields()}>
+                      onClick={() => addFormFields()}
+                    >
                       Add more +
                     </a>
                     <button className="comman_btn" type="submit">
@@ -638,7 +674,8 @@ const MarketingOffers = () => {
                     <button
                       className="comman_btn d-none"
                       id="Reset"
-                      type="reset">
+                      type="reset"
+                    >
                       Reset
                     </button>
                   </div>
@@ -719,7 +756,8 @@ const MarketingOffers = () => {
         data-bs-keyboard="false"
         tabIndex={-1}
         aria-labelledby="staticBackdropLabel"
-        aria-hidden="true">
+        aria-hidden="true"
+      >
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content border-0">
             <div className="modal-header">
@@ -742,7 +780,8 @@ const MarketingOffers = () => {
               <form
                 className="form-design px-3 py-2 help-support-form row  justify-content-center"
                 action=""
-                onSubmit={handleSubmit2(onEdit)}>
+                onSubmit={handleSubmit2(onEdit)}
+              >
                 <div className="form-group col-6">
                   <label htmlFor="">Combo (En)</label>
                   <input
@@ -861,7 +900,8 @@ const MarketingOffers = () => {
                   <button
                     className="comman_btn d-none"
                     type="reset"
-                    id="ResetS">
+                    id="ResetS"
+                  >
                     Reset
                   </button>
                 </div>
