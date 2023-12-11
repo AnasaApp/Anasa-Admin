@@ -38,6 +38,7 @@ const MarketingOffers = () => {
   const [subCategoryData, setSubCategoryData] = useState();
   const [offers, setAllOffers] = useState([]);
   const [offerId, setOfferId] = useState();
+  const [totalPrice, setTotalPrice] = useState(0);
 
   const [offerData, setOfferData] = useState();
   const [vendors, setVendors] = useState([]);
@@ -333,13 +334,31 @@ const MarketingOffers = () => {
     let newFormValues = [...formValues];
     newFormValues[i][e.target.name] = e.target.value;
     setFormValues(newFormValues);
+
+    const filteredOptions = options2.filter((option) => option !== undefined);
+    const totalPrice = filteredOptions.reduce((acc, next) => {
+      return acc + parseFloat(next.price || 0);
+    }, 0);
+    setTotalPrice(totalPrice);
   };
 
   const removeFormFields = (index) => {
     let newFormValues = [...formValues];
-    newFormValues?.splice(index, 1);
+    newFormValues.splice(index, 1);
     setFormValues(newFormValues);
+
+    let newOptions2 = [...options2];
+    newOptions2.splice(index, 1);
+    setOptions2(newOptions2);
+    const filteredOptions = newFormValues.map((element) =>
+      options2.find((option) => option?._id === element.service)
+    );
+    const totalPrice = filteredOptions.reduce((acc, next) => {
+      return acc + parseFloat(next?.price || 0);
+    }, 0);
+    setTotalPrice(totalPrice);
   };
+
   const addFormFields = (e) => {
     setFormValues([
       ...formValues,
@@ -524,7 +543,6 @@ const MarketingOffers = () => {
                               ))}
                           </select>
                         </div>
-                        {console.log(formValues)}
                         <div className="form-group col-4">
                           <label htmlFor="">Select Vendor</label>
                           <select
@@ -549,7 +567,11 @@ const MarketingOffers = () => {
                             ))}
                           </select>
                         </div>
-                        <div className={`form-group ${formValues?.length <= 1 ? 'col-4' : "col-3"}`}>
+                        <div
+                          className={`form-group ${
+                            formValues?.length <= 1 ? "col-4" : "col-3"
+                          }`}
+                        >
                           <label htmlFor="">Select Service</label>
                           <select
                             className="form-select"
@@ -569,7 +591,7 @@ const MarketingOffers = () => {
                               )
                               .map((item) => (
                                 <option value={item?._id}>
-                                  {item?.name_en}
+                                  {item?.name_en} - {item?.price}
                                 </option>
                               ))}
                           </select>
@@ -606,6 +628,21 @@ const MarketingOffers = () => {
                       </div>
                     </div>
                   ))}
+
+                  {totalPrice === 0 ? (
+                    ""
+                  ) : (
+                    <>
+                      <hr />
+                      <div>
+                        <div className="d-flex align-items-center justify-content-between">
+                          <p>Total Price:</p>
+                          <p className="fw-bold">{totalPrice}</p>
+                        </div>
+                      </div>
+                      <hr />
+                    </>
+                  )}
 
                   <div className="form-group mb-0 col-12 text-center mt-3">
                     <a

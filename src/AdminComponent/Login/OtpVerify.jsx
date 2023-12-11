@@ -52,6 +52,8 @@ const OtpVerify = () => {
                       <div className=" form-group col-12 d-flex justify-content-center mt-2 mb-1">
                         <div>
                           <OtpInput
+                          width={50}
+                          height={50}
                             value={value}
                             onChange={setValue}
                             numInputs={4}

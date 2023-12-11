@@ -2305,6 +2305,27 @@ export async function getViewBuyerSupport(id) {
     return { error };
   }
 }
+export async function PenalityDeduction(formData) {
+  try {
+    const { data } = await appHttpService.post(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/deductPenalty`,
+      formData
+    );
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      // console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
 export async function getViewVendorSupport(id) {
   try {
     const { data } = await appHttpService.post(

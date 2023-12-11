@@ -22,6 +22,7 @@ const VendorManagement = () => {
   const [vendorId, setVendorId] = useState();
   const [files, setFiles] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loading1, setLoading1] = useState(true);
   const [values, setValues] = useState({ from: "", to: "" });
   let location = useLocation();
   const [approved, setApproved] = useState({
@@ -196,7 +197,7 @@ const VendorManagement = () => {
     });
     const newRows = [];
     if (!data.error) {
-      setLoading(false);
+      setLoading1(false);
       let values = data?.results?.vendors;
       console.log(values);
       values?.map((list, index) => {
@@ -749,7 +750,7 @@ const VendorManagement = () => {
                               <div className="row">
                                 <div className="col-12 comman_table_design px-0">
                                   <div className="table-responsive">
-                                    {loading ? (
+                                    {loading1 ? (
                                       <div className="d-flex justify-content-center py-5">
                                         <Loader />
                                       </div>

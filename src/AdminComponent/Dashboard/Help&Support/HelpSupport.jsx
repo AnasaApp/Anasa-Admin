@@ -6,12 +6,15 @@ import {
   changeBuyerTicketStatus,
   getViewBuyerSupport,
   getViewVendorSupport,
+  PenalityDeduction,
   SendMessageBuy,
   SupportList,
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
 import { MessageBox } from "react-chat-elements";
 import Loader from "../Loader";
+import { useForm } from "react-hook-form";
+import classNames from "classnames";
 
 const HelpSupport = () => {
   const chatpartMainRef = useRef(null);
@@ -28,7 +31,10 @@ const HelpSupport = () => {
   const [newMessageV, setNewMessageV] = useState("");
   const [buyId, setBuyId] = useState();
   const [VenId, setVenId] = useState();
+  const [vendorIdForDeduction, setVendorIdForDeduction] = useState();
   const [loading, setLoading] = useState(false);
+  // const [deductionAmount, setDeductionAmount] = useState(0);
+  // const [deductionReason, setDeductionReason] = useState("");
   // const ref = useRef(null);
   useEffect(() => {
     getBuyerSupport();
@@ -39,12 +45,21 @@ const HelpSupport = () => {
     VScrollToBottom();
   }, [chat, chatV]);
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
   const ViewBuyerSupport = async (id, status) => {
     setLoading(true);
     if (status) {
       setBuyId(id);
+
+      // setVendorId()
       const { data } = await getViewBuyerSupport(id);
-      // console.warn(data)
+      console.warn(data);
+      setVendorIdForDeduction(data?.results?.message?.vendor?._id);
       if (!data.error) {
         setLoading(false);
         setChat(data?.results.message?.reply);
@@ -66,6 +81,7 @@ const HelpSupport = () => {
     if (status) {
       setVenId(id);
       const { data } = await getViewVendorSupport(id);
+      // console.log(data);
       if (!data.error) {
         setLoading(false);
         setChatV(data?.results.message?.reply);
@@ -98,7 +114,7 @@ const HelpSupport = () => {
 
   const getBuyerSupport = async () => {
     const { data } = await SupportList({ page: 1, type: "Buyer" });
-    // console.log(data)
+    console.log(data);
     setBuyerSupport(data.results);
   };
 
@@ -172,6 +188,26 @@ const HelpSupport = () => {
       getBuyerSupport();
       getVendorSupport();
     }
+  };
+
+  const onSubmit = async (data) => {
+    let response = await PenalityDeduction({
+      amount: data?.amount,
+      reason: data?.reason,
+      vendorId: vendorIdForDeduction,
+    });
+    console.log(response)
+    if(!response?.data?.error){
+      Swal.fire({
+        title: "Deduction Successfull",
+        icon: "success",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+      document.getElementById('close2').click();
+      document?.getElementById("reset").click();
+    }
+
   };
 
   const getBarClick = (val) => {
@@ -319,6 +355,27 @@ const HelpSupport = () => {
                                                 >
                                                   View
                                                 </a>
+                                                {item?.vendor ? (
+                                                  <a
+                                                    className="comman_btn2 ms-2 table_viewbtn bg-red"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target={
+                                                      item?.status
+                                                        ? "#staticBackdrop11"
+                                                        : ""
+                                                    }
+                                                    onClick={() => {
+                                                      ViewBuyerSupport(
+                                                        item?._id,
+                                                        item?.status
+                                                      );
+                                                    }}
+                                                  >
+                                                    Deduct
+                                                  </a>
+                                                ) : (
+                                                  ""
+                                                )}
                                                 {/* <a
                                                   className="comman_btn2 table_viewbtn bg-red"
                                                   href="javscript:;">
@@ -403,8 +460,8 @@ const HelpSupport = () => {
                                         (item, ind) => (
                                           <tr key={ind}>
                                             <td>{ind + 1}</td>
-                                            <td>{item?.buyer?.full_name}</td>
-                                            <td>{item?.buyer?.email}</td>
+                                            <td>{item?.vendor?.full_name}</td>
+                                            <td>{item?.vendor?.email}</td>
                                             <td>{item?.subject}</td>
                                             <td>{item?.concern}</td>
                                             <td>
@@ -446,8 +503,20 @@ const HelpSupport = () => {
                                               </a>
                                               {/* <a
                                                 className="comman_btn2 table_viewbtn bg-red"
-                                                href="javscript:;">
-                                                Delete
+                                                data-bs-toggle="modal"
+                                                data-bs-target={
+                                                  item?.status
+                                                    ? "#staticBackdrop11"
+                                                    : ""
+                                                }
+                                                onClick={() => {
+                                                  VieWVendorSupport(
+                                                    item?._id,
+                                                    item?.status
+                                                  );
+                                                }}
+                                              >
+                                                Deduct
                                               </a> */}
                                             </td>
                                           </tr>
@@ -471,7 +540,7 @@ const HelpSupport = () => {
       </div>
 
       <>
-        !-- Modal --&gt;
+        {/* !-- Modal  */}
         <div
           className="modal fade reply_modal"
           id="staticBackdrop"
@@ -720,6 +789,128 @@ const HelpSupport = () => {
                       NO
                     </a>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* Deduction Modal */}
+        <div
+          class="modal fade"
+          id="staticBackdrop11"
+          data-bs-backdrop="static"
+          data-bs-keyboard="false"
+          tabindex={-1}
+          aria-labelledby="staticBackdropLabel"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">
+                  Deduction
+                </h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  id="close2"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body">
+                <div>
+                  <form
+                    className="form-design"
+                    onSubmit={handleSubmit(onSubmit)}
+                  >
+                    <div className="row">
+                      <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                        <div className="row view-inner-box border mx-0 w-100">
+                          <span>Buyer Name:</span>
+                          <div className="col">
+                            <strong>
+                              {mainChat?.buyer
+                                ? mainChat?.buyer?.full_name
+                                : ""}
+                            </strong>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                        <div className="row view-inner-box border mx-0 w-100">
+                          <span>Vendor Name:</span>
+                          <div className="col">
+                            <strong>
+                              {mainChat?.vendor
+                                ? mainChat?.vendor?.full_name
+                                : ""}
+                            </strong>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="col-md-12 mb-4 d-flex align-items-stretch">
+                        <div className="row view-inner-box border mx-0 w-100">
+                          <span>Concern:</span>
+                          <div className="col">
+                            <strong>{mainChat ? mainChat?.concern : ""}</strong>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="form-group mb-3 col-12">
+                        <label htmlFor="">Deduction Amount</label>
+                        <input
+                          type="number"
+                          className={classNames("form-control", {
+                            "is-invalid": errors.amount,
+                          })}
+                          name="amount"
+                          {...register("amount", {
+                            required: "Deduction Amount is required!",
+                            maxLength: {
+                              value: 4,
+                              message: "*Max character Length is 4",
+                            },
+                          })}
+                          onInput={(e) => {
+                            if (e.target.value.length > 4) {
+                              e.target.value = e.target.value.slice(0, 4);
+                            }
+                          }}
+                        />
+                        {errors.amount && (
+                          <small className="errorText mx-1">
+                            *{errors.amount?.message}
+                          </small>
+                        )}
+                      </div>
+                      <div className="form-group mb-3 col-12">
+                        <label htmlFor="">Deduction Reason</label>
+                        <textarea
+                          style={{ minHeight: "100px" }}
+                          type="number"
+                          className={classNames("form-control", {
+                            "is-invalid": errors.reason,
+                          })}
+                          name="reason"
+                          {...register("reason", {
+                            required: "Please Enter Reason",
+                          })}
+                        ></textarea>
+                        {errors.reason && (
+                          <small className="errorText mx-1">
+                            *{errors.reason?.message}
+                          </small>
+                        )}
+                      </div>
+                    </div>
+                    <button type="submit" className="comman_btn">
+                      Submit
+                    </button>
+                    <button type="reset" id="reset" className="comman_btn d-none">
+                      reset
+                    </button>
+                  </form>
                 </div>
               </div>
             </div>
