@@ -138,7 +138,7 @@ const TransactionManagement = () => {
     const newRows = [];
     if (!data.error) {
       let values = data?.results.transactions;
-      // console.log(values)
+      console.log(values)
       let total = values
       .filter((item) => item.status === "Paid")
       .reduce((acc, next) => {
@@ -149,7 +149,7 @@ const TransactionManagement = () => {
         const returnData = {};
         returnData.sn = index + 1 + ".";
         returnData.name_vendor = list?.vendor.full_name;
-        returnData.amount = list?.withdrawl || list?.deposit;
+        returnData.amount = list?.amount || list?.withdrawl;
         returnData.date = moment(list?.createdAt).format("L");
         returnData.status = list?.status;
 
