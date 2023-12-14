@@ -24,8 +24,8 @@ const TransactionManagement = () => {
   const [vendorId, setVendorId] = useState();
   const [wallet, setWallet] = useState();
   const [value, setValue] = useState();
-  const [totalBuyerAmount, setTotalBuyerAmount] = useState()
-  const [totalVendorAmount, setTotalVendorAmount] = useState()
+  const [totalBuyerAmount, setTotalBuyerAmount] = useState();
+  const [totalVendorAmount, setTotalVendorAmount] = useState();
 
   const {
     register: register2,
@@ -127,8 +127,6 @@ const TransactionManagement = () => {
     rows: [],
   });
 
-
-
   const getVendorTransactions = async () => {
     const { data } = await VendorTransactions({
       page: 1,
@@ -138,17 +136,17 @@ const TransactionManagement = () => {
     const newRows = [];
     if (!data.error) {
       let values = data?.results.transactions;
-      console.log(values)
+      console.log(values);
       let total = values
-      .filter((item) => item.status === "Paid")
-      .reduce((acc, next) => {
-        return +next.withdrawl + acc;
-      }, 0);
-      setTotalVendorAmount(total)
+        .filter((item) => item.status === "Paid" && item?.vendor !== null)
+        .reduce((acc, next) => {
+          return +next.amount + acc;
+        }, 0);
+      setTotalVendorAmount(total);
       values?.map((list, index) => {
         const returnData = {};
         returnData.sn = index + 1 + ".";
-        returnData.name_vendor = list?.vendor.full_name;
+        returnData.name_vendor = list?.vendor?.full_name;
         returnData.amount = list?.amount || list?.withdrawl;
         returnData.date = moment(list?.createdAt).format("L");
         returnData.status = list?.status;
@@ -192,16 +190,16 @@ const TransactionManagement = () => {
       let values = data?.results.transactions;
       // console.log(values)
       let total = values
-      .filter((item) => item.status === "Successful")
-      .reduce((acc, next) => {
-        return +next.amount + acc;
-      }, 0);
-      setTotalBuyerAmount(total)
+        .filter((item) => item.status === "Successful")
+        .reduce((acc, next) => {
+          return +next.amount + acc;
+        }, 0);
+      setTotalBuyerAmount(total);
       values?.map((list, index) => {
         const returnData = {};
         returnData.sn = index + 1 + ".";
         returnData.name = list?.buyer.full_name;
-        returnData.amount = list?.amount ;
+        returnData.amount = list?.amount;
         returnData.date = moment(list?.createdAt).format("L");
         returnData.status = list?.status;
         returnData.action = (
@@ -213,7 +211,6 @@ const TransactionManagement = () => {
             >
               View
             </Link>
-          
           </>
         );
         newRows.push(returnData);
