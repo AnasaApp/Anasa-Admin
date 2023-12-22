@@ -63,25 +63,9 @@ const VendorCms = () => {
   };
   const handleChangePrivacy = (e, key) => {
     if (key === "description_ar") {
-      const arabicRegex = /^[\u0600-\u06FF\s]+$/;
-
-      if (!arabicRegex.test(e.target.value)) {
-        e.preventDefault();
-        Swal.fire({
-          toast: true,
-          position: "top-end",
-          icon: "warning",
-          title: "Please enter only Arabic characters for the description!",
-          showConfirmButton: false,
-          timerProgressBar: true,
-          timer: 3000,
-        });
-        return false;
-      } else {
-        let newFormValues = [...privacyEdit];
-        newFormValues[0][key] = e.target.value;
-        setPrivacyEdit(newFormValues);
-      }
+      let newFormValues = [...privacyEdit];
+      newFormValues[0][key] = e.target.value;
+      setPrivacyEdit(newFormValues);
     } else {
       let newFormValues = [...privacyEdit];
       newFormValues[0][key] = e.target.value;

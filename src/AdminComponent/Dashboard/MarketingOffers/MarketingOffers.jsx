@@ -8,6 +8,7 @@ import {
   AllCategory,
   AllOffers,
   AllVendors,
+  DeleteOffer,
   editOffer,
   getSubCategory,
   GetVendorByCate,
@@ -138,7 +139,7 @@ const MarketingOffers = () => {
 
   const getAllOffers = async () => {
     const { data } = await AllOffers();
-    console.log(data)
+    console.log(data);
     const newRows = [];
     if (!data.error) {
       let values = data.results?.offer;
@@ -173,6 +174,12 @@ const MarketingOffers = () => {
               onClick={() => handleView(list?._id)}
             >
               Edit
+            </a>
+            <a
+              className="comman_btn2 table_viewbtn ms-1"
+              onClick={() => handleDelete(list?._id)}
+            >
+              Delete
             </a>
           </>
         );
@@ -308,6 +315,21 @@ const MarketingOffers = () => {
         });
       }
     });
+  };
+
+  const handleDelete = async (id) => {
+    const { data } = await DeleteOffer(id);
+    console.log(data);
+    if (!data?.error) {
+      Swal.fire({
+        title: "Offer deleted",
+        icon: "success",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+      getAllCat();
+      getAllOffers();
+    }
   };
 
   const onFileSelection = async (e, key) => {
@@ -652,14 +674,14 @@ const MarketingOffers = () => {
                       </div>
                     </div>
                   ))}
-                      <hr />
-                      <div>
-                        <div className="d-flex align-items-center justify-content-between">
-                          <p>Total Price:</p>
-                          <p className="fw-bold">{totalPrice}</p>
-                        </div>
-                      </div>
-                      <hr />
+                  <hr />
+                  <div>
+                    <div className="d-flex align-items-center justify-content-between">
+                      <p>Total Price:</p>
+                      <p className="fw-bold">{totalPrice}</p>
+                    </div>
+                  </div>
+                  <hr />
 
                   <div className="form-group mb-0 col-12 text-center mt-3">
                     <a

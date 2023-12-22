@@ -395,7 +395,7 @@ const ApprovedView = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
+                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Country Code:</span>
                       <div className="col">
@@ -403,7 +403,7 @@ const ApprovedView = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
+                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Country Name:</span>
                       <div className="col">
@@ -411,11 +411,15 @@ const ApprovedView = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
+                  <div className="col-md-12 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
-                      <span>Serviceable Radius:</span>
+                      <span>Serviceable City:</span>
                       <div className="col">
-                        <strong>{vendor?.service_radius}</strong>
+                        {vendor?.serviceableCity.map((item, index) => (
+                          <>
+                          <strong> • </strong>
+                          <strong key={index}>{item.city}</strong></>
+                        ))}
                       </div>
                     </div>
                   </div>
