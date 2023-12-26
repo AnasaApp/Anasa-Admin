@@ -94,7 +94,9 @@ const ServicesManage = () => {
     if (!data.error) {
       let values = data?.results?.services;
       // console.log(values);
-      values.sort((a, b) => (a.status === true ? -1 : b.status === true ? 1:0))
+      values.sort((a, b) =>
+        a.status === true ? -1 : b.status === true ? 1 : 0
+      );
       values?.map((list, index) => {
         const returnData = {};
         returnData.sn = index + 1 + ".";
@@ -127,6 +129,15 @@ const ServicesManage = () => {
               onClick={() => handleView(list)}
             >
               View
+            </Link>
+            <Link
+              // data-bs-toggle="modal"
+              // data-bs-target="#staticBackdrop447"
+              className="comman_btn ms-1 table_viewbtn"
+              // to={`/Admin/Dashboard/Vendor-Management/Services/${list?.vendor?._id}`}
+              to={`/Admin/Dashboard/Vendor-Management/Services/${list?.vendor?._id}/${list?.name_en}`}
+            >
+              Edit
             </Link>
           </>
         );
@@ -230,7 +241,7 @@ const ServicesManage = () => {
             <div className="modal-content border-0">
               <div className="modal-header">
                 <h5 className="modal-title" id="staticBackdropLabel">
-                  Edit Services
+                  View Services
                 </h5>
                 <button
                   type="button"

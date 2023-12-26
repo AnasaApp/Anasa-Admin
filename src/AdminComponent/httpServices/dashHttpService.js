@@ -2611,3 +2611,34 @@ export async function getPushNotify() {
     return { error };
   }
 }
+
+
+export async function getCities() {
+  try {
+    const { data } = await appHttpService.get(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/getCities`
+    );
+    // console.log(data);
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      // console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}

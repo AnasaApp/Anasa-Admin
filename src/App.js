@@ -38,6 +38,7 @@ import BookingDetails from "./AdminComponent/Dashboard/bookingManage/BookingDeta
 import Payout from "./AdminComponent/Dashboard/Payout";
 import ServicesManage from "./AdminComponent/Dashboard/ServicesManage/Services";
 import EventManagement from "./AdminComponent/Dashboard/EventManage/EventManagement";
+import NewServices from "./AdminComponent/Dashboard/VendorManage/NewServices";
 // import EVM from "./AdminComponent/Dashboard/EventManage/EVM";
 
 function App() {
@@ -100,6 +101,10 @@ function App() {
             <Route
               path="/Admin/Dashboard/Vendor-Management/Services/:id"
               element={<Services />}
+            />
+            <Route
+              path="/Admin/Dashboard/Vendor-Management/Services/:vendorId/:serviceName"
+              element={<NewServices />}
             />
             <Route
               path="/Admin/Dashboard/Booking-Management"

@@ -1,17 +1,21 @@
 import classNames from "classnames";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { Button, Loader } from "rsuite";
 import Swal from "sweetalert2";
-import { AddVendor } from "../../httpServices/dashHttpService";
+import { AddVendor, getCities } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
+import Select from "react-select";
 
 const AddUser = () => {
   const [slide, setSlide] = useState("VM");
   const [sideBar, setSideBar] = useState();
   const [loader, setLoader] = useState("");
   const [files, setFiles] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [selectedCities, setSelectedCities] = useState([]);
+
   const {
     register,
     handleSubmit,
@@ -24,11 +28,34 @@ const AddUser = () => {
     setFiles({ ...files, [key]: e.target.files[0] });
   };
 
+  useEffect(() => {
+    getCity();
+  }, []);
+
+  const getCity = async () => {
+    let { data } = await getCities();
+    console.log(data);
+    if (!data.error) {
+      setCities(data?.results?.cities);
+      let values = data?.results?.cities;
+      let options = values?.map((item, i) => ({
+        value: item?._id,
+        label: item?.city,
+      }));
+      setCities(options);
+    }
+  };
+
+  const handleChange = (selectedOptions) => {
+    setSelectedCities(selectedOptions);
+    
+  };
+
   const onSave = async (data) => {
     setLoader(true);
 
-    console.log(data?.country_code)
-
+    console.log(data?.country_code);
+    const cityValues = selectedCities.map((city) => city.value);
     const formData = new FormData();
     formData.append("shop_cover_image", files?.shop_cover_image);
     formData.append("full_name", data?.full_name.trim());
@@ -40,7 +67,7 @@ const AddUser = () => {
     formData.append("building_name", data?.building_name?.trim());
     formData.append("country_code", data?.country_code);
     formData.append("locality", data?.locality.trim());
-    formData.append("service_radius", data?.service_radius.trim());
+    formData.append("serviceableCity", JSON.stringify(cityValues));
     formData.append("email", data?.email.trim());
     formData.append("signed_contract", files?.signed_contract);
     formData.append("trade_licence_copy", files?.trade_licence_copy);
@@ -76,7 +103,8 @@ const AddUser = () => {
               <div className="col-12 p-4 Pending-view-main">
                 <form
                   className="row py-2 form-design "
-                  onSubmit={handleSubmit(onSave)}>
+                  onSubmit={handleSubmit(onSave)}
+                >
                   <div className="form-group col-4 mb-4 choose_file position-relative">
                     <span>Upload Image</span>{" "}
                     <label htmlFor="upload_video">
@@ -369,15 +397,14 @@ const AddUser = () => {
                     <label htmlFor="">Country Code</label>
                     <select
                       name="country_code"
-                      className="form-select"
+                      className="form-select form-control"
                       {...register("country_code", {
                         required: "*Code is Required!",
                       })}
-                      id="">
+                      id=""
+                    >
                       <optgroup>
-                      <option selected>
-                          Select country code.... 
-                        </option>
+                        <option selected>Select country code....</option>
                         <option data-countryCode="DZ" value="213">
                           Algeria (+213)
                         </option>
@@ -1035,21 +1062,16 @@ const AddUser = () => {
                     )}
                   </div>
                   <div className="form-group col-4 mb-4">
-                    <label htmlFor="">Serviceable Radius</label>
-                    <input
-                      type="number"
-                      className={classNames("form-control", {
-                        "is-invalid": errors.service_radius,
-                      })}
-                      name="service_radius"
-                      id="name"
-                      {...register("service_radius", {
-                        required: "*Radius is Required!",
-                        maxLength: {
-                          value: 3,
-                          message: "Maximium 2 Characters!",
-                        },
-                      })}
+                    <label htmlFor="">Serviceable City</label>
+                    <Select
+                      defaultValue=""
+                      isMulti
+                      name="users"
+                      options={cities}
+                      className="basic-multi-select z-3 "
+                      classNamePrefix="select"
+                      onChange={handleChange}
+                      value={selectedCities}
                     />
                     {errors.service_radius && (
                       <small className="errorText mx-1 ">
@@ -1143,7 +1165,8 @@ const AddUser = () => {
                         errors.trade_licence_copy
                           ? "row view-inner-box border mx-0 w-100 border border-danger"
                           : "row view-inner-box border mx-0 w-100"
-                      }>
+                      }
+                    >
                       <span>Trade Licence Copy:</span>
                       <div className="col img_box_show">
                         {errors.trade_licence_copy && (
@@ -1187,7 +1210,8 @@ const AddUser = () => {
                         errors.signed_contract
                           ? "row view-inner-box border mx-0 w-100 border border-danger"
                           : "row view-inner-box border mx-0 w-100"
-                      }>
+                      }
+                    >
                       <span>Signed Contract:</span>
                       <div className="col img_box_show">
                         {errors.signed_contract && (
@@ -1229,7 +1253,8 @@ const AddUser = () => {
                       loading={loader}
                       appearance="primary"
                       className="comman_btn2"
-                      type="submit">
+                      type="submit"
+                    >
                       Save
                     </Button>
                     <Loader />

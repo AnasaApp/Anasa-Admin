@@ -509,7 +509,7 @@ const MarketingOffers = () => {
                   </div>
 
                   <div className="form-group col-4">
-                    <label htmlFor="">Discount</label>
+                    <label htmlFor="">Package Price</label>
                     <input
                       type="number"
                       className={classNames("form-control", {
