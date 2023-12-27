@@ -68,7 +68,7 @@ const AdvertiseManagement = () => {
       label: item?.full_name,
     }));
     optionList = optionList.filter((item) => item.label.trim() !== "");
-    // optionList.sort((a, b) => a.label.localeCompare(b.label));
+    optionList.sort((a, b) => a.label.localeCompare(b.label));
     setOptionsNewVendors(optionList);
     setOptions(optionList);
   };
@@ -85,7 +85,7 @@ const AdvertiseManagement = () => {
           value: item?._id._id,
           label: item?._id.full_name,
         }));
-        // optionList.sort((a, b) => a.label.localeCompare(b.label));
+        optionList.sort((a, b) => a.label.localeCompare(b.label));
         // setOptions(optionList);
       }
     });
@@ -102,7 +102,7 @@ const AdvertiseManagement = () => {
             label: item?._id.full_name,
           }));
         // console.log(optionList);
-        // optionList.sort((a, b) => a.label.localeCompare(b.label));
+        optionList.sort((a, b) => a.label.localeCompare(b.label));
         setOptionsNewVendors(optionList);
       }
     });
@@ -119,7 +119,7 @@ const AdvertiseManagement = () => {
             value: item?._id,
             label: item?.name_en,
           }));
-        // optionList.sort((a, b) => a.label.localeCompare(b.label));
+        optionList.sort((a, b) => a.label.localeCompare(b.label));
         setOptionsCate(optionList);
       }
     });
@@ -135,7 +135,7 @@ const AdvertiseManagement = () => {
             value: item?._id,
             label: item?.name_en,
           }));
-        // optionList.sort((a, b) => a.label.localeCompare(b.label));
+        optionList.sort((a, b) => a.label.localeCompare(b.label));
         setOptionsNewCate(optionList);
       }
     });
