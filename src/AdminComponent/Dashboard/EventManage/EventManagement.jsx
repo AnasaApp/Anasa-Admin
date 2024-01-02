@@ -754,7 +754,7 @@ const EventManagement = () => {
                             )[0]
                             ?.packages?.map((item) => (
                               <option value={item?._id}>
-                                {item?.name_en} د.إ {item?.price}
+                                {item?.name_en} - {item?.price} SAR
                               </option>
                             ))}
                           {console.log(
