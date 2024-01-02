@@ -96,7 +96,7 @@ const ApprovedView = () => {
       },
       {
         label: "AMOUNT",
-        field: "number",
+        field: "amount",
         sort: "asc",
         width: 100,
       },
@@ -200,15 +200,13 @@ const ApprovedView = () => {
       let values = data?.results.transaction;
       console.log(values);
       let newVal = values.sort(
-        (a, b) =>
-          new moment(b.createdAt).format("YYYYMMDD") -
-          new moment(a.createdAt).format("YYYYMMDD")
+        (a, b) => new moment(b.createdAt) - new moment(a.createdAt)
       );
       newVal?.map((list, index) => {
         const returnData = {};
         returnData.sn = index + 1 + ".";
         returnData.id = list?.transactionID;
-        returnData.number = list?.deposit;
+        returnData.amount = list?.amount;
         returnData.type = list?.type;
         returnData.date = moment(list?.createdAt).format("L");
         returnData.status = list?.status;
@@ -417,8 +415,9 @@ const ApprovedView = () => {
                       <div className="col">
                         {vendor?.serviceableCity.map((item, index) => (
                           <>
-                          <strong> • </strong>
-                          <strong key={index}>{item.city}</strong></>
+                            <strong> • </strong>
+                            <strong key={index}>{item.city}</strong>
+                          </>
                         ))}
                       </div>
                     </div>

@@ -637,7 +637,7 @@ const TransactionManagement = () => {
                     onChange={(e) => onUpdate(e)}
                   >
                     <option selected="">{trans.status}</option>
-                    <option value="Paid">Completed</option>
+                    <option value="Paid">Paid</option>
                     <option value="Pending">Pending</option>
                     <option value="Cancelled">Cancelled</option>
                     <option value="Refund">Refund</option>
