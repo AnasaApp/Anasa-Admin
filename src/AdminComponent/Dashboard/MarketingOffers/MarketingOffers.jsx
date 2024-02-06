@@ -356,7 +356,7 @@ const MarketingOffers = () => {
       combo_ar_edit_ar: date?.name_ar,
       Edit_Discount: date?.comboPrice,
       dateFrom: date?.validFrom?.slice(0, 10),
-      dateTo: date?.validFrom?.slice(0, 10),
+      dateTo: date?.validTo?.slice(0, 10),
     });
   };
 
