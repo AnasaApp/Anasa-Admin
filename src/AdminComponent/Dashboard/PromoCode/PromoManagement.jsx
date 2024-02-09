@@ -125,101 +125,96 @@ const PromoManagement = () => {
   };
 
   const GetPromocodes = async () => {
-    await AllPromocodes().then((res) => {
-      const newRows = [];
-      if (!res.data.error) {
-        let values = res.data.results?.promocodes;
-        console.log(values);
-        values?.map((list, index) => {
-          const returnData = {};
-          returnData.sn = index + 1 + ".";
-          returnData.name_en = list?.name_en;
-          returnData.name_ar = list?.name_ar;
-          returnData.sub_cate_name = list?.subCategory?.name_en;
-          returnData.number = list?.discount;
-          returnData.date_from = moment(list?.validFrom).format("L");
-          returnData.date_till = moment(list?.validTo).format("L");
-          returnData.status = (
-            <div className="check_toggle">
-              <input
-                type="checkbox"
-                defaultChecked={list?.status}
-                name="checkv4"
-                id={list?._id}
-                className="d-none"
-                onClick={() => {
-                  PromoCodeStatus(list?._id);
-                }}
-              />
-              <label
-                data-bs-toggle="modal"
-                data-bs-target="#staticBackdrop12"
-                htmlFor={list?._id}
-              />
-            </div>
-          );
-          returnData.image = (
-            <img
-              className="table_img"
-              width={70}
-              height={60}
-              src={
-                list?.image
-                  ? list?.image
-                  : require("../../../assets/img/Nupload.jpg")
-              }
-              alt=""
+    let { data } = await AllPromocodes();
+    const newRows = [];
+    if (!data?.error) {
+      let values = data?.results?.promocodes;
+      values?.map((list, index) => {
+        const returnData = {};
+        returnData.sn = index + 1 + ".";
+        returnData.name_en = list?.name_en;
+        returnData.name_ar = list?.name_ar;
+        returnData.sub_cate_name = list?.subCategory?.name_en;
+        returnData.number = list?.discount;
+        returnData.date_from = moment(list?.validFrom).format("L");
+        returnData.date_till = moment(list?.validTo).format("L");
+        returnData.status = (
+          <div key={list?._id} className="check_toggle">
+            <input
+              type="checkbox"
+              defaultChecked={list?.status}
+              name="checkv4"
+              id={list?._id}
+              className="d-none"
+              onClick={() => {
+                PromoCodeStatus(list?._id);
+              }}
             />
-          );
-          returnData.action = (
-            <>
-              <a
-                className="comman_btn table_viewbtn mx-1"
-                data-bs-toggle="modal"
-                data-bs-target="#staticBackdrop22"
-                onClick={() => handleView(list?._id)}
-              >
-                Edit
-              </a>
-              {/* <a className="comman_btn2 table_viewbtn" onClick={DeleteCode}>
+            <label
+              data-bs-toggle="modal"
+              data-bs-target="#staticBackdrop12"
+              htmlFor={list?._id}
+            />
+          </div>
+        );
+        returnData.image = (
+          <img
+            className="table_img"
+            width={70}
+            height={60}
+            src={
+              list?.image
+                ? list?.image
+                : require("../../../assets/img/Nupload.jpg")
+            }
+            alt=""
+          />
+        );
+        returnData.action = (
+          <>
+            <a
+              className="comman_btn table_viewbtn mx-1"
+              data-bs-toggle="modal"
+              data-bs-target="#staticBackdrop22"
+              onClick={() => handleView(list?._id)}
+            >
+              Edit
+            </a>
+            {/* <a className="comman_btn2 table_viewbtn" onClick={DeleteCode}>
                 Delete
               </a> */}
-            </>
-          );
-          newRows.push(returnData);
-        });
-
-        setPromos({ ...promos, rows: newRows });
-      }
-      setPromoCodes(res.data.results?.promocodes);
-    });
+          </>
+        );
+        newRows.push(returnData);
+      });
+      setPromos({ ...promos, rows: newRows });
+    }
   };
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (datas) => {
     let formData = new FormData();
-    console.log(data);
 
-    formData.append("name_en", data?.promo_code_en);
-    formData.append("name_ar", data?.promo_code_ar);
-    formData.append("discount", data?.discount);
-    formData.append("validFrom", data?.dateFrom);
-    formData.append("validTo", data?.dateTo);
+    formData.append("name_en", datas?.promo_code_en);
+    formData.append("name_ar", datas?.promo_code_ar);
+    formData.append("discount", datas?.discount);
+    formData.append("validFrom", datas?.dateFrom);
+    formData.append("validTo", datas?.dateTo);
     formData.append("image", files?.upload_video);
     // formData.append("selectedUsers",userTypes === "specific" &&
     // selectedUsers.usersSelected?.map((item) => item?.value),)
-    await AddPromoCode(formData).then((res) => {
+
+    let { data } = await AddPromoCode(formData);
+    if (!data?.error) {
+      Swal.fire({
+        title: "Promo Code Added!",
+        icon: "success",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
       document.getElementById("ResetPromo").click();
-      GetPromocodes();
       setFiles([]);
-      if (!res.data.error) {
-        Swal.fire({
-          title: "Promo Code Added!",
-          icon: "success",
-          confirmButtonText: "Okay",
-          confirmButtonColor: "#e25829",
-        });
-      }
-    });
+      GetPromocodes();
+    }
   };
 
   const onEdit = async (data) => {
@@ -282,17 +277,18 @@ const PromoManagement = () => {
     setFiles({ ...files, [key]: e.target.files[0] });
   };
 
-  console.log(files);
+  // console.log(files);
+
   const PromoCodeStatus = async (id) => {
     const { data } = await changePromocodeStatus(id);
     if (!data?.error) {
-      GetPromocodes();
       Swal.fire({
-        title: "Code Status Changed!",
+        title: "Status Changed!",
         icon: "success",
         confirmButtonText: "Ok",
         confirmButtonColor: "#e25829",
       });
+      GetPromocodes();
     }
   };
 
