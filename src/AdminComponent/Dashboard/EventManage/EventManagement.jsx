@@ -14,12 +14,10 @@ import {
   partyApproval,
   updateServiceAmount,
 } from "../../httpServices/dashHttpService";
-import Select from "react-select";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 
 import DateTimePicker from "react-datetime-picker";
-import dayjs from "dayjs";
 
 const EventManagement = () => {
   const [slide, setSlide] = useState("EM");

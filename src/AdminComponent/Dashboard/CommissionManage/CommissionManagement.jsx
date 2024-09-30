@@ -4,19 +4,20 @@ import {
   addCommission,
   AllCategory,
   AllCommision,
+  AllVendors,
   EditCommission,
   getSubCategory,
   getViewCommission,
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
 import { MDBDataTable } from "mdbreact";
-import moment from "moment";
 import { Link } from "react-router-dom";
 
 const CommissionManagement = () => {
   const [slide, setSlide] = useState("ComM");
   const [sideBar, setSideBar] = useState();
-  const [allCategories, setAllCategories] = useState();
+  const [selectedVendor, setSelectedVendor] = useState();
+  const [allVendors, setAllVendors] = useState();
   const [subCategory, setSubCategory] = useState();
   const [commission, setCommission] = useState([]);
   const [Id, setID] = useState();
@@ -39,15 +40,15 @@ const CommissionManagement = () => {
         width: 50,
       },
       {
-        label: "CATEGORY",
-        field: "cate_name",
+        label: "VENDOR NAME",
+        field: "vendor",
         sort: "asc",
         width: 100,
       },
 
       {
-        label: "SUB-CATEGORY",
-        field: "sub_cate_name",
+        label: "SHOP NAME",
+        field: "shop",
         sort: "asc",
         width: 100,
       },
@@ -67,15 +68,19 @@ const CommissionManagement = () => {
     rows: [],
   });
   useEffect(() => {
-    getAllCat();
     getCommissions();
+    getAllVendors();
   }, []);
 
-  const getAllCat = async () => {
-    const { data } = await AllCategory();
+  const getAllVendors = async () => {
+    const { data } = await AllVendors({
+      status: "APPROVED",
+      page: 1,
+    });
     // console.log(data);
-    setAllCategories(data?.results?.categories);
+    setAllVendors(data?.results?.vendors);
   };
+
   const getCommissions = async () => {
     const { data } = await AllCommision();
     const newRows = [];
@@ -85,9 +90,9 @@ const CommissionManagement = () => {
       values?.map((list, index) => {
         const returnData = {};
         returnData.sn = index + 1 + ".";
-        returnData.cate_name = list?.category?.name_en;
-        returnData.sub_cate_name = list?.subCategory?.name_en;
-        returnData.number = list?.commissionPrice;
+        returnData.vendor = list?.full_name;
+        returnData.shop = list?.shop_name;
+        returnData.number = list?.commission;
         returnData.action = (
           <>
             <Link
@@ -96,7 +101,7 @@ const CommissionManagement = () => {
               data-bs-target="#staticBackdrop"
               onClick={() => viewCommission(list?._id)}
             >
-              View
+              View/Edit
             </Link>
           </>
         );
@@ -121,20 +126,11 @@ const CommissionManagement = () => {
     setCommission(data?.results?.commission);
   };
 
-  const EditSubCategories = async (id) => {
-    const { data } = await getSubCategory({ categoryId: id });
-    setSubCategory(data?.results?.subCategories);
-    let newData = { ...formEditData };
-    newData.category = id;
-    setFormEditData(newData);
-  };
-
   const AddCommision = async (e) => {
     e.preventDefault();
 
     const { data } = await addCommission({
-      category: formData?.category,
-      subCategory: formData?.subCategory,
+      vendor: selectedVendor,
       commissionPrice: formData?.commission,
     });
     console.log(data);
@@ -153,7 +149,7 @@ const CommissionManagement = () => {
 
   const saveCommission = async (e) => {
     e.preventDefault();
-    if(formEditData?.commission > 100){
+    if (formEditData?.commission > 100) {
       Swal.fire({
         toast: true,
         position: "top-end",
@@ -168,8 +164,7 @@ const CommissionManagement = () => {
 
     const { data } = await EditCommission(
       {
-        category: formEditData?.category,
-        subCategory: formEditData?.subCategory,
+        vendor: Id,
         commissionPrice: formEditData?.commission,
       },
       Id
@@ -197,7 +192,7 @@ const CommissionManagement = () => {
         <div className="row buyers-details justify-content-center">
           <div className="col-12">
             <div className="row">
-              <div className="col-12 mb-4 design_outter_comman border shadow">
+              <div className="col-12 mb-4 design_outter_comman border shadow d-none">
                 <div className="row comman_header justify-content-between">
                   <div className="col-auto">
                     <h2>Add Commission</h2>
@@ -207,7 +202,7 @@ const CommissionManagement = () => {
                   className="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"
                   action=""
                 >
-                  <div className="form-group col mb-0">
+                  {/* <div className="form-group col mb-0">
                     <label htmlFor="">Category</label>
                     <select
                       className="form-select form-control"
@@ -241,6 +236,22 @@ const CommissionManagement = () => {
                       {subCategory?.map((item) => (
                         <option value={item?._id}>{item?.name_en}</option>
                       ))}
+                    </select>
+                  </div> */}
+                  <div className="form-group col mb-0">
+                    <label htmlFor="">Vendors</label>
+                    <select
+                      className="form-select form-control"
+                      aria-label="Default select example"
+                      onChange={(e) => setSelectedVendor(e.target.values)}
+                    >
+                      <option selected="">Select Vendor</option>
+                      {allVendors &&
+                        allVendors?.map((item) => (
+                          <option value={item._id} key={item._id}>
+                            {item.full_name}
+                          </option>
+                        ))}
                     </select>
                   </div>
                   <div className="form-group mb-0 col">
@@ -377,52 +388,23 @@ const CommissionManagement = () => {
                 className="form-design px-3 py-2 help-support-form row align-items-end justify-content-center"
                 action=""
               >
-                <div className="form-group col-4">
-                  <label htmlFor="">Category</label>
-                  <select
-                    className="form-select form-control"
-                    onChange={(e) => EditSubCategories(e.target.value)}
-                    aria-label="Default select example"
-                  >
-                    <option selected="" value={commission?.category?._id}>
-                      {commission?.category?.name_en}
-                    </option>
-                    {allCategories?.map((item) => (
-                      <option value={item?._id}>{item?.name_en}</option>
-                    ))}
-                  </select>
+                <div className="form-group col-4" key={commission?.full_name}>
+                  <label htmlFor="">Vendor</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    defaultValue={commission?.full_name}
+                    disabled
+                  />
                 </div>
-                <div className="form-group col-4">
-                  <label htmlFor="">Sub Category</label>
-                  <select
-                    className="form-select form-control"
-                    aria-label="Default select example"
-                    onChange={(e) => {
-                      let newData = { ...formEditData };
-                      newData.subCategory = e.target.value;
-                      setFormEditData(newData);
-                    }}
-                  >
-                    <option selected="" value={commission?.subCategory?._id}>
-                      {commission?.subCategory?.name_en}
-                    </option>
-                    {subCategory?.map((item) => (
-                      <option value={item?._id}>{item?.name_en}</option>
-                    ))}
-                  </select>
-                </div>
-                <div
-                  className="form-group col-4"
-                  key={commission?.commissionPrice}
-                >
+
+                <div className="form-group col-4" key={commission?.commission}>
                   <label htmlFor="">Add Commission</label>
                   <input
                     type="number"
                     className="form-control"
                     defaultValue={
-                      commission?.commissionPrice
-                        ? commission?.commissionPrice
-                        : ""
+                      commission?.commission ? commission?.commission : ""
                     }
                     onChange={(e) => {
                       let newData = { ...formEditData };
@@ -437,7 +419,8 @@ const CommissionManagement = () => {
                     }}
                   />
                 </div>
-                <div className="form-group mb-0 col-auto mt-3">
+
+                <div className="form-group  col-2">
                   <button className="comman_btn" onClick={saveCommission}>
                     Save
                   </button>

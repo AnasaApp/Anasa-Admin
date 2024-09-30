@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import {
   changeBuyerStatus,
   getBuyerBookingDetails,
   getBuyersDetails,
-  getBuyerSupport,
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
 import Loader from "../Loader";

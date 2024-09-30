@@ -2,7 +2,6 @@ import classNames from "classnames";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import Sidebar from "../Sidebar";
-import Select from "react-select";
 import { useEffect } from "react";
 import {
   AddPromoCode,
@@ -10,7 +9,6 @@ import {
   changePromocodeStatus,
   editPromocode,
   getViewPromo,
-  ImageUpload,
   SearchUser,
 } from "../../httpServices/dashHttpService";
 import Swal from "sweetalert2";
@@ -22,13 +20,9 @@ const PromoManagement = () => {
   const [slide, setSlide] = useState("PCM");
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [searchKey, setSearchKey] = useState("");
-  const [userTypes, setUsertypes] = useState();
-  const [promoCodes, setPromoCodes] = useState();
   const [sideBar, setSideBar] = useState();
   const [editData, setEditData] = useState([]);
-  const [newData, setNewData] = useState([
-    { name_en: "", name_ar: "", discount: "", validFrom: "", validTo: "" },
-  ]);
+
   const [promoId, setPromoId] = useState();
   const {
     register,

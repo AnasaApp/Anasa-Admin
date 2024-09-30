@@ -48,7 +48,6 @@ const AddUser = () => {
 
   const handleChange = (selectedOptions) => {
     setSelectedCities(selectedOptions);
-    
   };
 
   const onSave = async (data) => {
@@ -1079,6 +1078,34 @@ const AddUser = () => {
                       </small>
                     )}
                   </div>
+                  {/* <div className="form-group col-3 mb-4">
+                    <label htmlFor="">Commission (%)</label>
+                    <input
+                      type="number"
+                      className={classNames("form-control", {
+                        "is-invalid": errors.commission,
+                      })}
+                      name="commission"
+                      onInput={(e) => {
+                        if (e.target.value > 100) {
+                          alert("Enter value upto 100");
+                          e.target.value = 100;
+                        }
+                      }}
+                      id="name"
+                      {...register("commission", {
+                        maxLength: {
+                          value: 3,
+                          message: "Maximium 3 Characters!",
+                        },
+                      })}
+                    />
+                    {errors.commission && (
+                      <small className="errorText mx-1 ">
+                        {errors.commission?.message}
+                      </small>
+                    )}
+                  </div> */}
 
                   <br className="border" />
                   <div className="form-group col-4 mb-4">

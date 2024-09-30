@@ -1,4 +1,3 @@
-import classNames from "classnames";
 import { MDBDataTable } from "mdbreact";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
@@ -7,7 +6,6 @@ import { Link } from "react-router-dom";
 import {
   changeServiceStatus,
   getServices,
-  getVendorServices,
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
 import Swal from "sweetalert2";
