@@ -52,8 +52,6 @@ const AddUser = () => {
 
   const onSave = async (data) => {
     setLoader(true);
-
-    console.log(data?.country_code);
     const cityValues = selectedCities.map((city) => city.value);
     const formData = new FormData();
     formData.append("shop_cover_image", files?.shop_cover_image);
@@ -70,6 +68,7 @@ const AddUser = () => {
     formData.append("email", data?.email.trim());
     formData.append("signed_contract", files?.signed_contract);
     formData.append("trade_licence_copy", files?.trade_licence_copy);
+    formData.append("commission", data?.commission);
     await AddVendor(formData).then((res) => {
       console.log(res.data);
       if (res.data.message === "Vendor Created Successfully") {
@@ -365,7 +364,7 @@ const AddUser = () => {
                       </small>
                     )}
                   </div>
-                  <div className="form-group col-4 mb-4">
+                  <div className="form-group col-3 mb-4">
                     <label htmlFor="">City</label>
                     <input
                       type="text"
@@ -392,7 +391,7 @@ const AddUser = () => {
                       </small>
                     )}
                   </div>
-                  <div className="form-group col-4 mb-4">
+                  <div className="form-group col-3 mb-4">
                     <label htmlFor="">Country Code</label>
                     <select
                       name="country_code"
@@ -1060,7 +1059,7 @@ const AddUser = () => {
                       </small>
                     )}
                   </div>
-                  <div className="form-group col-4 mb-4">
+                  <div className="form-group col-3 mb-4">
                     <label htmlFor="">Serviceable City</label>
                     <Select
                       defaultValue=""
@@ -1078,7 +1077,7 @@ const AddUser = () => {
                       </small>
                     )}
                   </div>
-                  {/* <div className="form-group col-3 mb-4">
+                  <div className="form-group col-3 mb-4">
                     <label htmlFor="">Commission (%)</label>
                     <input
                       type="number"
@@ -1105,7 +1104,7 @@ const AddUser = () => {
                         {errors.commission?.message}
                       </small>
                     )}
-                  </div> */}
+                  </div>
 
                   <br className="border" />
                   <div className="form-group col-4 mb-4">
