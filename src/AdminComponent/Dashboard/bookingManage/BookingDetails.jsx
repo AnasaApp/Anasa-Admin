@@ -14,6 +14,7 @@ const BookingDetails = () => {
   const [slide, setSlide] = useState("BM");
   const [buyerDetails, setBuyerDetails] = useState([]);
   const [booking, setBookings] = useState([]);
+  const [earning, setEarning] = useState([]);
   const [sideBar, setSideBar] = useState();
   const [loading, setLoading] = useState(true);
   const getBarClick = (val) => {
@@ -36,6 +37,7 @@ const BookingDetails = () => {
       });
       console.log(res);
       setBookings(res?.data?.results?.booking);
+      setEarning(res?.data?.results?.earning);
     });
   };
 
@@ -168,7 +170,7 @@ const BookingDetails = () => {
                         ) : (
                           <div className="row mx-0">
                             <div className="col-12 px-5 pb-4">
-                              <div className="row booking_details_box mt-4">
+                              <div className="row booking_details_box mt-4 pb-0">
                                 <div className="col-6 py-1">
                                   <div className="row mx-0">
                                     <div className="col-6">
@@ -262,12 +264,12 @@ const BookingDetails = () => {
                                   <div className="row mx-0">
                                     <div className="col-6">
                                       <strong className="booking_head">
-                                        SAR:
+                                       Booking Amount:
                                       </strong>
                                     </div>
                                     <div className="col-6">
                                       <span className="booking_head">
-                                        {booking?.total}
+                                       SAR {booking?.total}
                                       </span>
                                     </div>
                                   </div>
@@ -300,19 +302,51 @@ const BookingDetails = () => {
                                     </div>
                                   </div>
                                 </div>
-                                <div className="">
+
+                                <div className="col-6 py-1">
+                                  <div className="row mx-0">
+                                    <div className="col-6">
+                                      <strong className="booking_head">
+                                        Vendor Amount:
+                                      </strong>
+                                    </div>
+                                    <div className="col-6">
+                                      <span className="booking_head">
+                                        SAR {booking?.total - earning?.amount}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="col-6 py-1">
+                                  <div className="row mx-0">
+                                    <div className="col-6">
+                                      <strong className="booking_head">
+                                        Admin Amount:
+                                      </strong>
+                                    </div>
+                                    <div className="col-6">
+                                      <span className="booking_head">
+                                       SAR  {earning?.amount}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div className="mt-3">
                                   {booking?.services?.map((item, index) => (
-                                    <div className=" border row">
-                                      <div className="col-12 py-1">
+                                    <div className=" border rounded  bg-white row m-2 p-2">
+                                      <div className="col-6 py-1">
                                         <div className="row mx-0 justify-content-between">
                                           <div className="col-6">
                                             <strong className="booking_head">
                                               Quantity:
                                             </strong>
                                           </div>
-                                          <div className="col-6">
-                                            <span className="booking_head">
-                                              {item.service ? item?.quantity : '0'}
+                                          <div className="col-6 d-flex text-start ">
+                                            <span className="booking_head ">
+                                              {item.service
+                                                ? item?.quantity
+                                                : "0"}
                                             </span>
                                           </div>
                                         </div>
