@@ -269,7 +269,7 @@ const BookingDetails = () => {
                                     </div>
                                     <div className="col-6">
                                       <span className="booking_head">
-                                       SAR {booking?.total}
+                                       SAR   {booking?.total}
                                       </span>
                                     </div>
                                   </div>

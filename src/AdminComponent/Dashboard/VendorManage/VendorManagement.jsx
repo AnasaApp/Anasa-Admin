@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import {
   AllVendors,
   changeVendorStatus,
+  deleteVendorSoft,
   getVendorDetails,
   importVendorServices,
   VendorsCount,
@@ -269,8 +270,26 @@ const VendorManagement = () => {
             >
               View
             </Link>
+
             <button
-              className="green_btn table_viewbtn"
+              className=" table_viewbtn"
+              style={{
+                backgroundColor: "#FF0000",
+                color: "#fff",
+                border: "none",
+              }}
+              type="button"
+              data-bs-toggle="modal"
+              data-bs-target="#deleteVendor"
+              onClick={() => {
+                setVendorId(list?._id);
+              }}
+            >
+              Delete
+            </button>
+
+            <button
+              className="green_btn table_viewbtn mt-2"
               type="button"
               data-bs-toggle="modal"
               data-bs-target="#importServices"
@@ -377,6 +396,23 @@ const VendorManagement = () => {
         </div>
       </>
     );
+  };
+
+  const deleteVendor = async () => {
+    const { data } = await deleteVendorSoft(vendorId);
+    if (!data?.error) {
+      setVendorId();
+      Swal.fire({
+        title: "Vendor Deleted!",
+        text: "",
+        icon: "success",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+        timer: 500,
+      });
+      getApprovedVendors();
+      document.getElementById("close2").click();
+    }
   };
 
   const onFileSelection = (e, key) => {
@@ -615,6 +651,7 @@ const VendorManagement = () => {
   document.getElementById("penTo")?.setAttribute("max", today);
   document.getElementById("retFrom")?.setAttribute("max", today);
   document.getElementById("retTo")?.setAttribute("max", today);
+
   return (
     <div className={sideBar === "click" ? "expanded_main" : "admin_main"}>
       <Sidebar slide={slide} getBarClick={getBarClick} />
@@ -986,6 +1023,52 @@ const VendorManagement = () => {
                 class="btn comman_btn rounded-pill"
               >
                 Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="modal fade"
+        id="deleteVendor"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabindex="-1"
+        aria-labelledby="staticBackdropLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">
+                Delete Vendor
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                id="close2"
+                onClick={() => setVendorId()}
+              ></button>
+            </div>
+            <div class="modal-body">
+              <h4>Are you Sure?</h4>
+            </div>
+            <div class="modal-footer">
+              <button
+                onClick={() => document.getElementById("close2").click()}
+                class="btn comman_btn rounded-pill"
+              >
+                Cancel
+              </button>
+
+              <button
+                class="btn comman_btn rounded-pill"
+                onClick={() => deleteVendor()}
+              >
+                Delete
               </button>
             </div>
           </div>

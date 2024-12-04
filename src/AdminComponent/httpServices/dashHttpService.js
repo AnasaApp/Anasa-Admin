@@ -882,6 +882,28 @@ export async function getVendorDetails(id, formData) {
     return { error };
   }
 }
+export async function deleteVendorSoft(id) {
+  try {
+    const { data } = await appHttpService.get(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/deleteVendor/${id}`
+    );
+    // console.log(data);
+
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      // console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
 export async function getVendorBooking(id, formData) {
   try {
     const { data } = await appHttpService.post(
@@ -1693,7 +1715,7 @@ export async function AddCombo(formData) {
 export async function DeleteOffer(id) {
   try {
     const { data } = await appHttpService.get(
-      `${process.env.REACT_APP_APIENDPOINT}api/admin/deleteOffer/${id}`,
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/deleteOffer/${id}`
     );
     // console.log(data);
     if (data?.error) {
@@ -2611,7 +2633,6 @@ export async function getPushNotify() {
     return { error };
   }
 }
-
 
 export async function getCities() {
   try {
