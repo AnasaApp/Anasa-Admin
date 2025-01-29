@@ -107,6 +107,12 @@ const EventManagement = () => {
         width: 100,
       },
       {
+        label: "BUYER CONTACT",
+        field: "buyerContact",
+        sort: "asc",
+        width: 100,
+      },
+      {
         label: "STAR DATE & TIME",
         field: "date",
         sort: "asc",
@@ -154,6 +160,7 @@ const EventManagement = () => {
         returnData.address = address;
         returnData.desc = list?.description;
         returnData.buyer = list?.buyer?.full_name;
+        returnData.buyerContact = list?.buyer?.phone_number;
         const startTime = list?.startTime;
 
         let formattedTime;
@@ -209,6 +216,31 @@ const EventManagement = () => {
                 : list?.status === "Completed"
                 ? "View Plan"
                 : ""}
+            </Link>
+
+            <Link
+              className={"comman_btn table_viewbtn bg-danger mt-2"}
+              // data-bs-toggle="modal"
+              // data-bs-target={
+              //   list?.status === "Pending"
+              //     ? "#staticBackdrop50"
+              //     : list?.status === "Paid"
+              //     ? "#staticBackdrop49"
+              //     : list?.status === "Completed"
+              //     ? "#staticBackdrop50"
+              //     : ""
+              // }
+              // onClick={() =>
+              //   list?.status === "Pending"
+              //     ? manageEvent(list?._id)
+              //     : list?.status === "Paid"
+              //     ? manageEvent(list?._id)
+              //     : list?.status === "Completed"
+              //     ? manageEvent(list?._id)
+              //     : ""
+              // }
+            >
+              Decline
             </Link>
           </>
         );
