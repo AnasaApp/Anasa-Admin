@@ -882,6 +882,89 @@ export async function getVendorDetails(id, formData) {
     return { error };
   }
 }
+
+export async function getAddedCities(id, formData) {
+  try {
+    const { data } = await appHttpService.patch(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/getAllCities`,
+      {
+        formData,
+      }
+    );
+
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      // console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
+
+export async function AddCity(formData) {
+  try {
+    const { data } = await appHttpService.post(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/addCity`,
+      formData
+    );
+
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      // console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
+
+export async function EditVendor(id, formData) {
+  try {
+    const { data, error } = await appHttpService.put(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/editVendor/${id}`,
+      formData
+    );
+
+    if (error) {
+      if (data?.error) {
+        Swal.fire({
+          title: data?.message,
+          text: "",
+          icon: "error",
+          confirmButtonText: "Okay",
+          confirmButtonColor: "#e25829",
+        });
+      }
+    }
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      // console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
+
 export async function deleteVendorSoft(id) {
   try {
     const { data } = await appHttpService.get(

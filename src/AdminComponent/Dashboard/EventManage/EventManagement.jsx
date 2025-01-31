@@ -26,7 +26,6 @@ const EventManagement = () => {
   const [eventInfo, setEventInfo] = useState();
   const [services, setServices] = useState();
   const [selectedServices, setSelectedServices] = useState([]);
-  const [selectedPackage, setSelectedPackage] = useState([]);
   const [searchKey, setSearchKey] = useState("");
   const [packages, setPackages] = useState([]);
   const [selectedServiceImage, setSelectedServiceImage] = useState([]);

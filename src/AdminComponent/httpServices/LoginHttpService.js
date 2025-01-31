@@ -7,8 +7,6 @@ export async function adminLogin(formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/login`,
       formData
     );
-    console.log(data);
-
     if (!data.error) {
       await localStorage.removeItem("token-admin");
       await localStorage.setItem("token-admin", data.results.token);

@@ -3,7 +3,10 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { saveAs } from "file-saver";
 import {
+  AddCity,
   downloadFiles,
+  EditVendor,
+  getAddedCities,
   getVendorBooking,
   getVendorDetails,
   getVendorServices,
@@ -13,23 +16,96 @@ import Sidebar from "../Sidebar";
 import moment from "moment";
 import { MDBDataTable } from "mdbreact";
 import { countries } from "country-data";
+import { useForm } from "react-hook-form";
+import Select from "react-select";
 
 const ApprovedView = () => {
   const [slide, setSlide] = useState("VM");
   const [vendor, setVendor] = useState();
   const [sideBar, setSideBar] = useState();
-  const [vendorBooking, setVendorBooking] = useState();
   const [values, setValues] = useState({ from: "", to: "" });
-  const [transaction, setTransaction] = useState();
   const [countryName, setCountryName] = useState();
   const [shopAddress, setShopAddress] = useState();
-  const navigate = useNavigate();
   let location = useLocation();
+
   useEffect(() => {
     getVendor();
     GetVendorBooking();
     GetVendorTransactions();
   }, []);
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm();
+
+  const [form1, setForm1] = useState(true);
+  const [cities, setCities] = useState([]);
+  const [selectedvalues, setSelectedValues] = useState();
+  const [selectedOptions, setSelectedOptions] = useState();
+
+  console.log({ selectedvalues });
+
+  const fetchCities = async (vendor) => {
+    const filteredIds = new Set(
+      vendor?.serviceableCity?.map((itms) => itms?._id)
+    );
+
+    try {
+      const response = await getAddedCities();
+      let tempCities = response.data?.results?.cities || [];
+      setCities(tempCities);
+
+      const preSelected = tempCities
+        ?.filter((itm) => filteredIds.has(itm?._id)) // Using `Set` lookup
+        .map((city) => ({
+          value: city._id,
+          label: city.city,
+        }));
+
+      console.log({ preSelected, tempCities });
+      setSelectedValues(preSelected);
+    } catch (error) {
+      console.error("Error fetching cities", error);
+    }
+  };
+
+  const onSubmit = async (info) => {
+    try {
+      if (!form1) {
+        const { data } = await AddCity({
+          city: info.cityEn,
+          city_ar: info.cityAr,
+          state: "Meccah",
+        });
+        if (!data?.error) {
+          fetchCities();
+          document.getElementById("city_ar").value = "";
+        }
+      } else {
+        const formData = new FormData();
+        let citiess = selectedvalues?.map((itmss) => itmss?.value);
+
+        formData.append("serviceableCity", JSON.stringify(citiess));
+        formData.append("shop_cover_image", info.image[0]);
+        let id = location?.state?.id;
+        const { data } = await EditVendor(id, formData);
+        if (!data?.error) {
+          document.getElementById("resetBtn").click();
+          document.getElementById("closeModal").click();
+          getVendor();
+
+        }
+      }
+      setForm1(true);
+    } catch (error) {
+      console.error("Error submitting form", error);
+    }
+  };
+
   const [bookings, setBookings] = useState({
     columns: [
       {
@@ -73,6 +149,7 @@ const ApprovedView = () => {
     ],
     rows: [],
   });
+
   const [transactionList, setTransactionList] = useState({
     columns: [
       {
@@ -122,6 +199,7 @@ const ApprovedView = () => {
     ],
     rows: [],
   });
+
   const handleDate = (e) => {
     const value = e.target.value;
     setValues({
@@ -129,6 +207,7 @@ const ApprovedView = () => {
       [e.target.name]: value,
     });
   };
+
   const getVendor = async () => {
     let id = location?.state?.id;
     const { data } = await getVendorDetails(id, { status: "APPROVED" });
@@ -152,13 +231,16 @@ const ApprovedView = () => {
       const countryName = country ? country.name : "Country Not Found";
       setCountryName(countryName);
     }
+    fetchCities(vendor);
     setVendor(values);
   };
+
   const GetVendorBooking = async () => {
     let id = location?.state?.id;
     const { data } = await getVendorBooking(id);
-    // setVendorBooking(data?.results.bookings);
+
     const newRows = [];
+
     if (!data.error) {
       let values = data?.results.bookings;
       console.log(values);
@@ -216,6 +298,7 @@ const ApprovedView = () => {
       setTransactionList({ ...transactionList, rows: newRows });
     }
   };
+
   const onSearchBookings = async (e) => {
     let id = location?.state?.id;
     if (values?.from && values?.to) {
@@ -503,18 +586,19 @@ const ApprovedView = () => {
                     </div>
                   </div>
 
-                  {/* <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <div className="col">
                         <Link
                           data-bs-toggle="modal"
-                          data-bs-target="#staticBackdrop44"
+                          data-bs-target="#staticBackdrop448"
+                          onClick={() => fetchCities(vendor)}
                         >
-                          <strong>Manage Payout</strong>
+                          <strong>Edit City & Profile</strong>
                         </Link>
                       </div>
                     </div>
-                  </div> */}
+                  </div>
                 </div>
               </div>
             </div>
@@ -709,6 +793,189 @@ const ApprovedView = () => {
                 </div>
                 <div className="form-group mb-0 col-auto mt-3">
                   <button className="comman_btn">Confirm</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        className="modal fade comman_modal"
+        id="staticBackdrop44"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabIndex={-1}
+        aria-labelledby="staticBackdropLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content border-0">
+            <div className="modal-header">
+              <h5 className="modal-title" id="staticBackdropLabel">
+                Payout
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              />
+            </div>
+            <div className="modal-body">
+              <form
+                className="form-design px-3 py-2 help-support-form row align-items-end justify-content-center"
+                action=""
+              >
+                <div className="form-group col-6">
+                  <label htmlFor="">Total Payout</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    defaultValue="5000"
+                    disabled
+                  />
+                </div>
+                <div className="form-group col-6">
+                  <label htmlFor="">Withdraw</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter Amount"
+                  />
+                </div>
+                <div className="form-group mb-0 col-auto mt-3">
+                  <button className="comman_btn">Confirm</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        className="modal fade comman_modal"
+        id="staticBackdrop448"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabIndex={-1}
+        aria-labelledby="staticBackdropLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content border-0">
+            <div className="modal-header">
+              <h5 className="modal-title" id="staticBackdropLabel">
+                Edit
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                id="closeModal"
+              />
+            </div>
+            <div className="modal-body">
+              <form
+                className="form-design px-3 py-2 help-support-form row align-items-end justify-content-center"
+                onSubmit={handleSubmit(onSubmit)}
+              >
+                {form1 ? (
+                  <div className="col-12 text-end mb-4">
+                    <label className="fw-bold">
+                      City not found?{" "}
+                      <a
+                        onClick={() => setForm1(false)}
+                        className="comman_btn2 table_viewbtn"
+                      >
+                        + Add Now
+                      </a>
+                    </label>
+                  </div>
+                ) : (
+                  <div className="col-12 text-end mb-4">
+                    <label className="fw-bold">
+                      <a
+                        onClick={() => setForm1(true)}
+                        className="comman_btn2 table_viewbtn"
+                      >
+                        Cancel
+                      </a>
+                    </label>
+                  </div>
+                )}
+
+                {form1 ? (
+                  <>
+                    <div className="form-group col-6">
+                      <label>Serviceable City</label>
+                      <Select
+                        options={cities.map((city) => ({
+                          value: city._id,
+                          label: city.city,
+                        }))}
+                        isMulti
+                        value={selectedvalues}
+                        onChange={(selectedOptions) =>
+                          setSelectedValues(selectedOptions)
+                        }
+                      />
+                    </div>
+                    <div className="form-group col-6">
+                      <label>Upload New Profile</label>
+                      <input
+                        type="file"
+                        className="form-control"
+                        {...register("image")}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="form-group col-12">
+                      <label>State</label>
+                      <select className="form-select" disabled>
+                        <option>Meccah</option>
+                      </select>
+                    </div>
+                    <div className="form-group col-6">
+                      <label>City Name (en)</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        {...register("cityEn", { required: true })}
+                      />
+                      {errors.cityEn && (
+                        <p className="text-danger">
+                          City Name (en) is required
+                        </p>
+                      )}
+                    </div>
+                    <div className="form-group col-6">
+                      <label>City Name (ar)</label>
+                      <input
+                        type="text"
+                        id="city_ar"
+                        className="form-control"
+                        {...register("cityAr", { required: true })}
+                      />
+                      {errors.cityAr && (
+                        <p className="text-danger">
+                          City Name (ar) is required
+                        </p>
+                      )}
+                    </div>
+                  </>
+                )}
+
+                <div className="form-group mb-0 col-auto mt-3">
+                  <button type="submit" className="comman_btn">
+                    Confirm
+                  </button>
+                  <button type="reset" className="d-none" id="resetBtn">
+                    Reset
+                  </button>
                 </div>
               </form>
             </div>
