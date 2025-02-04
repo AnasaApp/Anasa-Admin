@@ -9,6 +9,7 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
   const [sideBar, setSideBar] = useState(width < 768 ? false : true);
   const [signOutClicked, setSignOutClicked] = useState(false);
 
+
   useEffect(() => {
     setSlideState(slide);
   }, []);
@@ -17,7 +18,7 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
   let AdminData = JSON.parse(localStorage.getItem("token-admin-data"));
   let Admin = JSON.parse(localStorage.getItem("AdminSave"));
 
-  // console.log(AdminData);
+  console.log(AdminData?.access);
 
   const Logout = () => {
     localStorage.removeItem("token-admin");
@@ -40,6 +41,37 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
     }
   }, [token, navigate, signOutClicked]);
   console.log(width);
+
+console.log(slide);
+
+  const allModules = [
+    { label: "Dashboard", value: "Dashboard", icon: "fas fa-home", path: "/Admin/Dashboard",key:"Dash" },
+    { label: "Buyers Management", value: "Buyers-Management", icon: "fas fa-luggage-cart", path: "/Admin/Dashboard/Buyer-Management",key:"BuyM" },
+    { label: "Vendor Management", value: "Vendor-Management", icon: "fas fa-store", path: "/Admin/Dashboard/Vendor-Management",key:"VM" },
+    { label: "Booking Management", value: "Booking-Management", icon: "fas fa-clipboard-list", path: "/Admin/Dashboard/Booking-Management",key:"BM" },
+    { label: "Category Management", value: "Category-Management", icon: "fas fa-list-ol", path: "/Admin/Dashboard/Category-Management",key:"CM" },
+    { label: "Transaction Management", value: "Transaction-Management", icon: "fas fa-repeat", path: "/Admin/Dashboard/Transaction-Management",key:"TM" },
+    { label: "Services Management", value: "Services-Management", icon: "fa-solid fa-layer-group", path: "/Admin/Dashboard/Services-Management",key:"SM" },
+    { label: "Payout Management", value: "Payout-Management", icon: "fa-solid fa-sack-dollar", path: "/Admin/Dashboard/Payout-Management",key:"PM" },
+    { label: "Event-Plan Management", value: "Event-Plan-Management", icon: "fas fa-calendar", path: "/Admin/Dashboard/Event-Management",key:"EM" },
+    { label: "Commission Management", value: "Commission-Management", icon: "fas fa-percent", path: "/Admin/Dashboard/Commission-Management",key:"ComM" },
+    { label: "Promo Code Management", value: "Promocode-Management", icon: "fas fa-coins", path: "/Admin/Dashboard/Promo-Management",key:"PCM" },
+    { label: "Advertisement Management", value: "Advertisement-Management", icon: "fas fa-ad", path: "/Admin/Dashboard/Adds-Management",key:"ADM" },
+    { label: "Marketing Offers", value: "Marketing-Offers", icon: "fas fa-gift", path: "/Admin/Dashboard/Marketing-Offers",key:"MO" },
+    { label: "Notification Management", value: "Notification-Management", icon: "fas fa-bell", path: "/Admin/Dashboard/Notifications-Management",key:"NM" },
+    { label: "Help & Support", value: "Help-and-Support", icon: "fas fa-hands-holding", path: "/Admin/Dashboard/Help&Support-Management",key:"HS" },
+    { label: "Content Management", value: "Content-Management", icon: "fas fa-user-edit", path: "/Admin/Dashboard/Content-Management",key:"ConM" },
+  ];
+  
+  // Filtered modules based on access
+  let accessibleModules = allModules;
+
+  if (AdminData?.access?.length > 0) {
+    accessibleModules = allModules?.filter((module) =>
+      AdminData.access.includes(module.value)
+    );
+  }
+
 
   return (
     <div>
@@ -64,203 +96,25 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
                 <img src={require("../../assets/img/logo.png")} alt="Logo" />{" "}
               </NavLink>
             </div>
-            <div className="sidebar_menus">
+             <div className="sidebar_menus">
               <ul className="list-unstyled ps-1 m-0">
-                <li>
-                  <Link
-                    className={SlideState === "Dash" ? "active" : ""}
-                    to="/Admin/Dashboard"
-                    onClick={() => {
-                      setSlideState("Dash");
-                      if (width < 768) {
-                        setSideBar(!sideBar);
-                      }
-                    }}
-                  >
-                    <i className="fas fa-home" />
-                    Dashboard
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className={SlideState === "BuyM" ? "active" : ""}
-                    to="/Admin/Dashboard/Buyer-Management"
-                    onClick={() => {
-                      setSlideState("BuyM");
-                    }}
-                  >
-                    <i className="fas fa-luggage-cart" />
-                    Buyers Management
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className={SlideState === "VM" ? "active" : ""}
-                    to="/Admin/Dashboard/Vendor-Management"
-                    onClick={() => {
-                      setSlideState("VM");
-                    }}
-                  >
-                    <i className="fas fa-store" />
-                    Vendor Management
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className={SlideState === "BM" ? "active" : ""}
-                    to="/Admin/Dashboard/Booking-Management"
-                    onClick={() => {
-                      setSlideState("BM");
-                    }}
-                  >
-                    <i className="fas fa-clipboard-list" />
-                    Booking Management
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className={SlideState === "CM" ? "active" : ""}
-                    to="/Admin/Dashboard/Category-Management"
-                    onClick={() => {
-                      setSlideState("CM");
-                    }}
-                  >
-                    <i className="fas fa-list-ol" />
-                    Category Management
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className={SlideState === "TM" ? "active" : ""}
-                    to="/Admin/Dashboard/Transaction-Management"
-                    onClick={() => {
-                      setSlideState("TM");
-                    }}
-                  >
-                    <i className="fas fa-repeat" />
-                    Transaction Management
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className={SlideState === "SM" ? "active" : ""}
-                    to="/Admin/Dashboard/Services-Management"
-                    onClick={() => {
-                      setSlideState("SM");
-                    }}
-                  >
-                    <i class="fa-solid fa-layer-group"></i>
-                    Services Management
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className={SlideState === "PM" ? "active" : ""}
-                    to="/Admin/Dashboard/Payout-Management"
-                    onClick={() => {
-                      setSlideState("PM");
-                    }}
-                  >
-                    <i class="fa-solid fa-sack-dollar"></i>
-                    Payout Management
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className={SlideState === "EM" ? "active" : ""}
-                    to="/Admin/Dashboard/Event-Management"
-                    onClick={() => {
-                      setSlideState("EM");
-                    }}
-                  >
-                    <i class="fas fa-calendar"></i>
-                    Event-Plan Management
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className={SlideState === "ComM" ? "active" : ""}
-                    to="/Admin/Dashboard/Commission-Management"
-                    onClick={() => {
-                      setSlideState("ComM");
-                    }}
-                  >
-                    <i className="fas fa-percent" />
-                    Commission Management
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className={SlideState === "PCM" ? "active" : ""}
-                    to="/Admin/Dashboard/Promo-Management"
-                    onClick={() => {
-                      setSlideState("PCM");
-                    }}
-                  >
-                    <i className="fas fa-coins" />
-                    Promo Code Management
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className={SlideState === "ADM" ? "active" : ""}
-                    to="/Admin/Dashboard/Adds-Management"
-                    onClick={() => {
-                      setSlideState("ADM");
-                    }}
-                  >
-                    <i className="fas fa-ad" />
-                    Advertisment Management
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className={SlideState === "MO" ? "active" : ""}
-                    to="/Admin/Dashboard/Marketing-Offers"
-                    onClick={() => {
-                      setSlideState("MO");
-                    }}
-                  >
-                    <i className="fas fa-gift" />
-                    Marketing offers
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className={SlideState === "NM" ? "active" : ""}
-                    to="/Admin/Dashboard/Notifications-Management"
-                    onClick={() => {
-                      setSlideState("NM");
-                    }}
-                  >
-                    <i className="fas fa-bell" />
-                    Notification Management
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className={SlideState === "HS" ? "active" : ""}
-                    to="/Admin/Dashboard/Help&Support-Management"
-                    onClick={() => {
-                      setSlideState("HS");
-                    }}
-                  >
-                    <i className="fas fa-hands-holding" />
-                    Help &amp; Support
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className={SlideState === "ConM" ? "active" : ""}
-                    to="/Admin/Dashboard/Content-Management"
-                    onClick={() => {
-                      setSlideState("ConM");
-                    }}
-                  >
-                    <i className="fas fa-user-edit" />
-                    Content Management
-                  </Link>
-                </li>
+                {accessibleModules?.map((module) => (
+                  <li key={module.key}>
+                    <Link
+                      className={SlideState === module.key ? "active" : ""}
+                      to={module.path}
+                      onClick={() => {
+                        setSlideState(module.key);
+                        if (width < 768) {
+                          setSideBar(!sideBar);
+                        }
+                      }}
+                    >
+                      <i className={module.icon} />
+                      {module.label}
+                    </Link>
+                  </li>
+                ))}
                 <li>
                   <Link className="" onClick={Logout}>
                     <i className="fas fa-sign-out" />

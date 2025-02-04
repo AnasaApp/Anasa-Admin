@@ -37,8 +37,6 @@ const ApprovedView = () => {
   const {
     register,
     handleSubmit,
-    setValue,
-    watch,
     formState: { errors },
   } = useForm();
 
@@ -79,7 +77,6 @@ const ApprovedView = () => {
         const { data } = await AddCity({
           city: info.cityEn,
           city_ar: info.cityAr,
-          state: "Meccah",
         });
         if (!data?.error) {
           fetchCities();
@@ -933,7 +930,7 @@ const ApprovedView = () => {
                   </>
                 ) : (
                   <>
-                    <div className="form-group col-12">
+                    <div className="form-group col-12 d-none">
                       <label>State</label>
                       <select className="form-select" disabled>
                         <option>Meccah</option>

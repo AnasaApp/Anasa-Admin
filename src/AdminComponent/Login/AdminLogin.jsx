@@ -7,6 +7,121 @@ import { Button } from "rsuite";
 import { adminLogin } from "../httpServices/LoginHttpService";
 import { useState } from "react";
 
+const allModules = [
+  {
+    label: "Dashboard",
+    value: "Dashboard",
+    icon: "fas fa-home",
+    path: "/Admin/Dashboard",
+    key: "Dash",
+  },
+  {
+    label: "Buyers Management",
+    value: "Buyers-Management",
+    icon: "fas fa-luggage-cart",
+    path: "/Admin/Dashboard/Buyer-Management",
+    key: "BuyM",
+  },
+  {
+    label: "Vendor Management",
+    value: "Vendor-Management",
+    icon: "fas fa-store",
+    path: "/Admin/Dashboard/Vendor-Management",
+    key: "VM",
+  },
+  {
+    label: "Booking Management",
+    value: "Booking-Management",
+    icon: "fas fa-clipboard-list",
+    path: "/Admin/Dashboard/Booking-Management",
+    key: "BM",
+  },
+  {
+    label: "Category Management",
+    value: "Category-Management",
+    icon: "fas fa-list-ol",
+    path: "/Admin/Dashboard/Category-Management",
+    key: "CM",
+  },
+  {
+    label: "Transaction Management",
+    value: "Transaction-Management",
+    icon: "fas fa-repeat",
+    path: "/Admin/Dashboard/Transaction-Management",
+    key: "TM",
+  },
+  {
+    label: "Services Management",
+    value: "Services-Management",
+    icon: "fa-solid fa-layer-group",
+    path: "/Admin/Dashboard/Services-Management",
+    key: "SM",
+  },
+  {
+    label: "Payout Management",
+    value: "Payout-Management",
+    icon: "fa-solid fa-sack-dollar",
+    path: "/Admin/Dashboard/Payout-Management",
+    key: "PM",
+  },
+  {
+    label: "Event-Plan Management",
+    value: "Event-Plan-Management",
+    icon: "fas fa-calendar",
+    path: "/Admin/Dashboard/Event-Management",
+    key: "EM",
+  },
+  {
+    label: "Commission Management",
+    value: "Commission-Management",
+    icon: "fas fa-percent",
+    path: "/Admin/Dashboard/Commission-Management",
+    key: "ComM",
+  },
+  {
+    label: "Promo Code Management",
+    value: "Promocode-Management",
+    icon: "fas fa-coins",
+    path: "/Admin/Dashboard/Promo-Management",
+    key: "PCM",
+  },
+  {
+    label: "Advertisement Management",
+    value: "Advertisement-Management",
+    icon: "fas fa-ad",
+    path: "/Admin/Dashboard/Adds-Management",
+    key: "ADM",
+  },
+  {
+    label: "Marketing Offers",
+    value: "Marketing-Offers",
+    icon: "fas fa-gift",
+    path: "/Admin/Dashboard/Marketing-Offers",
+    key: "MO",
+  },
+  {
+    label: "Notification Management",
+    value: "Notification-Management",
+    icon: "fas fa-bell",
+    path: "/Admin/Dashboard/Notifications-Management",
+    key: "NM",
+  },
+  {
+    label: "Help & Support",
+    value: "Help-and-Support",
+    icon: "fas fa-hands-holding",
+    path: "/Admin/Dashboard/Help&Support-Management",
+    key: "HS",
+  },
+  {
+    label: "Content Management",
+    value: "Content-Management",
+    icon: "fas fa-user-edit",
+    path: "/Admin/Dashboard/Content-Management",
+    key: "ConM",
+  },
+];
+
 const AdminLogin = () => {
   const [rememberCheck, setRememberCheck] = useState(false);
   const {
@@ -14,7 +129,7 @@ const AdminLogin = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  
+
   const navigate = useNavigate();
   let AdminData = JSON.parse(localStorage.getItem("AdminSave"));
   function togglePassword() {
@@ -34,8 +149,15 @@ const AdminLogin = () => {
     rememberCheck && rememberMe(data);
     const res = await adminLogin(data);
     if (!res?.data.error) {
+      let AdminData = res?.data?.results?.verify;
       localStorage.setItem("token-admin", res.data?.results.token);
-      navigate("/Admin/Dashboard");
+      if (AdminData?.access?.length > 0) {
+        allModules?.map((itms) => {
+          itms?.value === AdminData?.access?.[0] && navigate(itms?.path);
+        });
+      } else {
+        navigate("/Admin/Dashboard");
+      }
     }
   };
 
