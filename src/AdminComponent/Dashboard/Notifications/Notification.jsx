@@ -53,6 +53,12 @@ const Notification = () => {
         width: 50,
       },
       {
+        label: "TITLE",
+        field: "title",
+        sort: "asc",
+        width: 100,
+      },
+      {
         label: "MESSAGE SENT",
         field: "message_sent",
         sort: "asc",
@@ -96,6 +102,7 @@ const Notification = () => {
         values?.map((list, index) => {
           const returnData = {};
           returnData.sn = index + 1 + ".";
+          returnData.title = list?.title;
           returnData.message_sent = list?.message;
           returnData.user = list?.userType;
           returnData.status = "Sent";
@@ -130,7 +137,6 @@ const Notification = () => {
       status: "APPROVED",
       page: 1,
     });
-    // console.log(data?.results?.vendors);
     if (!data.error) {
       let res = data?.results?.vendors;
       console.log(res);
@@ -179,22 +185,25 @@ const Notification = () => {
   const onSubmit = async (data) => {
     if (userTypes) {
       console.log(userTypes);
-  
+
       let selectedUsersKey;
       if (userTypes === "Vendor") {
         selectedUsersKey = "vendors";
       } else {
         selectedUsersKey = "buyers";
       }
-  
+
       if (
         selectedUsers.usersSelected &&
         selectedUsers.usersSelected.length > 0
       ) {
         await SendPushNotify({
+          title: data?.title,
           message: data?.message,
           userType: userTypes,
-          [selectedUsersKey]: selectedUsers.usersSelected.map((item) => item?.value),
+          [selectedUsersKey]: selectedUsers.usersSelected.map(
+            (item) => item?.value
+          ),
         }).then((res) => {
           document.getElementById("resetForm").click();
           GetNotifications();
@@ -213,7 +222,7 @@ const Notification = () => {
         const allUsersOfType =
           userTypes === "Vendor" ? vendorOptions : buyerOptions;
         const selectedUserIds = allUsersOfType.map((item) => item.value);
-  
+
         await SendPushNotify({
           message: data?.message,
           userType: userTypes,
@@ -236,7 +245,6 @@ const Notification = () => {
       message.error("Please select a user type.");
     }
   };
-  
 
   return (
     <div className={sideBar === "click" ? "expanded_main" : "admin_main"}>
@@ -275,6 +283,26 @@ const Notification = () => {
                       </small>
                     )}
                   </div>
+
+                  <div className="form-group col-3">
+                    <label htmlFor="">Title</label>
+                    <input
+                      type="text"
+                      className={classNames("form-control", {
+                        "is-invalid": errors.title,
+                      })}
+                      name="title"
+                      {...register("title", {
+                        required: "*Title is required!",
+                      })}
+                    />
+                    {errors.title && (
+                      <small className="errorText mx-1">
+                        {errors.message.title}
+                      </small>
+                    )}
+                  </div>
+
                   <div className="form-group mb-0 col Select">
                     <label htmlFor="">Select Vendor/Buyer</label>
                     <select

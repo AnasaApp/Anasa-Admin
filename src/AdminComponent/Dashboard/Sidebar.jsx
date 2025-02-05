@@ -9,7 +9,6 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
   const [sideBar, setSideBar] = useState(width < 768 ? false : true);
   const [signOutClicked, setSignOutClicked] = useState(false);
 
-
   useEffect(() => {
     setSlideState(slide);
   }, []);
@@ -42,27 +41,123 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
   }, [token, navigate, signOutClicked]);
   console.log(width);
 
-console.log(slide);
+  console.log(slide);
 
   const allModules = [
-    { label: "Dashboard", value: "Dashboard", icon: "fas fa-home", path: "/Admin/Dashboard",key:"Dash" },
-    { label: "Buyers Management", value: "Buyers-Management", icon: "fas fa-luggage-cart", path: "/Admin/Dashboard/Buyer-Management",key:"BuyM" },
-    { label: "Vendor Management", value: "Vendor-Management", icon: "fas fa-store", path: "/Admin/Dashboard/Vendor-Management",key:"VM" },
-    { label: "Booking Management", value: "Booking-Management", icon: "fas fa-clipboard-list", path: "/Admin/Dashboard/Booking-Management",key:"BM" },
-    { label: "Category Management", value: "Category-Management", icon: "fas fa-list-ol", path: "/Admin/Dashboard/Category-Management",key:"CM" },
-    { label: "Transaction Management", value: "Transaction-Management", icon: "fas fa-repeat", path: "/Admin/Dashboard/Transaction-Management",key:"TM" },
-    { label: "Services Management", value: "Services-Management", icon: "fa-solid fa-layer-group", path: "/Admin/Dashboard/Services-Management",key:"SM" },
-    { label: "Payout Management", value: "Payout-Management", icon: "fa-solid fa-sack-dollar", path: "/Admin/Dashboard/Payout-Management",key:"PM" },
-    { label: "Event-Plan Management", value: "Event-Plan-Management", icon: "fas fa-calendar", path: "/Admin/Dashboard/Event-Management",key:"EM" },
-    { label: "Commission Management", value: "Commission-Management", icon: "fas fa-percent", path: "/Admin/Dashboard/Commission-Management",key:"ComM" },
-    { label: "Promo Code Management", value: "Promocode-Management", icon: "fas fa-coins", path: "/Admin/Dashboard/Promo-Management",key:"PCM" },
-    { label: "Advertisement Management", value: "Advertisement-Management", icon: "fas fa-ad", path: "/Admin/Dashboard/Adds-Management",key:"ADM" },
-    { label: "Marketing Offers", value: "Marketing-Offers", icon: "fas fa-gift", path: "/Admin/Dashboard/Marketing-Offers",key:"MO" },
-    { label: "Notification Management", value: "Notification-Management", icon: "fas fa-bell", path: "/Admin/Dashboard/Notifications-Management",key:"NM" },
-    { label: "Help & Support", value: "Help-and-Support", icon: "fas fa-hands-holding", path: "/Admin/Dashboard/Help&Support-Management",key:"HS" },
-    { label: "Content Management", value: "Content-Management", icon: "fas fa-user-edit", path: "/Admin/Dashboard/Content-Management",key:"ConM" },
+    {
+      label: "Dashboard",
+      value: "Dashboard",
+      icon: "fas fa-home",
+      path: "/Admin/Dashboard",
+      key: "Dash",
+    },
+    {
+      label: "Buyers Management",
+      value: "Buyers-Management",
+      icon: "fas fa-luggage-cart",
+      path: "/Admin/Dashboard/Buyer-Management",
+      key: "BuyM",
+    },
+    {
+      label: "Vendor Management",
+      value: "Vendor-Management",
+      icon: "fas fa-store",
+      path: "/Admin/Dashboard/Vendor-Management",
+      key: "VM",
+    },
+    {
+      label: "Booking Management",
+      value: "Booking-Management",
+      icon: "fas fa-clipboard-list",
+      path: "/Admin/Dashboard/Booking-Management",
+      key: "BM",
+    },
+    {
+      label: "Category Management",
+      value: "Category-Management",
+      icon: "fas fa-list-ol",
+      path: "/Admin/Dashboard/Category-Management",
+      key: "CM",
+    },
+    {
+      label: "Transaction Management",
+      value: "Transaction-Management",
+      icon: "fas fa-repeat",
+      path: "/Admin/Dashboard/Transaction-Management",
+      key: "TM",
+    },
+    {
+      label: "Services Management",
+      value: "Services-Management",
+      icon: "fa-solid fa-layer-group",
+      path: "/Admin/Dashboard/Services-Management",
+      key: "SM",
+    },
+    {
+      label: "Payout Management",
+      value: "Payout-Management",
+      icon: "fa-solid fa-sack-dollar",
+      path: "/Admin/Dashboard/Payout-Management",
+      key: "PM",
+    },
+    {
+      label: "Event-Plan Management",
+      value: "Event-Plan-Management",
+      icon: "fas fa-calendar",
+      path: "/Admin/Dashboard/Event-Management",
+      key: "EM",
+    },
+    {
+      label: "Commission Management",
+      value: "Commission-Management",
+      icon: "fas fa-percent",
+      path: "/Admin/Dashboard/Commission-Management",
+      key: "ComM",
+    },
+    {
+      label: "Promo Code Management",
+      value: "Promocode-Management",
+      icon: "fas fa-coins",
+      path: "/Admin/Dashboard/Promo-Management",
+      key: "PCM",
+    },
+    {
+      label: "Advertisement Management",
+      value: "Advertisement-Management",
+      icon: "fas fa-ad",
+      path: "/Admin/Dashboard/Adds-Management",
+      key: "ADM",
+    },
+    {
+      label: "Marketing Offers",
+      value: "Marketing-Offers",
+      icon: "fas fa-gift",
+      path: "/Admin/Dashboard/Marketing-Offers",
+      key: "MO",
+    },
+    {
+      label: "Notification Management",
+      value: "Notification-Management",
+      icon: "fas fa-bell",
+      path: "/Admin/Dashboard/Notifications-Management",
+      key: "NM",
+    },
+    {
+      label: "Help & Support",
+      value: "Help-and-Support",
+      icon: "fas fa-hands-holding",
+      path: "/Admin/Dashboard/Help&Support-Management",
+      key: "HS",
+    },
+    {
+      label: "Content Management",
+      value: "Content-Management",
+      icon: "fas fa-user-edit",
+      path: "/Admin/Dashboard/Content-Management",
+      key: "ConM",
+    },
   ];
-  
+
   // Filtered modules based on access
   let accessibleModules = allModules;
 
@@ -71,7 +166,6 @@ console.log(slide);
       AdminData.access.includes(module.value)
     );
   }
-
 
   return (
     <div>
@@ -96,7 +190,7 @@ console.log(slide);
                 <img src={require("../../assets/img/logo.png")} alt="Logo" />{" "}
               </NavLink>
             </div>
-             <div className="sidebar_menus">
+            <div className="sidebar_menus">
               <ul className="list-unstyled ps-1 m-0">
                 {accessibleModules?.map((module) => (
                   <li key={module.key}>
@@ -204,7 +298,8 @@ console.log(slide);
                         : require("../../assets/img/Nupload.jpg")
                     }
                     alt=""
-                  />Logo
+                  />
+                  Logo
                 </button>
                 <ul
                   className="dropdown-menu"
@@ -212,7 +307,11 @@ console.log(slide);
                 >
                   <li>
                     <Link
-                      className="dropdown-item"
+                      className={
+                        AdminData?.access?.length > 0
+                          ? "d-none"
+                          : "dropdown-item"
+                      }
                       to="/Admin/Dashboard/Edit-Profile"
                     >
                       Edit Profile

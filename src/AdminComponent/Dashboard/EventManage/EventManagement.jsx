@@ -12,6 +12,7 @@ import {
   getServiceAmount,
   getServices,
   partyApproval,
+  partyDecline,
   updateServiceAmount,
 } from "../../httpServices/dashHttpService";
 import { useForm } from "react-hook-form";
@@ -217,30 +218,33 @@ const EventManagement = () => {
                 : ""}
             </Link>
 
-            <Link
-              className={"comman_btn table_viewbtn bg-danger mt-2"}
-              // data-bs-toggle="modal"
-              // data-bs-target={
-              //   list?.status === "Pending"
-              //     ? "#staticBackdrop50"
-              //     : list?.status === "Paid"
-              //     ? "#staticBackdrop49"
-              //     : list?.status === "Completed"
-              //     ? "#staticBackdrop50"
-              //     : ""
-              // }
-              // onClick={() =>
-              //   list?.status === "Pending"
-              //     ? manageEvent(list?._id)
-              //     : list?.status === "Paid"
-              //     ? manageEvent(list?._id)
-              //     : list?.status === "Completed"
-              //     ? manageEvent(list?._id)
-              //     : ""
-              // }
-            >
-              Decline
-            </Link>
+            {list?.status === "Rejected" ? (
+              <Link
+              style={{cursor:"none"}}
+                className={"comman_btn table_viewbtn bg-none  mt-2 "}
+                disabled
+              >
+                Declined
+              </Link>
+            ) : (
+              <Link
+                className={"comman_btn table_viewbtn bg-danger mt-2"}
+                data-bs-toggle="modal"
+                data-bs-target={"#staticBackdrop51"}
+                onClick={() => setServiceId(list?._id)}
+                // onClick={() =>
+                //   list?.status === "Pending"
+                //     ? manageEvent(list?._id)
+                //     : list?.status === "Paid"
+                //     ? manageEvent(list?._id)
+                //     : list?.status === "Completed"
+                //     ? manageEvent(list?._id)
+                //     : ""
+                // }
+              >
+                Decline
+              </Link>
+            )}
           </>
         );
         newRows.push(returnData);
@@ -268,6 +272,19 @@ const EventManagement = () => {
       });
       getAllEvents();
       document.getElementById("closed").click();
+    }
+  };
+
+  const DeclineParty = async () => {
+    const { data } = await partyDecline(serviceId);
+    if (!data.error) {
+      Swal.fire({
+        text: "Request Declined!",
+        icon: "success",
+        confirmButtonText: "Okay",
+      });
+      getAllEvents();
+      document.getElementById("closed22").click();
     }
   };
 
@@ -1038,6 +1055,60 @@ const EventManagement = () => {
                     </button>
                   </div>
                 )}
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        className="modal fade comman_modal"
+        id="staticBackdrop51"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabIndex={-1}
+        aria-labelledby="staticBackdropLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content border-0">
+            <div className="modal-header">
+              <h5 className="modal-title" id="staticBackdropLabel">
+                Confirm Rejection
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                id="closed22"
+              />
+            </div>
+            <div className="modal-body">
+              <form
+                className="form-design px-3 py-2 help-support-form row  justify-content-center"
+                action=""
+              >
+                <div className="form-group mb-0 col-12 text-center mt-3">
+                  <h2>Are you sure ?</h2>
+                </div>
+                <div className="form-group mb-0 col-12 text-center mt-3">
+                  <button
+                    className="comman_btn mx-2"
+                    type="button"
+                    onClick={() => DeclineParty()}
+                  >
+                    Yes
+                  </button>
+                  <button
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                    className="comman_btn2"
+                    type="button"
+                  >
+                    No
+                  </button>
+                </div>
               </form>
             </div>
           </div>
