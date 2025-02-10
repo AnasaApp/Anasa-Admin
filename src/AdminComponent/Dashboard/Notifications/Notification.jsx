@@ -145,6 +145,7 @@ const Notification = () => {
         label: item?.full_name,
       }));
       optionList.sort((a, b) => a.label.localeCompare(b.label));
+
       setVendorOptions(optionList);
     }
     // await SearchVendor({ search: searchVendorKey }).then((res) => {
@@ -160,11 +161,18 @@ const Notification = () => {
     //   }
     // });
   };
+  console.log({ selectedUsers });
 
   const handleChange = (selected) => {
-    setSelectedUsers({
-      usersSelected: selected,
-    });
+    if (userTypes === "Vendor") {
+      if (selected?.some((option) => option.value === "all")) {
+        setSelectedUsers(vendorOptions);
+      } else {
+        setSelectedUsers(selected || []);
+      }
+    } else {
+      setSelectedUsers(selected ? [selected] : []);
+    }
   };
 
   const handleInputChange = (inputValue) => {
@@ -179,7 +187,7 @@ const Notification = () => {
   const handleUserTypeChange = (e) => {
     const newUserType = e.target.value;
     setUsertypes(newUserType);
-    setSelectedUsers({ usersSelected: [] });
+    setSelectedUsers([]);
   };
 
   const onSubmit = async (data) => {
@@ -194,20 +202,20 @@ const Notification = () => {
       }
 
       if (
-        selectedUsers.usersSelected &&
-        selectedUsers.usersSelected.length > 0
+        selectedUsers &&
+        selectedUsers?.length > 0
       ) {
         await SendPushNotify({
           title: data?.title,
           message: data?.message,
           userType: userTypes,
-          [selectedUsersKey]: selectedUsers.usersSelected.map(
+          [selectedUsersKey]: selectedUsers?.map(
             (item) => item?.value
           ),
         }).then((res) => {
           document.getElementById("resetForm").click();
           GetNotifications();
-          setSelectedUsers({ usersSelected: [] });
+          setSelectedUsers([]);
           if (!res.data.error) {
             Swal.fire({
               title: "Notification Sent!",
@@ -218,19 +226,21 @@ const Notification = () => {
           }
         });
       } else {
-        // ALL USERS ON SELECTED TYPE
         const allUsersOfType =
           userTypes === "Vendor" ? vendorOptions : buyerOptions;
         const selectedUserIds = allUsersOfType.map((item) => item.value);
 
         await SendPushNotify({
+          title: data?.title,
           message: data?.message,
           userType: userTypes,
-          [selectedUsersKey]: selectedUserIds,
+          [selectedUsersKey]: selectedUsers?.map(
+            (item) => item?.value
+          ),
         }).then((res) => {
           document.getElementById("resetForm").click();
           GetNotifications();
-          setSelectedUsers({ usersSelected: [] });
+          setSelectedUsers([]);
           if (!res.data.error) {
             Swal.fire({
               title: "Notification Sent to All " + userTypes + "s!",
@@ -337,21 +347,25 @@ const Notification = () => {
                   <div className="form-group mb-0 col">
                     <label htmlFor="">Search User</label>
                     <Select
-                      defaultValue=""
-                      isMulti
+                      isMulti={userTypes === "Vendor"}
                       name="users"
-                      // options={options}
                       options={
-                        userTypes === "Vendor" ? vendorOptions : buyerOptions
+                        userTypes === "Vendor"
+                          ? [
+                              { value: "all", label: "Select All Vendors" },
+                              ...vendorOptions,
+                            ]
+                          : buyerOptions
                       }
                       className="basic-multi-select z-3"
                       classNamePrefix="select"
                       onChange={handleChange}
-                      value={selectedUsers?.usersSelected}
+                      value={selectedUsers}
                       onInputChange={handleInputChange}
-                      isDisabled={userTypes === "" ? true : false}
+                      isDisabled={!userTypes}
                     />
                   </div>
+
                   <div className="form-group mb-0 col-auto mt-3">
                     <button className="comman_btn" type="submit">
                       Send
