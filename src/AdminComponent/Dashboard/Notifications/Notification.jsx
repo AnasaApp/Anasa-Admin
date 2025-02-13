@@ -117,14 +117,15 @@ const Notification = () => {
 
   const createOptions = async () => {
     await SearchUser({ search: searchKey }).then((res) => {
-      console.warn(res);
       if (!res.error) {
         let data = res?.data.results?.buyers;
-        const optionList = data?.map((item, index) => ({
+        const optionList = data?.map((item) => ({
           value: item?._id,
           label: item?.full_name,
         }));
+
         optionList.sort((a, b) => a.label.localeCompare(b.label));
+
         setBuyerOptions(optionList);
       }
     });
@@ -171,7 +172,11 @@ const Notification = () => {
         setSelectedUsers(selected || []);
       }
     } else {
-      setSelectedUsers(selected ? [selected] : []);
+      if (selected?.some((option) => option.value === "all")) {
+        setSelectedUsers(buyerOptions);
+      } else {
+        setSelectedUsers(selected || []);
+      }
     }
   };
 
@@ -201,21 +206,19 @@ const Notification = () => {
         selectedUsersKey = "buyers";
       }
 
-      if (
-        selectedUsers &&
-        selectedUsers?.length > 0
-      ) {
+      if (selectedUsers && selectedUsers?.length > 0) {
         await SendPushNotify({
           title: data?.title,
           message: data?.message,
           userType: userTypes,
-          [selectedUsersKey]: selectedUsers?.map(
-            (item) => item?.value
-          ),
+          [selectedUsersKey]: selectedUsers?.map((item) => item?.value),
         }).then((res) => {
           document.getElementById("resetForm").click();
           GetNotifications();
           setSelectedUsers([]);
+          setTimeout(() => {
+            window.location.reload(false);
+          }, [2000]);
           if (!res.data.error) {
             Swal.fire({
               title: "Notification Sent!",
@@ -234,13 +237,14 @@ const Notification = () => {
           title: data?.title,
           message: data?.message,
           userType: userTypes,
-          [selectedUsersKey]: selectedUsers?.map(
-            (item) => item?.value
-          ),
+          [selectedUsersKey]: selectedUsers?.map((item) => item?.value),
         }).then((res) => {
           document.getElementById("resetForm").click();
           GetNotifications();
           setSelectedUsers([]);
+          setTimeout(() => {
+            window.location.reload(false);
+          }, [2000]);
           if (!res.data.error) {
             Swal.fire({
               title: "Notification Sent to All " + userTypes + "s!",
@@ -299,16 +303,16 @@ const Notification = () => {
                     <input
                       type="text"
                       className={classNames("form-control", {
-                        "is-invalid": errors.title,
+                        "is-invalid": errors?.title,
                       })}
                       name="title"
                       {...register("title", {
                         required: "*Title is required!",
                       })}
                     />
-                    {errors.title && (
+                    {errors?.title && (
                       <small className="errorText mx-1">
-                        {errors.message.title}
+                        {errors?.message?.title}
                       </small>
                     )}
                   </div>
@@ -347,7 +351,7 @@ const Notification = () => {
                   <div className="form-group mb-0 col">
                     <label htmlFor="">Search User</label>
                     <Select
-                      isMulti={userTypes === "Vendor"}
+                      isMulti
                       name="users"
                       options={
                         userTypes === "Vendor"
@@ -355,7 +359,10 @@ const Notification = () => {
                               { value: "all", label: "Select All Vendors" },
                               ...vendorOptions,
                             ]
-                          : buyerOptions
+                          : [
+                              { value: "all", label: "Select All Buyers" },
+                              ...buyerOptions,
+                            ]
                       }
                       className="basic-multi-select z-3"
                       classNamePrefix="select"
