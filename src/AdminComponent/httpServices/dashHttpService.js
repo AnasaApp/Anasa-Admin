@@ -968,7 +968,6 @@ export async function EditVendor(id, formData) {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/editVendor/${id}`,
       formData
     );
-
     if (error) {
       if (data?.error) {
         Swal.fire({
@@ -983,7 +982,6 @@ export async function EditVendor(id, formData) {
     return { data };
   } catch (error) {
     if (error.response) {
-      // console.log(error?.response);
       Swal.fire({
         title: "Error!",
         text: "",

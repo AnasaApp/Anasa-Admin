@@ -9,7 +9,6 @@ import {
   getAddedCities,
   getVendorBooking,
   getVendorDetails,
-  getVendorServices,
   getVendorTransactions,
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
@@ -37,6 +36,8 @@ const ApprovedView = () => {
   const {
     register,
     handleSubmit,
+    reset,
+    setValue,
     formState: { errors },
   } = useForm();
 
@@ -44,6 +45,70 @@ const ApprovedView = () => {
   const [cities, setCities] = useState([]);
   const [selectedvalues, setSelectedValues] = useState();
   const [selectedOptions, setSelectedOptions] = useState();
+  const [isEditing, setIsEditing] = useState(false);
+
+  // Enable edit mode and prefill form fields
+  const handleEditClick = () => {
+    setIsEditing(true);
+    setValue("name", vendor?.full_name);
+    setValue("email", vendor?.email);
+    setValue("phone_number", vendor?.phone_number);
+    setValue("customer_contact_number", vendor?.customer_contact_number);
+    setValue("city", vendor?.city);
+    setValue("state", vendor?.state);
+    setValue("shop_address", vendor?.shop_address);
+    setValue("shop_name", vendor?.shop_name);
+    setValue("building_name", vendor?.building_name);
+    setValue("locality", vendor?.locality);
+    setValue("country_code", vendor?.country_code);
+    setValue("business_name", vendor?.building_name);
+  };
+
+  const handleProfileUpdate = async (info) => {
+    try {
+      const formData = new FormData();
+      let citiess = selectedvalues?.map((itmss) => itmss?.value);
+
+      formData?.append("full_name", info?.name);
+      formData?.append("email", info?.email);
+      formData?.append("phone_number", info?.phone_number);
+      formData?.append(
+        "customer_contact_number",
+        info?.customer_contact_number
+      );
+      formData?.append("city", info?.city);
+      formData?.append("shop_address", info?.shop_address);
+      formData?.append("shop_name", info?.shop_name);
+      formData?.append("building_name", info?.building_name);
+      formData?.append("locality", info?.locality);
+      formData?.append("country_code", info?.country_code);
+      formData?.append("business_name", info?.building_name);
+      formData.append("serviceableCity", JSON.stringify(citiess));
+
+      let id = location?.state?.id;
+      const { data } = await EditVendor(id, formData);
+      if (!data?.error) {
+        document.getElementById("resetBtn").click();
+        document.getElementById("closeModal").click();
+        getVendor();
+        setIsEditing(false);
+        Swal.fire({
+          title: data?.message,
+          text: "",
+          icon: "success",
+          confirmButtonText: "Okay",
+          confirmButtonColor: "#e25829",
+        });
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    reset();
+  };
 
   console.log({ selectedvalues });
 
@@ -94,7 +159,6 @@ const ApprovedView = () => {
           document.getElementById("resetBtn").click();
           document.getElementById("closeModal").click();
           getVendor();
-
         }
       }
       setForm1(true);
@@ -381,7 +445,7 @@ const ApprovedView = () => {
               </div>
             </div>
             <div className="row">
-              <div className="col-12 p-4 ">
+              <div className="col-12 p-4">
                 <div className="row py-2">
                   <div className="col-12 text-center mb-4">
                     <div className="Pending-view_img">
@@ -396,205 +460,321 @@ const ApprovedView = () => {
                     </div>
                     <h4 className="user_name">{vendor?.full_name}</h4>
                   </div>
+
+                  {/* Name */}
+                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                    <div className="row view-inner-box border mx-0 w-100">
+                      <span>Name:</span>
+                      <div className="col">
+                        {isEditing ? (
+                          <input
+                            type="text"
+                            className="form-control"
+                            {...register("name", { required: true })}
+                          />
+                        ) : (
+                          <strong>{vendor?.full_name}</strong>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Email */}
+                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                    <div className="row view-inner-box border mx-0 w-100">
+                      <span>Email:</span>
+                      <div className="col">
+                        {isEditing ? (
+                          <input
+                            type="email"
+                            className="form-control"
+                            {...register("email", { required: true })}
+                          />
+                        ) : (
+                          <strong>{vendor?.email}</strong>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Mobile Number */}
+                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                    <div className="row view-inner-box border mx-0 w-100">
+                      <span>Mobile Number:</span>
+                      <div className="col">
+                        {isEditing ? (
+                          <input
+                            type="text"
+                            className="form-control"
+                            {...register("phone_number", { required: true })}
+                          />
+                        ) : (
+                          <strong>{vendor?.phone_number}</strong>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Customer Contact Number */}
+                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                    <div className="row view-inner-box border mx-0 w-100">
+                      <span>Customer Contact Number:</span>
+                      <div className="col">
+                        {isEditing ? (
+                          <input
+                            type="text"
+                            className="form-control"
+                            {...register("customer_contact_number")}
+                          />
+                        ) : (
+                          <strong>{vendor?.customer_contact_number}</strong>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="col-md-6 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Shop Address:</span>
                       <div className="col">
+                        {isEditing ? (
+                          <input
+                            type="text"
+                            className="form-control"
+                            {...register("shop_address")}
+                          />
+                        ) : (
+                          <strong>{vendor?.shop_address}</strong>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Shop Name */}
+                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                    <div className="row view-inner-box border mx-0 w-100">
+                      <span>Shop Name:</span>
+                      <div className="col">
+                        {isEditing ? (
+                          <input
+                            type="text"
+                            className="form-control"
+                            {...register("shop_name")}
+                          />
+                        ) : (
+                          <strong>{vendor?.shop_name}</strong>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Building Name */}
+                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                    <div className="row view-inner-box border mx-0 w-100">
+                      <span>Building Name:</span>
+                      <div className="col">
+                        {isEditing ? (
+                          <input
+                            type="text"
+                            className="form-control"
+                            {...register("building_name")}
+                          />
+                        ) : (
+                          <strong>{vendor?.building_name}</strong>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Locality */}
+                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                    <div className="row view-inner-box border mx-0 w-100">
+                      <span>Locality:</span>
+                      <div className="col">
+                        {isEditing ? (
+                          <input
+                            type="text"
+                            className="form-control"
+                            {...register("locality")}
+                          />
+                        ) : (
+                          <strong>{vendor?.locality}</strong>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* City */}
+                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                    <div className="row view-inner-box border mx-0 w-100">
+                      <span>City:</span>
+                      <div className="col">
+                        {isEditing ? (
+                          <input
+                            type="text"
+                            className="form-control"
+                            {...register("city")}
+                          />
+                        ) : (
+                          <strong>{vendor?.city}</strong>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Country Code */}
+                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                    <div className="row view-inner-box border mx-0 w-100">
+                      <span>Country Code:</span>
+                      <div className="col">
+                        {isEditing ? (
+                          <input
+                            type="text"
+                            disabled
+                            className="form-control"
+                            {...register("country_code")}
+                          />
+                        ) : (
+                          <strong>{vendor?.country_code}</strong>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Country Name */}
+                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                    <div className="row view-inner-box border mx-0 w-100">
+                      <span>Serviceable cities:</span>
+                      <div className="col">
                         <strong>
-                          {vendor?.shop_address
-                            ? vendor?.shop_address
-                            : shopAddress}
+                          {vendor?.serviceableCity?.map(
+                            (itm) => itm?.city + "/"
+                          )}
                         </strong>
                       </div>
                     </div>
                   </div>
 
-                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
-                    <div className="row view-inner-box border mx-0 w-100">
-                      <span>Shop Name:</span>
-                      <div className="col">
-                        <strong>{vendor?.shop_name}</strong>
-                      </div>
+                  {/* Edit Button */}
+                  {!isEditing && (
+                    <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                      <button
+                        className="comman_btn border rounded"
+                        onClick={handleEditClick}
+                      >
+                        Edit Profile
+                      </button>
                     </div>
-                  </div>
-                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
-                    <div className="row view-inner-box border mx-0 w-100">
-                      <span>Email Id:</span>
-                      <div className="col">
-                        <strong>{vendor?.email}</strong>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
-                    <div className="row view-inner-box border mx-0 w-100">
-                      <span>Mobile Number:</span>
-                      <div className="col">
-                        <strong>{vendor?.phone_number}</strong>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
-                    <div className="row view-inner-box border mx-0 w-100">
-                      <span>Customer Contact Number:</span>
-                      <div className="col">
-                        <strong>{vendor?.customer_contact_number}</strong>
-                      </div>
-                    </div>
-                  </div>
-                  {/* <div className="col-md-4 mb-4 d-flex align-items-stretch">
-                    <div className="row view-inner-box border mx-0 w-100">
-                      <span>Shop Address:</span>
-                      <div className="col">
-                        <strong>{vendor?.shop_address}</strong>
-                      </div>
-                    </div>
-                  </div> */}
-                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
-                    <div className="row view-inner-box border mx-0 w-100">
-                      <span>Building Name:</span>
-                      <div className="col">
-                        <strong>{vendor?.building_name}</strong>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
-                    <div className="row view-inner-box border mx-0 w-100">
-                      <span>Locality:</span>
-                      <div className="col">
-                        <strong>{vendor?.locality}</strong>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
-                    <div className="row view-inner-box border mx-0 w-100">
-                      <span>City:</span>
-                      <div className="col">
-                        <strong>{vendor?.city}</strong>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
-                    <div className="row view-inner-box border mx-0 w-100">
-                      <span>Country Code:</span>
-                      <div className="col">
-                        <strong>{vendor?.country_code}</strong>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
-                    <div className="row view-inner-box border mx-0 w-100">
-                      <span>Country Name:</span>
-                      <div className="col">
-                        <strong>{countryName}</strong>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-12 mb-4 d-flex align-items-stretch">
-                    <div className="row view-inner-box border mx-0 w-100">
-                      <span>Serviceable City:</span>
-                      <div className="col">
-                        {vendor?.serviceableCity.map((item, index) => (
-                          <>
-                            <strong> • </strong>
-                            <strong key={index}>{item.city}</strong>
-                          </>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
-                    <div className="row view-inner-box border mx-0 w-100">
-                      <span>Trade Licence copy:</span>
-                      <div className="col img_box_show">
-                        <label htmlFor="file1">
-                          <div className="licence_id">
-                            {vendor?.trade_licence_copy ? (
-                              <i
-                                class="fa fa-eye preview_icon"
-                                onClick={() =>
-                                  preview(vendor?.trade_licence_copy)
-                                }
-                              ></i>
-                            ) : null}
-                            {vendor?.trade_licence_copy ? (
-                              <i
-                                className="fa fa-download mx-4 mt-2"
-                                onClick={() => {
-                                  fileDownload(vendor?.trade_licence_copy);
-                                }}
-                              />
-                            ) : (
-                              <i
-                                className="fa fa-upload mx-4 mt-2"
-                                onClick={() => {
-                                  fileDownload(vendor?.trade_licence_copy);
-                                }}
-                              />
-                            )}{" "}
-                            {vendor?.trade_licence_copy}
-                          </div>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
-                    <div className="row view-inner-box border mx-0 w-100">
-                      <span>Signed Contract:</span>
-                      <div className="col img_box_show">
-                        <label htmlFor="file1">
-                          <div className="licence_id">
-                            {vendor?.signed_contract ? (
-                              <i
-                                class="fa fa-eye preview_icon"
-                                onClick={() => preview(vendor?.signed_contract)}
-                              ></i>
-                            ) : null}
-                            {vendor?.signed_contract ? (
-                              <i
-                                className="fa fa-download mx-4 mt-2"
-                                onClick={() => {
-                                  fileDownload(vendor?.signed_contract);
-                                }}
-                              />
-                            ) : (
-                              <i
-                                className="fa fa-upload mx-4 mt-2"
-                                onClick={() => {
-                                  fileDownload(vendor?.signed_contract);
-                                }}
-                              />
-                            )}{" "}
-                            {vendor?.signed_contract}
-                          </div>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
+                  )}
 
-                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
-                    <div className="row view-inner-box border mx-0 w-100">
-                      <div className="col">
-                        <Link
-                          to={`/Admin/Dashboard/Vendor-Management/Services/${vendor?._id}`}
-                        >
-                          <strong>Go to Listed Services</strong>
-                        </Link>
-                      </div>
+                  {/* Save & Cancel Buttons */}
+                  {isEditing && (
+                    <div className="col-md-12 mb-4 d-flex align-items-stretch">
+                      <button
+                        className="comman_btn2 me-3"
+                        onClick={handleSubmit(handleProfileUpdate)}
+                      >
+                        Save
+                      </button>
+                      <button
+                        className="comman_btn btn-danger"
+                        onClick={handleCancelEdit}
+                      >
+                        Cancel
+                      </button>
                     </div>
+                  )}
+                </div>
+              </div>
+              <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                <div className="row view-inner-box border mx-0 w-100">
+                  <span>Trade Licence copy:</span>
+                  <div className="col img_box_show">
+                    <label htmlFor="file1">
+                      <div className="licence_id">
+                        {vendor?.trade_licence_copy ? (
+                          <i
+                            class="fa fa-eye preview_icon"
+                            onClick={() => preview(vendor?.trade_licence_copy)}
+                          ></i>
+                        ) : null}
+                        {vendor?.trade_licence_copy ? (
+                          <i
+                            className="fa fa-download mx-4 mt-2"
+                            onClick={() => {
+                              fileDownload(vendor?.trade_licence_copy);
+                            }}
+                          />
+                        ) : (
+                          <i
+                            className="fa fa-upload mx-4 mt-2"
+                            onClick={() => {
+                              fileDownload(vendor?.trade_licence_copy);
+                            }}
+                          />
+                        )}{" "}
+                        {vendor?.trade_licence_copy}
+                      </div>
+                    </label>
                   </div>
-
-                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
-                    <div className="row view-inner-box border mx-0 w-100">
-                      <div className="col">
-                        <Link
-                          data-bs-toggle="modal"
-                          data-bs-target="#staticBackdrop448"
-                          onClick={() => fetchCities(vendor)}
-                        >
-                          <strong>Edit City & Profile</strong>
-                        </Link>
+                </div>
+              </div>
+              <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                <div className="row view-inner-box border mx-0 w-100">
+                  <span>Signed Contract:</span>
+                  <div className="col img_box_show">
+                    <label htmlFor="file1">
+                      <div className="licence_id">
+                        {vendor?.signed_contract ? (
+                          <i
+                            class="fa fa-eye preview_icon"
+                            onClick={() => preview(vendor?.signed_contract)}
+                          ></i>
+                        ) : null}
+                        {vendor?.signed_contract ? (
+                          <i
+                            className="fa fa-download mx-4 mt-2"
+                            onClick={() => {
+                              fileDownload(vendor?.signed_contract);
+                            }}
+                          />
+                        ) : (
+                          <i
+                            className="fa fa-upload mx-4 mt-2"
+                            onClick={() => {
+                              fileDownload(vendor?.signed_contract);
+                            }}
+                          />
+                        )}{" "}
+                        {vendor?.signed_contract}
                       </div>
-                    </div>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                <div className="row view-inner-box border mx-0 w-100">
+                  <div className="col">
+                    <Link
+                      to={`/Admin/Dashboard/Vendor-Management/Services/${vendor?._id}`}
+                    >
+                      <strong>Go to Listed Services</strong>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
+              <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                <div className="row view-inner-box border mx-0 w-100">
+                  <div className="col">
+                    <Link
+                      data-bs-toggle="modal"
+                      data-bs-target="#staticBackdrop448"
+                      onClick={() => fetchCities(vendor)}
+                    >
+                      <strong>Edit Cities & Image</strong>
+                    </Link>
                   </div>
                 </div>
               </div>
