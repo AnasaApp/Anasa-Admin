@@ -649,6 +649,8 @@ const ApprovedView = () => {
                   </div>
 
                   {/* Country Name */}
+
+                 
                   <div className="col-md-6 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Serviceable cities:</span>
@@ -661,6 +663,45 @@ const ApprovedView = () => {
                       </div>
                     </div>
                   </div>
+
+                  <div className="col-md-6 mb-4 d-flex align-items-stretch">
+                    <div className="row view-inner-box border mx-0 w-100">
+                      <span>Bank Iban:</span>
+                      <div className="col">
+                        <strong>{vendor?.iban ?? "NA"}</strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
+                    <div className="row view-inner-box border mx-0 w-100">
+                      <span>Bank Name:</span>
+                      <div className="col">
+                        <strong>{vendor?.bank_name}</strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
+                    <div className="row view-inner-box border mx-0 w-100">
+                      <span>Bank Account Number:</span>
+                      <div className="col">
+                        <strong>{vendor?.bank_account_num}</strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="col-md-4 mb-4 d-flex align-items-stretch">
+                    <div className="row view-inner-box border mx-0 w-100">
+                      <span>Bank Type:</span>
+                      <div className="col">
+                        <strong>{vendor?.bank_type}</strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  
+
 
                   {/* Edit Button */}
                   {!isEditing && (
