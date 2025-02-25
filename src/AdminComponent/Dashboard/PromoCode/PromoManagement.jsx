@@ -14,6 +14,7 @@ import {
 import Swal from "sweetalert2";
 import moment from "moment";
 import { MDBDataTable } from "mdbreact";
+import ImageEdit from "../../CropImage/ImageEdit";
 
 const PromoManagement = () => {
   const [files, setFiles] = useState();
@@ -22,6 +23,9 @@ const PromoManagement = () => {
   const [searchKey, setSearchKey] = useState("");
   const [sideBar, setSideBar] = useState();
   const [editData, setEditData] = useState([]);
+  const [modalVisible2, setModalVisible2] = useState(false);
+  const [croppedImage, setCroppedImage] = useState();
+  const [croppedImageUrl, setCroppedImageUrl] = useState();
 
   const [promoId, setPromoId] = useState();
   const {
@@ -118,6 +122,11 @@ const PromoManagement = () => {
     });
   };
 
+  const editImage = async (id) => {
+    setFiles([]);
+    setModalVisible2(true);
+  };
+
   const GetPromocodes = async () => {
     let { data } = await AllPromocodes();
     const newRows = [];
@@ -151,19 +160,23 @@ const PromoManagement = () => {
             />
           </div>
         );
+
         returnData.image = (
-          <img
-            className="table_img"
-            width={70}
-            height={60}
-            src={
-              list?.image
-                ? list?.image
-                : require("../../../assets/img/Nupload.jpg")
-            }
-            alt=""
-          />
+          <div className="cursor-pointer position-relative">
+            <div>
+              <img
+                src={
+                  list?.image
+                    ? list?.image
+                    : require("../../../assets/img/Nupload.jpg")
+                }
+                alt="image"
+                className="table_img"
+              />
+            </div>
+          </div>
         );
+
         returnData.action = (
           <>
             <a
@@ -228,7 +241,7 @@ const PromoManagement = () => {
     formData.append("discount", data?.EditDiscount);
     formData.append("validFrom", data?.dateFromEdit);
     formData.append("validTo", data?.dateToEdit);
-    formData.append("image", files?.comboImg ? files?.comboImg : "");
+    formData.append("image", croppedImageUrl?.length > 0 ? croppedImage : "");
 
     const res = await editPromocode(promoId, formData);
     console.log(res);
@@ -520,6 +533,8 @@ const PromoManagement = () => {
                 aria-label="Close"
                 onClick={() => {
                   document.getElementById("resetModal").click();
+                  setCroppedImageUrl("");
+                  setCroppedImage("");
                 }}
               />
             </div>
@@ -532,17 +547,21 @@ const PromoManagement = () => {
               >
                 <div className="form-group col-6 choose_file position-relative">
                   <span>Promo Code Image </span>{" "}
-                  <label htmlFor="upload_video_combo">
-                    <i className="fa fa-camera me-1" />
-                    Choose File
-                  </label>{" "}
-                  <input
-                    type="file"
-                    className="form-control mx-3"
-                    name="comboImg"
-                    id="upload_video_combo"
-                    onChange={(e) => onFileSelection(e, "comboImg")}
-                  />
+                  {croppedImageUrl ? (
+                    <div>
+                      <img src={croppedImageUrl} alt="" className="img-fluid" />
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setModalVisible2(true);
+                      }}
+                      className="comman_btn"
+                    >
+                      Upload New Image
+                    </button>
+                  )}
                 </div>
                 <div className="form-group col-6">
                   <label htmlFor="">Promo Code(En)</label>
@@ -670,6 +689,20 @@ const PromoManagement = () => {
             </div>
           </div>
         </div>
+      </div>
+      <div
+        className={`modal modal-lg ${
+          modalVisible2 ? "show d-block" : "d-none"
+        }`}
+        tabIndex="-1"
+        role="dialog"
+        aria-hidden="true"
+      >
+        <ImageEdit
+          setModalVisible2={setModalVisible2}
+          setCroppedImage={setCroppedImage}
+          setCroppedImageUrl={setCroppedImageUrl}
+        />
       </div>
     </div>
   );

@@ -98,6 +98,7 @@ const ServicesManage = () => {
       values?.map((list, index) => {
         const returnData = {};
         returnData.sn = index + 1 + ".";
+        
         returnData.name_en = list?.name_en;
         returnData.name_ar = list?.name_ar;
         returnData.name_vendor = list?.vendor?.full_name;

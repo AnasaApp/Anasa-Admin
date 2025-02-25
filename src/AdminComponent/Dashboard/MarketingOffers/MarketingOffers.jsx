@@ -22,6 +22,7 @@ import {
 import Sidebar from "../Sidebar";
 import { MDBDataTable } from "mdbreact";
 import moment from "moment";
+import ImageEdit from "../../CropImage/ImageEdit";
 
 const MarketingOffers = () => {
   const [slide, setSlide] = useState("MO");
@@ -40,11 +41,23 @@ const MarketingOffers = () => {
   const [offers, setAllOffers] = useState([]);
   const [offerId, setOfferId] = useState();
   const [totalPrice, setTotalPrice] = useState(0);
+  const [modalVisible2, setModalVisible2] = useState(false);
+  const [croppedImage, setCroppedImage] = useState();
+  const [croppedImageUrl, setCroppedImageUrl] = useState();
+  const [serviceImage, setServiceImage] = useState();
 
   const [offerData, setOfferData] = useState();
   const [vendors, setVendors] = useState([]);
   const [services, setServices] = useState([]);
   const [formValues, setFormValues] = useState([
+    {
+      category: "",
+      vendor: "",
+      service: "",
+      price: "",
+    },
+  ]);
+  const [formValues2, setFormValues2] = useState([
     {
       category: "",
       vendor: "",
@@ -72,6 +85,13 @@ const MarketingOffers = () => {
         field: "sn",
         sort: "asc",
         width: 50,
+      },
+
+      {
+        label: "Image",
+        field: "image",
+        sort: "asc",
+        width: 100,
       },
 
       {
@@ -148,6 +168,22 @@ const MarketingOffers = () => {
         const returnData = {};
         returnData.sn = index + 1 + ".";
         returnData.name_en = list?.name_en;
+        returnData.image = (
+          <div className="cursor-pointer position-relative">
+            <div>
+              <img
+                src={
+                  list?.image
+                    ? list?.image
+                    : require("../../../assets/img/Nupload.jpg")
+                }
+                alt="image"
+                className="table_img"
+              />
+            </div>
+          </div>
+        );
+
         returnData.name_ar = (
           <span lang="ar" dir="rtl">
             {list?.name_ar}
@@ -295,18 +331,26 @@ const MarketingOffers = () => {
     });
   };
 
+  console.log(croppedImage);
   const onEdit = async (data) => {
-    console.log(data);
-    await editOffer(offerId, {
-      name_ar: data?.combo_ar_edit_ar,
-      name_en: data?.combo_en_edit,
-      comboPrice: data?.Edit_Discount,
-      validFrom: data?.dateFrom,
-      validTo: data?.dateTo,
-    }).then((res) => {
+    let formData = new FormData();
+    formData.append("image", croppedImage);
+    formData.append("name_en", data?.combo_en_edit);
+    formData.append("name_ar", data?.combo_ar_edit_ar);
+    formData.append("comboPrice", data?.Edit_Discount);
+    formData.append("validFrom", data?.dateFrom);
+    formData.append("validTo", data?.dateTo);
+    formData.append("type", JSON.stringify(formValues2));
+    await editOffer(offerId, formData).then((res) => {
       if (!res.data.error) {
         document.getElementById("closed").click();
         getAllOffers();
+        setServiceImage("");
+        setOfferData("");
+        setCroppedImageUrl("");
+        setModalVisible2(false);
+        setFormValues2([]);
+        setFormValues([]);
         Swal.fire({
           title: "Offer Modified Successfully!",
           icon: "success",
@@ -341,16 +385,20 @@ const MarketingOffers = () => {
     setFiles(data.data.results?.obj[0]);
   };
 
+  console.log(serviceImage);
+
   const handleView = async (id) => {
     setOfferId(id);
     const { data } = await getViewCombo(id);
     let date = data?.results.offer;
+    setServiceImage(date?.image);
     setOfferData(date);
     document.getElementById("from").defaultValue = date?.validFrom?.slice(
       0,
       10
     );
     document.getElementById("till").defaultValue = date?.validTo?.slice(0, 10);
+
     reset({
       combo_en_edit: date.name_en,
       combo_ar_edit_ar: date?.name_ar,
@@ -358,6 +406,17 @@ const MarketingOffers = () => {
       dateFrom: date?.validFrom?.slice(0, 10),
       dateTo: date?.validTo?.slice(0, 10),
     });
+
+    setFormValues2([
+      {
+        category: date?.type?.[0]?.category?._id,
+        vendor: date?.type?.[0]?.vendor?._id,
+        vendorName: date?.type?.[0]?.vendor?.full_name,
+        service: date?.type?.[0]?.service?._id,
+        serviceName: date?.type?.[0]?.service?.name_en,
+        price: date?.type?.[0]?.service?.price,
+      },
+    ]);
   };
 
   const getAllCat = async () => {
@@ -387,6 +446,7 @@ const MarketingOffers = () => {
       newFormValues[i]["price"] = price;
     }
     setFormValues(newFormValues);
+    setFormValues2(newFormValues);
     console.log(formValues, "lll");
   };
 
@@ -394,6 +454,7 @@ const MarketingOffers = () => {
     let newFormValues = [...formValues];
     newFormValues.splice(index, 1);
     setFormValues(newFormValues);
+    setFormValues2(newFormValues);
 
     let newOptions2 = [...options2];
     newOptions2.splice(index, 1);
@@ -793,8 +854,11 @@ const MarketingOffers = () => {
                 aria-label="Close"
                 id="closed"
                 onClick={() => {
+                  setServiceImage("");
                   document.getElementById("ResetS").click();
                   setSelectedUsers(null);
+                  setFormValues2([]);
+                  setFormValues([]);
                 }}
               />
             </div>
@@ -913,6 +977,144 @@ const MarketingOffers = () => {
                   )}
                 </div>
 
+                {(formValues2 || [])?.map((element, index) => (
+                  <div className="form-group mb-0 col-12 ">
+                    <div className="row mt-3" key={index}>
+                      <div className="form-group col-4">
+                        <label htmlFor="">Select Category</label>
+                        <select
+                          className="form-select "
+                          aria-label="Default select example"
+                          name="category"
+                          value={element.category || ""}
+                          onChange={(e) => {
+                            handleChange(index, e);
+                            VendorsList(e.target.value, index);
+                          }}
+                        >
+                          <option selected="" value="">
+                            Select Category
+                          </option>
+                          {allCategories
+                            ?.filter((cat) => cat.status === true)
+                            ?.map((item) => (
+                              <option value={item?._id}>{item?.name_en}</option>
+                            ))}
+                        </select>
+                      </div>
+                      <div className="form-group col-4">
+                        <label htmlFor="">Select Vendor</label>
+                        <select
+                          className="form-select "
+                          aria-label="Default select example"
+                          id={index}
+                          name="vendor"
+                          value={element.vendor || ""}
+                          onChange={(e) => {
+                            handleChange(index, e);
+                            createOptionsServices(e.target.value, index);
+                          }}
+                        >
+                          <option selected="" value="">
+                            {element?.vendorName}
+                          </option>
+
+                          {vendors[index]?.map((item) => (
+                            <option value={item?._id}>{item?.full_name}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div
+                        className={`form-group ${
+                          formValues2?.length <= 1 ? "col-4" : "col-3"
+                        }`}
+                      >
+                        <label htmlFor="">Select Service</label>
+                        <select
+                          className="form-select"
+                          aria-label="Default select example"
+                          name="service"
+                          id={index}
+                          value={element.service || ""}
+                          // onChange={(e) => {
+                          //   handleChange(index, e);
+                          // }}
+                          onChange={(e) => {
+                            const selectedPrice =
+                              services[index]?.find(
+                                (item) => item?._id === e.target.value
+                              )?.price || 0; // Fetch the price of the selected service
+                            handleChange(index, e, selectedPrice); // Pass the price to handleChange
+                          }}
+                        >
+                          <option selected={true} value="">
+                            {element?.serviceName}
+                          </option>
+
+                          {services[index]?.map((item) => (
+                            <option value={item?._id}>
+                              {item?.name_en} - {item?.price}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="form-group col-1  mt-4">
+                        <button
+                          className={`comman_btn mt-2 ${
+                            formValues2?.length <= 1 ? "d-none" : "d-block"
+                          }`}
+                          style={{ padding: "5px 20px" }}
+                          type="button"
+                          disabled={formValues2?.length <= 1 ? true : false}
+                          onClick={() => removeFormFields(index)}
+                        >
+                          <i className="fa fa-minus mt-1 mx-1" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                <div className="form-group col-6">
+                  <label htmlFor="">Image</label>
+                  <div
+                    className="cursor-pointer position-relative"
+                    onClick={() => {
+                      setModalVisible2(true);
+                    }}
+                  >
+                    <div>
+                      <img
+                        src={croppedImageUrl || serviceImage}
+                        style={{
+                          width: "98%",
+                          height: "8rem",
+                          borderRadius: "12px",
+                        }}
+                        alt="image"
+                        className="table_ismg"
+                      />
+                    </div>
+                    <div
+                      style={{
+                        top: "-15px",
+                        right: "-10px",
+                        background: "#e25829",
+                      }}
+                      className="position-absolute rounded p-1"
+                    >
+                      <i
+                        style={{
+                          left: "2px",
+                        }}
+                        className="fa fa-edit me-1 text-light position-relative"
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 <div className="form-group mb-0 col-12 text-center mt-3">
                   <button className="comman_btn" type="submit">
                     Save
@@ -931,6 +1133,21 @@ const MarketingOffers = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      <div
+        className={`modal modal-lg ${
+          modalVisible2 ? "show d-block" : "d-none"
+        }`}
+        tabIndex="-1"
+        role="dialog"
+        aria-hidden="true"
+      >
+        <ImageEdit
+          setModalVisible2={setModalVisible2}
+          setCroppedImage={setCroppedImage}
+          setCroppedImageUrl={setCroppedImageUrl}
+        />
       </div>
     </div>
   );

@@ -11,6 +11,7 @@ import {
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
 import Swal from "sweetalert2";
+import ImageEdit from "../../CropImage/ImageEdit";
 
 const Services = () => {
   const [vendorService, setVendorService] = useState();
@@ -25,6 +26,9 @@ const Services = () => {
   const [selectedArSubCategory, setSelectedArSubCategory] = useState("");
   const [subCategory, setSubCategory] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible2, setModalVisible2] = useState(false);
+  const [croppedImage, setCroppedImage] = useState();
+  const [croppedImageUrl, setCroppedImageUrl] = useState();
 
   const [serviceNameEn, setServiceNameEn] = useState();
   const [serviceNameAr, setServiceNameAr] = useState();
@@ -32,6 +36,7 @@ const Services = () => {
   const [descriptionNameAr, setDescriptionNameAr] = useState();
   const [price, setPrice] = useState();
   const [categoryId, setCategoryId] = useState();
+  const [serviceImage, setServiceImage] = useState();
 
   const [subCat_Id, setSubCat_Id] = useState();
 
@@ -89,12 +94,12 @@ const Services = () => {
     } else {
       setSubCategory([]);
     }
-
     setModalVisible(true);
     setDataToEdit(item);
     setCategoryId(item?.category?._id);
     setServiceNameEn(item?.name_en);
     setServiceNameAr(item?.name_ar);
+    setServiceImage(item?.images?.[item?.images?.length - 1]);
     setDescriptionNameAr(item?.description_ar);
     setDescriptionNameEn(item?.description_en);
     setPrice(item?.price);
@@ -149,6 +154,8 @@ const Services = () => {
     });
   };
 
+  console.log({ croppedImage });
+
   const handleEditFinish = async (id, e) => {
     e.preventDefault();
     let category_id = category.find((cat) => categoryId === cat?._id);
@@ -161,6 +168,9 @@ const Services = () => {
     formData.append("categoryId", category_id?._id);
     formData.append("subCategoryId", subCat_Id ? subCat_Id : "");
     formData.append("price", price);
+    formData.append("images", croppedImage);
+    formData.append("removeImage", [serviceImage]);
+
     let { data } = await UpdateServices(id, formData);
     if (!data.error) {
       Swal.fire({
@@ -265,53 +275,77 @@ const Services = () => {
                               className="d-none"
                               onClick={() => {
                                 changeVendorServiceStatus(item?._id);
-                              }}
-                            />
-                            <label for={item?._id}></label>
-                          </div>
-                          <div className="text-end position-absolute bottom-0 pb-2">
-                            <button
-                              className="comman_btn py-1 px-4"
-                              onClick={() => handleEdit(item)}
-                            >
-                              Edit
-                            </button>
-                          </div>
-                          <div className="col-6 py-1">
-                            <div className="row mx-0">
-                              <div className="col-6">
+                                }}
+                              />
+                              <label htmlFor={item?._id}></label>
+                              </div>
+                              <div className="text-end position-absolute bottom-0 pb-2">
+                              <button
+                                className="comman_btn py-1 px-4"
+                                onClick={() => handleEdit(item)}
+                              >
+                                Edit
+                              </button>
+                              </div>
+
+                              <div className="col-6 py-1">
+                              <div className="row mx-0">
+                                <div className="col-6">
+                                <strong className="booking_head">
+                                  Image :
+                                </strong>
+                                </div>
+                                <div className="col-6">
+                                <span className="booking_head">
+                                  <img
+                                  style={{
+                                    width: "32%",
+                                    height: "4rem",
+                                    borderRadius: "12px",
+                                  }}
+                                  src={item?.images?.[item?.images?.length - 1]}
+                                  />
+                                </span>
+                                </div>
+                              </div>
+                              </div>
+                              {console.log(croppedImage)}
+
+                              <div className="col-6 py-1">
+                              <div className="row mx-0">
+                                <div className="col-6">
                                 <strong className="booking_head">
                                   Service Name :
                                 </strong>
-                              </div>
-                              <div className="col-6">
+                                </div>
+                                <div className="col-6">
                                 <span className="booking_head">
                                   {item?.name_en}
                                 </span>
+                                </div>
                               </div>
-                            </div>
-                          </div>
-                          <div className="col-6 py-1">
-                            <div className="row mx-0">
-                              <div className="col-6">
+                              </div>
+                              <div className="col-6 py-1">
+                              <div className="row mx-0">
+                                <div className="col-6">
                                 <strong className="booking_head">
                                   Customization :
                                 </strong>
-                              </div>
-                              <div className="col-6">
+                                </div>
+                                <div className="col-6">
                                 <span className="booking_head">
                                   {item?.customization ? "YES" : "NO"}
                                 </span>
+                                </div>
                               </div>
-                            </div>
-                          </div>
-                          <div className="col-6 py-1">
-                            <div className="row mx-0">
-                              <div className="col-6">
+                              </div>
+                              <div className="col-6 py-1">
+                              <div className="row mx-0">
+                                <div className="col-6">
                                 <strong className="booking_head">
                                   Category :
                                 </strong>
-                              </div>
+                                </div>
                               <div className="col-6">
                                 <span className="booking_head">
                                   {item?.category?.name_en}
@@ -388,7 +422,9 @@ const Services = () => {
               </div>
 
               <div
-                className={`modal ${modalVisible ? "show d-block" : "d-none"}`}
+                className={`modal modal-lg ${
+                  modalVisible ? "show d-block" : "d-none"
+                }`}
                 tabIndex="-1"
                 role="dialog"
                 aria-hidden="true"
@@ -529,6 +565,45 @@ const Services = () => {
                             </div>
                           </>
                         )}
+
+                        <div className="form-group col-6">
+                          <label htmlFor="">Service Image</label>
+                          <div
+                            className="cursor-pointer position-relative"
+                            onClick={() => {
+                              setModalVisible2(true);
+                            }}
+                          >
+                            <div>
+                              <img
+                                src={croppedImageUrl || serviceImage}
+                                style={{
+                                  width: "98%",
+                                  height: "8rem",
+                                  borderRadius: "12px",
+                                }}
+                                alt="image"
+                                className="table_ismg"
+                              />
+                            </div>
+                            <div
+                              style={{
+                                top: "-15px",
+                                right: "-10px",
+                                background: "#e25829",
+                              }}
+                              className="position-absolute rounded p-1"
+                            >
+                              <i
+                                style={{
+                                  left: "2px",
+                                }}
+                                className="fa fa-edit me-1 text-light position-relative"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
                         <div className="form-group col-6">
                           <label htmlFor="">Price</label>
                           <input
@@ -557,6 +632,22 @@ const Services = () => {
           </div>
         </div>
       </div>
+
+      <div
+        className={`modal modal-lg ${
+          modalVisible2 ? "show d-block" : "d-none"
+        }`}
+        tabIndex="-1"
+        role="dialog"
+        aria-hidden="true"
+      >
+        <ImageEdit
+          setModalVisible2={setModalVisible2}
+          setCroppedImage={setCroppedImage}
+          setCroppedImageUrl={setCroppedImageUrl}
+        />
+      </div>
+      
     </div>
   );
 };

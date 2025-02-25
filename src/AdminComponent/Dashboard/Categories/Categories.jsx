@@ -16,9 +16,7 @@ import { MDBDataTable } from "mdbreact";
 import moment from "moment";
 import { UploadOutlined } from "@ant-design/icons";
 import { Button, message, Upload } from "antd";
-
 import getCroppedImg from "../../CropImage/CropImage";
-
 import { CropperRef, Cropper } from "react-advanced-cropper";
 import { useRef } from "react";
 
@@ -37,8 +35,6 @@ const Categories = () => {
   const [imageName, setImageName] = useState(null);
   const [errorEn, setErrorEn] = useState(false);
   const [errorAr, setErrorAr] = useState(false);
-
-  // crop //
   const [croppedImage, setCroppedImage] = useState(null);
   const [edit, setEdit] = useState(false);
   const [finish, setFinish] = useState(true);
@@ -218,6 +214,7 @@ const Categories = () => {
     }
     // setAllCategories(data?.results?.categories);
   };
+
 
   const CateStatus = async (id) => {
     const { data } = await changeCateStatus(id);
@@ -667,6 +664,7 @@ const Categories = () => {
           </div>
         </div>
       </div>
+
       <div
         className={`modal ${modalVisible ? "show d-block" : "d-none"}`}
         tabIndex="-1"

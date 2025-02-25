@@ -11,6 +11,7 @@ import {
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
 import Swal from "sweetalert2";
+import ImageEdit from "../../CropImage/ImageEdit";
 
 const NewServices = () => {
   //   const [vendorService, setVendorService] = useState();
@@ -24,7 +25,6 @@ const NewServices = () => {
   const [selectedEnSubCategory, setSelectedEnSubCategory] = useState("");
   const [selectedArSubCategory, setSelectedArSubCategory] = useState("");
   const [subCategory, setSubCategory] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
 
   const { vendorId, serviceName } = useParams();
   const [vendorService, setVendorService] = useState([]);
@@ -35,6 +35,11 @@ const NewServices = () => {
   const [descriptionNameAr, setDescriptionNameAr] = useState();
   const [price, setPrice] = useState();
   const [categoryId, setCategoryId] = useState();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible2, setModalVisible2] = useState(false);
+  const [croppedImage, setCroppedImage] = useState();
+  const [croppedImageUrl, setCroppedImageUrl] = useState();
+  const [serviceImage, setServiceImage] = useState();
 
   const [subCat_Id, setSubCat_Id] = useState();
 
@@ -114,6 +119,8 @@ const NewServices = () => {
     setSelectedEnCategory(item?.category?.name_en);
     setSelectedEnSubCategory(item?.subCategory?.name_en || "");
     setSelectedArSubCategory(item?.subCategory?.name_ar || "");
+    setServiceImage(item?.images?.[item?.images?.length - 1]);
+
   };
 
   const handleCategoryEnChange = (e) => {
@@ -174,6 +181,9 @@ const NewServices = () => {
     formData.append("categoryId", category_id?._id);
     formData.append("subCategoryId", subCat_Id ? subCat_Id : "");
     formData.append("price", price);
+    formData.append("images", croppedImage);
+    formData.append("removeImage", [serviceImage]);
+    
     let { data } = await UpdateServices(id, formData);
     if (!data.error) {
       Swal.fire({
@@ -399,7 +409,9 @@ const NewServices = () => {
               </div>
 
               <div
-                className={`modal ${modalVisible ? "show d-block" : "d-none"}`}
+                className={`modal modal-lg ${
+                  modalVisible ? "show d-block" : "d-none"
+                }`}
                 tabIndex="-1"
                 role="dialog"
                 aria-hidden="true"
@@ -540,6 +552,45 @@ const NewServices = () => {
                             </div>
                           </>
                         )}
+
+                        <div className="form-group col-6">
+                          <label htmlFor="">Service Image</label>
+                          <div
+                            className="cursor-pointer position-relative"
+                            onClick={() => {
+                              setModalVisible2(true);
+                            }}
+                          >
+                            <div>
+                              <img
+                                src={croppedImageUrl || serviceImage}
+                                style={{
+                                  width: "98%",
+                                  height: "8rem",
+                                  borderRadius: "12px",
+                                }}
+                                alt="image"
+                                className="table_ismg"
+                              />
+                            </div>
+                            <div
+                              style={{
+                                top: "-15px",
+                                right: "-10px",
+                                background: "#e25829",
+                              }}
+                              className="position-absolute rounded p-1"
+                            >
+                              <i
+                                style={{
+                                  left: "2px",
+                                }}
+                                className="fa fa-edit me-1 text-light position-relative"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
                         <div className="form-group col-6">
                           <label htmlFor="">Price</label>
                           <input
@@ -564,9 +615,26 @@ const NewServices = () => {
                   </div>
                 </div>
               </div>
+
+
             </div>
           </div>
         </div>
+      </div>
+
+      <div
+        className={`modal modal-lg ${
+          modalVisible2 ? "show d-block" : "d-none"
+        }`}
+        tabIndex="-1"
+        role="dialog"
+        aria-hidden="true"
+      >
+        <ImageEdit
+          setModalVisible2={setModalVisible2}
+          setCroppedImage={setCroppedImage}
+          setCroppedImageUrl={setCroppedImageUrl}
+        />
       </div>
     </div>
   );

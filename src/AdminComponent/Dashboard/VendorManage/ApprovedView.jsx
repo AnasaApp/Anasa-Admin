@@ -15,8 +15,9 @@ import Sidebar from "../Sidebar";
 import moment from "moment";
 import { MDBDataTable } from "mdbreact";
 import { countries } from "country-data";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import Select from "react-select";
+import ImageEdit from "../../CropImage/ImageEdit";
 
 const ApprovedView = () => {
   const [slide, setSlide] = useState("VM");
@@ -25,6 +26,10 @@ const ApprovedView = () => {
   const [values, setValues] = useState({ from: "", to: "" });
   const [countryName, setCountryName] = useState();
   const [shopAddress, setShopAddress] = useState();
+  const [modalVisible2, setModalVisible2] = useState(false);
+  const [croppedImage, setCroppedImage] = useState();
+  const [croppedImageUrl, setCroppedImageUrl] = useState();
+
   let location = useLocation();
 
   useEffect(() => {
@@ -152,13 +157,15 @@ const ApprovedView = () => {
         let citiess = selectedvalues?.map((itmss) => itmss?.value);
 
         formData.append("serviceableCity", JSON.stringify(citiess));
-        formData.append("shop_cover_image", info.image[0]);
+        formData.append("shop_cover_image", croppedImage);
         let id = location?.state?.id;
         const { data } = await EditVendor(id, formData);
         if (!data?.error) {
           document.getElementById("resetBtn").click();
           document.getElementById("closeModal").click();
           getVendor();
+          setCroppedImageUrl("");
+          setCroppedImage("");
         }
       }
       setForm1(true);
@@ -1099,13 +1106,28 @@ const ApprovedView = () => {
                         }
                       />
                     </div>
+
                     <div className="form-group col-6">
-                      <label>Upload New Profile</label>
-                      <input
-                        type="file"
-                        className="form-control"
-                        {...register("image")}
-                      />
+                      {croppedImageUrl ? (
+                        <div>
+                          <label>Profile Image</label>
+                          <img
+                            src={croppedImageUrl}
+                            alt=""
+                            className="img-fluid"
+                          />
+                        </div>
+                      ) : (
+                        <button
+                        type="button"
+                          onClick={() => {
+                            setModalVisible2(true);
+                          }}
+                          className="comman_btn"
+                        >
+                          Upload New Profile
+                        </button>
+                      )}
                     </div>
                   </>
                 ) : (
@@ -1158,6 +1180,21 @@ const ApprovedView = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      <div
+        className={`modal modal-lg ${
+          modalVisible2 ? "show d-block" : "d-none"
+        }`}
+        tabIndex="-1"
+        role="dialog"
+        aria-hidden="true"
+      >
+        <ImageEdit
+          setModalVisible2={setModalVisible2}
+          setCroppedImage={setCroppedImage}
+          setCroppedImageUrl={setCroppedImageUrl}
+        />
       </div>
     </div>
   );
