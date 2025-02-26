@@ -333,6 +333,14 @@ const MarketingOffers = () => {
 
   console.log(croppedImage);
   const onEdit = async (data) => {
+    let tempData = [];
+    formValues2?.map((item) => {
+      tempData.push({
+        category: item.category,
+        vendor: item.vendor,
+        service: item.service,
+      });
+    });
     let formData = new FormData();
     formData.append("image", croppedImage);
     formData.append("name_en", data?.combo_en_edit);
@@ -340,7 +348,7 @@ const MarketingOffers = () => {
     formData.append("comboPrice", data?.Edit_Discount);
     formData.append("validFrom", data?.dateFrom);
     formData.append("validTo", data?.dateTo);
-    formData.append("type", JSON.stringify(formValues2));
+    formData.append("type", JSON.stringify(tempData));
     await editOffer(offerId, formData).then((res) => {
       if (!res.data.error) {
         document.getElementById("closed").click();
@@ -406,17 +414,19 @@ const MarketingOffers = () => {
       dateFrom: date?.validFrom?.slice(0, 10),
       dateTo: date?.validTo?.slice(0, 10),
     });
+    let newFormValues = [];
+    date?.type?.map((item) => {
+      newFormValues.push({
+        category: item?.category?._id,
+        vendor: item?.vendor?._id,
+        vendorName: item?.vendor?.full_name,
+        service: item?.service?._id,
+        serviceName: item?.service?.name_en,
+        price: item?.service?.price,
+      });
+    });
 
-    setFormValues2([
-      {
-        category: date?.type?.[0]?.category?._id,
-        vendor: date?.type?.[0]?.vendor?._id,
-        vendorName: date?.type?.[0]?.vendor?.full_name,
-        service: date?.type?.[0]?.service?._id,
-        serviceName: date?.type?.[0]?.service?.name_en,
-        price: date?.type?.[0]?.service?.price,
-      },
-    ]);
+    setFormValues2(newFormValues);
   };
 
   const getAllCat = async () => {
@@ -446,7 +456,6 @@ const MarketingOffers = () => {
       newFormValues[i]["price"] = price;
     }
     setFormValues(newFormValues);
-    setFormValues2(newFormValues);
     console.log(formValues, "lll");
   };
 
@@ -454,6 +463,34 @@ const MarketingOffers = () => {
     let newFormValues = [...formValues];
     newFormValues.splice(index, 1);
     setFormValues(newFormValues);
+
+    let newOptions2 = [...options2];
+    newOptions2.splice(index, 1);
+    setOptions2(newOptions2);
+    const filteredOptions = newFormValues.map((element) =>
+      options2.find((option) => option?._id === element.service)
+    );
+    const totalPrice = filteredOptions.reduce((acc, next) => {
+      return acc + parseFloat(next?.price || 0);
+    }, 0);
+    setTotalPrice(totalPrice);
+  };
+
+  let handleChange2 = (i, e, price) => {
+    let newFormValues = [...formValues2];
+    if (e.target.name === "price") {
+      newFormValues[i][e.target.name] = e.target.value;
+    } else {
+      newFormValues[i][e.target.name] = e.target.value;
+      newFormValues[i]["price"] = price;
+    }
+    setFormValues2(newFormValues);
+  };
+  console.log(formValues2, "lll");
+
+  const removeFormFields2 = (index) => {
+    let newFormValues = [...formValues2];
+    newFormValues.splice(index, 1);
     setFormValues2(newFormValues);
 
     let newOptions2 = [...options2];
@@ -471,6 +508,16 @@ const MarketingOffers = () => {
   const addFormFields = (e) => {
     setFormValues([
       ...formValues,
+      {
+        service: "",
+        package: "",
+      },
+    ]);
+  };
+
+  const addFormFields2 = (e) => {
+    setFormValues2([
+      ...formValues2,
       {
         service: "",
         package: "",
@@ -988,7 +1035,7 @@ const MarketingOffers = () => {
                           name="category"
                           value={element.category || ""}
                           onChange={(e) => {
-                            handleChange(index, e);
+                            handleChange2(index, e);
                             VendorsList(e.target.value, index);
                           }}
                         >
@@ -1011,7 +1058,7 @@ const MarketingOffers = () => {
                           name="vendor"
                           value={element.vendor || ""}
                           onChange={(e) => {
-                            handleChange(index, e);
+                            handleChange2(index, e);
                             createOptionsServices(e.target.value, index);
                           }}
                         >
@@ -1045,7 +1092,7 @@ const MarketingOffers = () => {
                               services[index]?.find(
                                 (item) => item?._id === e.target.value
                               )?.price || 0; // Fetch the price of the selected service
-                            handleChange(index, e, selectedPrice); // Pass the price to handleChange
+                            handleChange2(index, e, selectedPrice); // Pass the price to handleChange
                           }}
                         >
                           <option selected={true} value="">
@@ -1068,7 +1115,7 @@ const MarketingOffers = () => {
                           style={{ padding: "5px 20px" }}
                           type="button"
                           disabled={formValues2?.length <= 1 ? true : false}
-                          onClick={() => removeFormFields(index)}
+                          onClick={() => removeFormFields2(index)}
                         >
                           <i className="fa fa-minus mt-1 mx-1" />
                         </button>
@@ -1116,6 +1163,13 @@ const MarketingOffers = () => {
                 </div>
 
                 <div className="form-group mb-0 col-12 text-center mt-3">
+                  <a
+                    className="comman_btn mx-3 "
+                    onClick={() => addFormFields2()}
+                  >
+                    Add more +
+                  </a>
+
                   <button className="comman_btn" type="submit">
                     Save
                   </button>

@@ -21,6 +21,9 @@ const Services = () => {
   const [dataToEdit, setDataToEdit] = useState(null);
   const [category, setCategory] = useState();
   const [selectedEnCategory, setSelectedEnCategory] = useState("");
+    const [preprationTime, setPreprationTime] = useState();
+    const [orderService, setOrderService] = useState();
+
   const [selectedArCategory, setSelectedArCategory] = useState("");
   const [selectedEnSubCategory, setSelectedEnSubCategory] = useState("");
   const [selectedArSubCategory, setSelectedArSubCategory] = useState("");
@@ -103,6 +106,8 @@ const Services = () => {
     setDescriptionNameAr(item?.description_ar);
     setDescriptionNameEn(item?.description_en);
     setPrice(item?.price);
+    setPreprationTime(item?.preparationTime);
+    setOrderService(item?.no_of_order_per_service);
     setSelectedEnCategory(item?.category?.name_en);
     setSelectedEnSubCategory(item?.subCategory?.name_en || "");
     setSelectedArSubCategory(item?.subCategory?.name_ar || "");
@@ -165,6 +170,9 @@ const Services = () => {
     formData.append("name_ar", serviceNameAr);
     formData.append("description_en", descriptionNameEn);
     formData.append("description_ar", descriptionNameAr);
+    formData.append("preparationTime", preprationTime);
+    formData.append("no_of_order_per_service", orderService);
+    
     formData.append("categoryId", category_id?._id);
     formData.append("subCategoryId", subCat_Id ? subCat_Id : "");
     formData.append("price", price);
@@ -495,6 +503,33 @@ const Services = () => {
                             }
                           />
                         </div>
+
+                        <div className="form-group col-6">
+                          <label htmlFor="">Prepration Time</label>
+                          <input
+                            type="number"
+                            className="form-control"
+                            name="preparationTime"
+                            value={preprationTime}
+                            onChange={(e) =>
+                              setPreprationTime(e.target.value)
+                            }
+                          />
+                        </div>
+                        <div className="form-group col-6">
+                          <label htmlFor="">Orders/Service</label>
+                          <input
+                            type="number"
+                            className="form-control"
+                            name="orderService"
+                            value={orderService}
+                            onChange={(e) =>
+                              setOrderService(e.target.value)
+                            }
+                          />
+                        </div>
+
+                        
                         <div className="form-group col-6">
                           <label htmlFor="">Select Category (En)</label>
                           <select

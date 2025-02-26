@@ -33,6 +33,8 @@ const NewServices = () => {
   const [serviceNameAr, setServiceNameAr] = useState();
   const [descriptionNameEn, setDescriptionNameEn] = useState();
   const [descriptionNameAr, setDescriptionNameAr] = useState();
+  const [preprationTime, setPreprationTime] = useState();
+  const [orderService, setOrderService] = useState();
   const [price, setPrice] = useState();
   const [categoryId, setCategoryId] = useState();
   const [modalVisible, setModalVisible] = useState(false);
@@ -115,6 +117,8 @@ const NewServices = () => {
     setServiceNameAr(item?.name_ar);
     setDescriptionNameAr(item?.description_ar);
     setDescriptionNameEn(item?.description_en);
+    setPreprationTime(item?.preparationTime);
+    setOrderService(item?.no_of_order_per_service);
     setPrice(item?.price);
     setSelectedEnCategory(item?.category?.name_en);
     setSelectedEnSubCategory(item?.subCategory?.name_en || "");
@@ -178,6 +182,9 @@ const NewServices = () => {
     formData.append("name_ar", serviceNameAr);
     formData.append("description_en", descriptionNameEn);
     formData.append("description_ar", descriptionNameAr);
+    formData.append("preparationTime", preprationTime);
+    formData.append("no_of_order_per_service", orderService);
+    
     formData.append("categoryId", category_id?._id);
     formData.append("subCategoryId", subCat_Id ? subCat_Id : "");
     formData.append("price", price);
@@ -482,6 +489,32 @@ const NewServices = () => {
                             }
                           />
                         </div>
+
+                        <div className="form-group col-6">
+                          <label htmlFor="">Prepration Time</label>
+                          <input
+                            type="number"
+                            className="form-control"
+                            name="preparationTime"
+                            value={preprationTime}
+                            onChange={(e) =>
+                              setPreprationTime(e.target.value)
+                            }
+                          />
+                        </div>
+                        <div className="form-group col-6">
+                          <label htmlFor="">Orders/Service</label>
+                          <input
+                            type="number"
+                            className="form-control"
+                            name="orderService"
+                            value={orderService}
+                            onChange={(e) =>
+                              setOrderService(e.target.value)
+                            }
+                          />
+                        </div>
+
                         <div className="form-group col-6">
                           <label htmlFor="">Select Category (En)</label>
                           <select
