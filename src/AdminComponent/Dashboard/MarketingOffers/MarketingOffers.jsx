@@ -27,7 +27,7 @@ import ImageEdit from "../../CropImage/ImageEdit";
 const MarketingOffers = () => {
   const [slide, setSlide] = useState("MO");
   const [sideBar, setSideBar] = useState();
-  const [files, setFiles] = useState();
+  const [files, setFiles] = useState({});
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
   const [searchKey, setSearchKey] = useState("");
@@ -277,7 +277,6 @@ const MarketingOffers = () => {
   console.log(formValues, "f");
 
   const onSubmit = async (data) => {
-    console.log(data);
     if (
       !formValues[0]?.category ||
       !formValues[0]?.vendor ||
@@ -292,15 +291,16 @@ const MarketingOffers = () => {
       });
       return false;
     }
-    await AddCombo({
-      name_en: data?.combo_en,
-      name_ar: data?.combo_ar,
-      comboPrice: data?.discount,
-      validFrom: data?.dateFrom,
-      validTo: data?.dateTo,
-      image: files,
-      type: formValues,
-    }).then((res) => {
+    let formData = new FormData();
+    formData.append("image", files?.upload_video);
+    formData.append("name_en", data?.combo_en);
+    formData.append("name_ar", data?.combo_ar);
+    formData.append("comboPrice", data?.discount);
+    formData.append("validFrom", data?.dateFrom);
+    formData.append("validTo", data?.dateTo);
+    formData.append("type", JSON.stringify(formValues));
+
+    await AddCombo(formData).then((res) => {
       if (!res.error) {
         console.log(res);
         setSelectedServices({ servicesSelected: [] });
@@ -385,15 +385,10 @@ const MarketingOffers = () => {
   };
 
   const onFileSelection = async (e, key) => {
-    // setFiles({ ...files, [key]: e.target.files[0] });
-    const formData = new FormData();
-    formData.append("image", e.target.files[0]);
-    const data = await ImageUpload(formData);
-    console.log(data.data?.results.obj);
-    setFiles(data.data.results?.obj[0]);
+    setFiles({ ...files, [key]: e.target.files[0] });
   };
 
-  console.log(serviceImage);
+  console.log(files);
 
   const handleView = async (id) => {
     setOfferId(id);
@@ -1024,106 +1019,114 @@ const MarketingOffers = () => {
                   )}
                 </div>
 
-                {(formValues2 || [])?.map((element, index) => (
-                  <div className="form-group mb-0 col-12 ">
-                    <div className="row mt-3" key={index}>
-                      <div className="form-group col-4">
-                        <label htmlFor="">Select Category</label>
-                        <select
-                          className="form-select "
-                          aria-label="Default select example"
-                          name="category"
-                          value={element.category || ""}
-                          onChange={(e) => {
-                            handleChange2(index, e);
-                            VendorsList(e.target.value, index);
-                          }}
-                        >
-                          <option selected="" value="">
-                            Select Category
-                          </option>
-                          {allCategories
-                            ?.filter((cat) => cat.status === true)
-                            ?.map((item) => (
-                              <option value={item?._id}>{item?.name_en}</option>
-                            ))}
-                        </select>
+                {offerData?.validFrom?.slice(0, 10) >
+                  new Date().toISOString().slice(0, 10) && (
+                  <>
+                    {(formValues2 || [])?.map((element, index) => (
+                      <div className="form-group mb-0 col-12 ">
+                        <div className="row mt-3" key={index}>
+                          <div className="form-group col-4">
+                            <label htmlFor="">Select Category</label>
+                            <select
+                              className="form-select "
+                              aria-label="Default select example"
+                              name="category"
+                              value={element.category || ""}
+                              onChange={(e) => {
+                                handleChange2(index, e);
+                                VendorsList(e.target.value, index);
+                              }}
+                            >
+                              <option selected="" value="">
+                                Select Category
+                              </option>
+                              {allCategories
+                                ?.filter((cat) => cat.status === true)
+                                ?.map((item) => (
+                                  <option value={item?._id}>
+                                    {item?.name_en}
+                                  </option>
+                                ))}
+                            </select>
+                          </div>
+                          <div className="form-group col-4">
+                            <label htmlFor="">Select Vendor</label>
+                            <select
+                              className="form-select "
+                              aria-label="Default select example"
+                              id={index}
+                              name="vendor"
+                              value={element.vendor || ""}
+                              onChange={(e) => {
+                                handleChange2(index, e);
+                                createOptionsServices(e.target.value, index);
+                              }}
+                            >
+                              <option selected="" value="">
+                                {element?.vendorName}
+                              </option>
+
+                              {vendors[index]?.map((item) => (
+                                <option value={item?._id}>
+                                  {item?.full_name}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          <div
+                            className={`form-group ${
+                              formValues2?.length <= 1 ? "col-4" : "col-3"
+                            }`}
+                          >
+                            <label htmlFor="">Select Service</label>
+                            <select
+                              className="form-select"
+                              aria-label="Default select example"
+                              name="service"
+                              id={index}
+                              value={element.service || ""}
+                              // onChange={(e) => {
+                              //   handleChange(index, e);
+                              // }}
+                              onChange={(e) => {
+                                const selectedPrice =
+                                  services[index]?.find(
+                                    (item) => item?._id === e.target.value
+                                  )?.price || 0; // Fetch the price of the selected service
+                                handleChange2(index, e, selectedPrice); // Pass the price to handleChange
+                              }}
+                            >
+                              <option selected={true} value="">
+                                {element?.serviceName}
+                              </option>
+
+                              {services[index]?.map((item) => (
+                                <option value={item?._id}>
+                                  {item?.name_en} - {item?.price}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          <div className="form-group col-1  mt-4">
+                            <button
+                              className={`comman_btn mt-2 ${
+                                formValues2?.length <= 1 ? "d-none" : "d-block"
+                              }`}
+                              style={{ padding: "5px 20px" }}
+                              type="button"
+                              disabled={formValues2?.length <= 1 ? true : false}
+                              onClick={() => removeFormFields2(index)}
+                            >
+                              <i className="fa fa-minus mt-1 mx-1" />
+                            </button>
+                          </div>
+                        </div>
                       </div>
-                      <div className="form-group col-4">
-                        <label htmlFor="">Select Vendor</label>
-                        <select
-                          className="form-select "
-                          aria-label="Default select example"
-                          id={index}
-                          name="vendor"
-                          value={element.vendor || ""}
-                          onChange={(e) => {
-                            handleChange2(index, e);
-                            createOptionsServices(e.target.value, index);
-                          }}
-                        >
-                          <option selected="" value="">
-                            {element?.vendorName}
-                          </option>
-
-                          {vendors[index]?.map((item) => (
-                            <option value={item?._id}>{item?.full_name}</option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div
-                        className={`form-group ${
-                          formValues2?.length <= 1 ? "col-4" : "col-3"
-                        }`}
-                      >
-                        <label htmlFor="">Select Service</label>
-                        <select
-                          className="form-select"
-                          aria-label="Default select example"
-                          name="service"
-                          id={index}
-                          value={element.service || ""}
-                          // onChange={(e) => {
-                          //   handleChange(index, e);
-                          // }}
-                          onChange={(e) => {
-                            const selectedPrice =
-                              services[index]?.find(
-                                (item) => item?._id === e.target.value
-                              )?.price || 0; // Fetch the price of the selected service
-                            handleChange2(index, e, selectedPrice); // Pass the price to handleChange
-                          }}
-                        >
-                          <option selected={true} value="">
-                            {element?.serviceName}
-                          </option>
-
-                          {services[index]?.map((item) => (
-                            <option value={item?._id}>
-                              {item?.name_en} - {item?.price}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div className="form-group col-1  mt-4">
-                        <button
-                          className={`comman_btn mt-2 ${
-                            formValues2?.length <= 1 ? "d-none" : "d-block"
-                          }`}
-                          style={{ padding: "5px 20px" }}
-                          type="button"
-                          disabled={formValues2?.length <= 1 ? true : false}
-                          onClick={() => removeFormFields2(index)}
-                        >
-                          <i className="fa fa-minus mt-1 mx-1" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-
+                    ))}
+                  </>
+                )}
                 <div className="form-group col-6">
                   <label htmlFor="">Image</label>
                   <div
