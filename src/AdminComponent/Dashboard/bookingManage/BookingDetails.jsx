@@ -255,7 +255,10 @@ const BookingDetails = () => {
                                     </div>
                                     <div className="col-6">
                                       <span className="booking_head">
-                                        New Delhi
+                                        {booking?.event_location?.house_number}/
+                                        {booking?.event_location?.building_name}
+                                        ,{booking?.event_location?.city}-
+                                        {booking?.event_location?.country}
                                       </span>
                                     </div>
                                   </div>
@@ -264,12 +267,12 @@ const BookingDetails = () => {
                                   <div className="row mx-0">
                                     <div className="col-6">
                                       <strong className="booking_head">
-                                       Booking Amount:
+                                        Booking Amount:
                                       </strong>
                                     </div>
                                     <div className="col-6">
                                       <span className="booking_head">
-                                       SAR   {booking?.total}
+                                        SAR {booking?.total}
                                       </span>
                                     </div>
                                   </div>
@@ -326,7 +329,24 @@ const BookingDetails = () => {
                                     </div>
                                     <div className="col-6">
                                       <span className="booking_head">
-                                       SAR  {earning?.amount}
+                                        SAR{" "}
+                                        {earning?.amount -
+                                          booking?.total * 0.01}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div className="col-6 py-1">
+                                  <div className="row mx-0">
+                                    <div className="col-6">
+                                      <strong className="booking_head">
+                                        Sales Amount:
+                                      </strong>
+                                    </div>
+                                    <div className="col-6">
+                                      <span className="booking_head">
+                                        SAR {booking?.total * 0.01}
                                       </span>
                                     </div>
                                   </div>
