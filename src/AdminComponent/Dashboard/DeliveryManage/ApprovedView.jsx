@@ -88,7 +88,7 @@ const ApprovedView = () => {
       formData?.append("locality", info?.locality);
       formData?.append("country_code", info?.country_code);
       formData?.append("business_name", info?.building_name);
-      // formData.append("serviceableCity", JSON.stringify(citiess));
+      formData.append("serviceableCity", JSON.stringify(citiess));
 
       let id = location?.state?.id;
       const { data } = await EditVendor(id, formData);

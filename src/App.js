@@ -39,6 +39,7 @@ import Payout from "./AdminComponent/Dashboard/Payout";
 import ServicesManage from "./AdminComponent/Dashboard/ServicesManage/Services";
 import EventManagement from "./AdminComponent/Dashboard/EventManage/EventManagement";
 import NewServices from "./AdminComponent/Dashboard/VendorManage/NewServices";
+import DeliveryManagement from "./AdminComponent/Dashboard/DeliveryManage/DeliveryManagement";
 // import EVM from "./AdminComponent/Dashboard/EventManage/EVM";
 
 function App() {
@@ -109,6 +110,10 @@ function App() {
             <Route
               path="/Admin/Dashboard/Booking-Management"
               element={<BookingManage />}
+            />
+            <Route
+              path="/Admin/Dashboard/Delivery-Management"
+              element={<DeliveryManagement />}
             />
             <Route
               path="/Admin/Dashboard/Booking-Management/Booking-Details/:id"
