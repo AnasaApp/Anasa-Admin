@@ -737,9 +737,7 @@ export async function partyApproval(id) {
 export async function partyDecline(id) {
   try {
     const { data } = await appHttpService.get(
-      `${process.env.REACT_APP_APIENDPOINT}api/admin/rejectEvent` +
-        "/" +
-        id
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/rejectEvent` + "/" + id
     );
     console.log(data);
     if (data?.error) {
@@ -2752,6 +2750,215 @@ export async function getCities() {
       `${process.env.REACT_APP_APIENDPOINT}api/admin/getCities`
     );
     // console.log(data);
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      // console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
+
+export async function DeliveriesData(formData) {
+  try {
+    const { data } = await appHttpService.patch(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/getDelivery`,
+      formData
+    );
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      // console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
+
+export async function ViewDeliveriesData(formData) {
+  try {
+    const { data } = await appHttpService.patch(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/viewDelivery`,
+      formData
+    );
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      // console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
+
+export async function AddDelivery(formData) {
+  try {
+    const { data } = await appHttpService.post(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/addDelivery`,
+      formData
+    );
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      // console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
+
+export async function EditDelivery(formData,id) {
+  try {
+    const { data } = await appHttpService.put(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/editDelivery/${id}`,
+      formData
+    );
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      // console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
+
+export async function DeleteDelivery(id) {
+  try {
+    const { data } = await appHttpService.delete(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/deleteDelivery/${id}`,
+    );
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      // console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
+
+export async function UpdateDelivery(id, formData) {
+  try {
+    const { data } = await appHttpService.post(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/updateVendorDelivery/${id}`,
+      formData
+    );
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      // console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
+
+export async function UpdateVendorDelivery(id, formData) {
+  try {
+    const { data } = await appHttpService.patch(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/updateVendorDelivery/${id}`,
+      formData
+    );
     if (data?.error) {
       Swal.fire({
         title: data?.message,

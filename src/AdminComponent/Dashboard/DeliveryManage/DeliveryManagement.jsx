@@ -3,11 +3,14 @@ import { useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import {
+  AddDelivery,
   AllVendors,
   changeVendorStatus,
   deleteVendorSoft,
   getVendorDetails,
   importVendorServices,
+  UpdateDeliveryData,
+  UpdateVendorDelivery,
   VendorsCount,
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
@@ -15,6 +18,84 @@ import { MDBDataTable } from "mdbreact";
 import moment from "moment";
 import Loader from "../Loader";
 import DeliveryPricingTable from "./DeliveryPricingTable";
+
+const saudiCities = [
+  "Riyadh",
+  "Jeddah",
+  "Mecca",
+  "Medina",
+  "Dammam",
+  "Taif",
+  "Tabuk",
+  "Al Khobar",
+  "Abha",
+  "Najran",
+  "Hail",
+  "Jizan",
+  "Al Qatif",
+  "Khamis Mushait",
+  "Al Hofuf",
+  "Al Jubail",
+  "Dhahran",
+  "Al Bahah",
+  "Arar",
+  "Sakaka",
+  "Yanbu",
+  "Al Mubarraz",
+  "Unaizah",
+  "Qatif",
+  "Al Kharj",
+  "Tarut",
+  "Rahimah",
+  "Buraidah",
+  "Khafji",
+  "Turaif",
+  "Sabya",
+  "Al Qunfudhah",
+  "Al Majma'ah",
+  "Al Awamiyah",
+  "Ras Tanura",
+  "Badr",
+  "Al Wajh",
+  "Dawadmi",
+  "Al Bukayriyah",
+  "Qurayyat",
+  "Ash Shafa",
+  "Al Artawiyah",
+  "Al Bahah",
+  "Al Hinakiyah",
+  "Al Lith",
+  "Al Mithnab",
+  "Al Namas",
+  "Al Qaisumah",
+  "Al Qurayyat",
+  "Al Ula",
+  "Al Wajh",
+  "Bisha",
+  "Farasan",
+  "Gurayat",
+  "Ha'il",
+  "Hotat Bani Tamim",
+  "Jalajil",
+  "Jubail",
+  "Khobar",
+  "Layla",
+  "Muzahmiyya",
+  "Qadeim",
+  "Radwa",
+  "Ras Al Khair",
+  "Riyadh Al Khabra",
+  "Rumailah",
+  "Sabt Al Alaya",
+  "Safwa",
+  "Sharurah",
+  "Tanomah",
+  "Thadiq",
+  "Thuqbah",
+  "Udhailiyah",
+  "Umluj",
+  "Uyun Al Jiwa",
+];
 
 const DeliveryManagement = () => {
   const [slide, setSlide] = useState("DelM");
@@ -28,7 +109,8 @@ const DeliveryManagement = () => {
   const [loading1, setLoading1] = useState(true);
   const [values, setValues] = useState({ from: "", to: "" });
   let location = useLocation();
-
+  const [fromCity, setFromCity] = useState("");
+  const [toCities, setToCities] = useState([]);
   const [approved, setApproved] = useState({
     columns: [
       {
@@ -63,66 +145,10 @@ const DeliveryManagement = () => {
         sort: "asc",
         width: 100,
       },
-
-      {
-        label: "ACTION",
-        field: "action",
-        sort: "asc",
-        width: 100,
-      },
     ],
     rows: [],
   });
-
-  const [pricings, setPricings] = useState({
-    columns: [
-      {
-        label: "S.NO.",
-        field: "sn",
-        sort: "asc",
-        width: 50,
-      },
-      {
-        label: "FULL NAME",
-        field: "name",
-        sort: "asc",
-        width: 150,
-      },
-      {
-        label: "SHOP NAME",
-        field: "name_shop",
-        sort: "asc",
-        width: 150,
-      },
-
-      {
-        label: "EMAIL ADDRESS",
-        field: "email",
-        sort: "asc",
-        width: 100,
-      },
-      {
-        label: "PHONE NUMBER",
-        field: "number",
-        sort: "asc",
-        width: 100,
-      },
-      {
-        label: "ADDED ON",
-        field: "date",
-        sort: "asc",
-        width: 100,
-      },
-
-      {
-        label: "ACTION",
-        field: "action",
-        sort: "asc",
-        width: 100,
-      },
-    ],
-    rows: [],
-  });
+  const [activeTab, setActiveTab] = useState("vendor");
 
   const [rejected, setRejected] = useState({
     columns: [
@@ -207,58 +233,48 @@ const DeliveryManagement = () => {
           <div className="check_toggle" key={list?._id}>
             <input
               type="checkbox"
-              defaultChecked={list?.active_status}
+              defaultChecked={list?.normalDelivery}
               name="check1"
-              id={list?._id}
+              id={list?._id + "normal"}
               className="d-none"
-              onClick={() => {
-                VendorStatus(list?._id);
+              onClick={(e) => {
+                VendorStatus(list?._id, "normalDelivery", e.target.checked);
               }}
             />
-            <label for={list?._id}></label>
+            <label for={list?._id + "normal"}></label>
           </div>
         );
         returnData.dev_cold = (
           <div className="check_toggle" key={list?._id}>
             <input
               type="checkbox"
-              defaultChecked={list?.active_status}
-              name="check1"
-              id={list?._id}
+              defaultChecked={list?.coldDelivery}
+              name="check2"
+              id={list?._id + "cold"}
               className="d-none"
-              onClick={() => {
-                VendorStatus(list?._id);
+              onClick={(e) => {
+                VendorStatus(list?._id, "coldDelivery", e.target.checked);
               }}
             />
-            <label for={list?._id}></label>
+            <label for={list?._id + "cold"}></label>
           </div>
         );
         returnData.dev_truck = (
           <div className="check_toggle" key={list?._id}>
             <input
               type="checkbox"
-              defaultChecked={list?.active_status}
-              name="check1"
-              id={list?._id}
+              defaultChecked={list?.truckDelivery}
+              name="check3"
+              id={list?._id + "truck"}
               className="d-none"
-              onClick={() => {
-                VendorStatus(list?._id);
+              onClick={(e) => {
+                VendorStatus(list?._id, "truckDelivery", e.target.checked);
               }}
             />
-            <label for={list?._id}></label>
+            <label for={list?._id + "truck"}></label>
           </div>
         );
-        returnData.action = (
-          <>
-            <Link
-              className="comman_btn2 table_viewbtn me-2"
-              to="/Admin/Dashboard/Vendor-Management/Approved"
-              state={{ id: list?._id }}
-            >
-              View
-            </Link>
-          </>
-        );
+
         newRows.push(returnData);
       });
 
@@ -302,59 +318,6 @@ const DeliveryManagement = () => {
 
       setRejected({ ...rejected, rows: newRows });
     }
-  };
-
-  const vendorServicesModal = async (id) => {
-    setLoading(true);
-    const { data } = await getVendorDetails(id, { status: "APPROVED" });
-    if (!data?.error) {
-      setLoading(false);
-    }
-    let values = data?.results?.vendor;
-    console.log(values);
-    setVendorId(values?._id);
-    setVendorDetails(
-      <>
-        <div className="row">
-          <div className="form-group col-6">
-            <label className="my-1" htmlFor="">
-              Name
-            </label>
-            <input
-              type="text"
-              className="form-control p-2"
-              name="amount"
-              value={values?.full_name}
-              disabled
-            />
-          </div>
-          <div className="form-group col-6">
-            <label className="my-1" htmlFor="">
-              Shop Name
-            </label>
-            <input
-              type="text"
-              className="form-control p-2"
-              name="amount"
-              value={values?.shop_name}
-              disabled
-            />
-          </div>
-          <div className="form-group mt-2 col-12">
-            <label className="my-1" htmlFor="">
-              Email
-            </label>
-            <input
-              type="text"
-              className="form-control p-2"
-              name="amount"
-              value={values?.email}
-              disabled
-            />
-          </div>
-        </div>
-      </>
-    );
   };
 
   const deleteVendor = async () => {
@@ -488,46 +451,27 @@ const DeliveryManagement = () => {
       });
     }
   };
-  const onSearchPen = async (e) => {
-    if (values?.from && values?.to) {
-      e.preventDefault();
-      const { data } = await AllVendors({
-        from: values?.from,
-        to: values?.to,
-        status: "PENDING",
-        page: 1,
+  
+
+  const HandleAddDeliveries = async () => {
+    if (toCities?.length > 0 && fromCity) {
+      const { data } = await AddDelivery({
+        fromCity: fromCity,
+        toCities: toCities,
       });
-      const newRows = [];
+
       if (!data.error) {
-        let values = data?.results?.vendors;
-        console.log(values);
-        values?.map((list, index) => {
-          const returnData = {};
-          returnData.sn = index + 1 + ".";
-          returnData.name = list?.full_name;
-          returnData.name_shop = list?.shop_name;
-          returnData.email = list?.email;
-          returnData.number = list?.phone_number;
-          returnData.date = moment(list?.createdAt).format("L");
-          returnData.action = (
-            <>
-              <Link
-                className="comman_btn2 table_viewbtn"
-                to="/Admin/Dashboard/Vendor-Management/Pending"
-                state={{ id: list?._id }}
-              >
-                View
-              </Link>
-            </>
-          );
-          newRows.push(returnData);
+        Swal.fire({
+          title: data.message,
+          icon: "success",
+          confirmButtonText: "Okay",
+          confirmButtonColor: "#e25829",
         });
-
-        // setPending({ ...pending, rows: newRows });
+        setToCities([]);
+        setFromCity("");
+        window.location.reload();
       }
-      setValues({ from: "", to: "" });
     } else {
-      e.preventDefault();
       Swal.fire({
         title: "Please select a Date range!",
         icon: "warning",
@@ -536,59 +480,21 @@ const DeliveryManagement = () => {
       });
     }
   };
-  const onSearchRet = async (e) => {
-    if (values?.from && values?.to) {
-      e.preventDefault();
-      const { data } = await AllVendors({
-        from: values?.from,
-        to: values?.to,
-        status: "RETURNED",
-        page: 1,
-      });
-      if (!data.error) {
-        const newRows = [];
-        if (!data.error) {
-          let values = data?.results?.vendors;
-          console.log(values);
-          values?.map((list, index) => {
-            const returnData = {};
-            returnData.sn = index + 1 + ".";
-            returnData.name = list?.full_name;
-            returnData.name_shop = list?.shop_name;
-            returnData.email = list?.email;
-            returnData.number = list?.phone_number;
-            returnData.date = moment(list?.createdAt).format("L");
-            returnData.action = (
-              <>
-                <Link
-                  className="comman_btn2 table_viewbtn"
-                  to="/Admin/Dashboard/Vendor-Management/Returned"
-                  state={{ id: list?._id }}
-                >
-                  View
-                </Link>
-              </>
-            );
-            newRows.push(returnData);
-          });
 
-          setRejected({ ...rejected, rows: newRows });
-        }
-        setValues({ from: "", to: "" });
-      }
-    } else {
-      e.preventDefault();
-      Swal.fire({
-        title: "Please select a Date range!",
-        icon: "warning",
-        button: "ok",
-        confirmButtonColor: "#e25829",
-      });
+  const VendorStatus = async (id, key, value) => {
+    const updateData = {};
+
+    if (key === "truckDelivery") {
+      updateData.truckDelivery = value === true ? "TRUE" : "FALSE";
+    } else if (key === "coldDelivery") {
+      updateData.coldDelivery = value === true ? "TRUE" : "FALSE";
+    } else if (key === "normalDelivery") {
+      updateData.normalDelivery = value === true ? "TRUE" : "FALSE";
     }
-  };
-  const VendorStatus = async (id) => {
-    const { data } = await changeVendorStatus(id);
-    if (!data?.error) {
+
+    const { data } = await UpdateVendorDelivery(id, updateData);
+    if (data.results && !data.error) {
+      getAllVendors();
       Swal.fire({
         title: "Vendor Status Changed!",
         icon: "success",
@@ -597,6 +503,7 @@ const DeliveryManagement = () => {
       });
     }
   };
+
   const getBarClick = (val) => {
     console.log(val);
     setSideBar(val);
@@ -615,14 +522,17 @@ const DeliveryManagement = () => {
       <div>
         <div className="admin_panel_data height_adjust">
           <div className="row vendor-management justify-content-center">
-            <div className="col-12 text-end mb-4">
-              <Link
-                to="/Admin/Dashboard/Vendor-Management/Add-User"
-                className="comman_btn2 ms-2"
-              >
-                Add Vendor
-              </Link>
-            </div>
+            {activeTab === "delivery" && (
+              <div className="col-12 text-end mb-4">
+                <Link
+                  className="comman_btn2 ms-2"
+                  data-bs-toggle="modal"
+                  data-bs-target="#addDeliveryPricings"
+                >
+                  + Add New
+                </Link>
+              </div>
+            )}
             <div className="col-12">
               <div className="row mx-0">
                 <div className="col-12 design_outter_comman shadow">
@@ -638,7 +548,7 @@ const DeliveryManagement = () => {
                         id="myTab"
                         role="tablist"
                       >
-                        <li className="nav-item" role="presentation">
+                        <li className="nav-item w-50" role="presentation">
                           <button
                             className="nav-link active"
                             id="home-tab"
@@ -647,15 +557,13 @@ const DeliveryManagement = () => {
                             type="button"
                             role="tab"
                             aria-controls="home"
+                            onClick={() => setActiveTab("vendor")}
                             aria-selected="true"
                           >
                             Vendors{" "}
-                            <span className="circle_count">
-                              {counters?.approved}
-                            </span>
                           </button>
                         </li>
-                        <li className="nav-item" role="presentation">
+                        <li className="nav-item w-50" role="presentation">
                           <button
                             className="nav-link"
                             id="profile-tab"
@@ -665,28 +573,9 @@ const DeliveryManagement = () => {
                             role="tab"
                             aria-controls="profile"
                             aria-selected="false"
+                            onClick={() => setActiveTab("delivery")}
                           >
                             Delivery Prices{" "}
-                            <span className="circle_count">
-                              {counters?.pending}
-                            </span>
-                          </button>
-                        </li>
-                        <li className="nav-item" role="presentation">
-                          <button
-                            className="nav-link"
-                            id="profile1-tab"
-                            data-bs-toggle="tab"
-                            data-bs-target="#profile1"
-                            type="button"
-                            role="tab"
-                            aria-controls="profile1"
-                            aria-selected="false"
-                          >
-                            Cancelled{" "}
-                            <span className="circle_count">
-                              {counters?.rejected}
-                            </span>
                           </button>
                         </li>
                       </ul>
@@ -773,120 +662,10 @@ const DeliveryManagement = () => {
                         >
                           <div className="row mx-0">
                             <div className="col-12">
-                              <form
-                                className="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"
-                                action=""
-                              >
-                                <div className="form-group mb-0 col-5 col-lg-5 col-sm-auto">
-                                  <label htmlFor="">From</label>
-                                  <input
-                                    type="date"
-                                    className="form-control"
-                                    name="from"
-                                    id="penFrom"
-                                    value={values.from}
-                                    onChange={handleDate}
-                                  />
-                                </div>
-                                <div className="form-group mb-0 col-5 col-lg-5 col-sm-auto">
-                                  <label htmlFor="">To</label>
-                                  <input
-                                    type="date"
-                                    className="form-control"
-                                    name="to"
-                                    id="penTo"
-                                    value={values.to}
-                                    onChange={handleDate}
-                                  />
-                                </div>
-                                <div className="form-group mb-0 col-auto">
-                                  <button
-                                    className="comman_btn2"
-                                    onClick={onSearchPen}
-                                  >
-                                    Search
-                                  </button>
-                                  <button
-                                    className="comman_btn2 d-none"
-                                    type="reset"
-                                    id="Resets"
-                                  >
-                                    Search
-                                  </button>
-                                </div>
-                              </form>
                               <div className="row">
                                 <div className="col-12 comman_table_design px-0">
                                   <div className="table-responsive p-0">
                                     <DeliveryPricingTable />
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div
-                          className="tab-pane fade"
-                          id="profile1"
-                          role="tabpanel"
-                          aria-labelledby="profile1-tab"
-                        >
-                          <div className="row mx-0">
-                            <div className="col-12">
-                              <form
-                                className="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"
-                                action=""
-                              >
-                                <div className="form-group mb-0 col-5 col-lg-5 col-sm-auto">
-                                  <label htmlFor="">From</label>
-                                  <input
-                                    type="date"
-                                    className="form-control"
-                                    name="from"
-                                    id="retFrom"
-                                    value={values.from}
-                                    onChange={handleDate}
-                                  />
-                                </div>
-                                <div className="form-group mb-0 col-5 col-lg-5 col-sm-auto">
-                                  <label htmlFor="">To</label>
-                                  <input
-                                    type="date"
-                                    className="form-control"
-                                    name="to"
-                                    id="retTo"
-                                    value={values.to}
-                                    onChange={handleDate}
-                                  />
-                                </div>
-                                <div className="form-group mb-0 col-auto">
-                                  <button
-                                    className="comman_btn2"
-                                    onClick={onSearchRet}
-                                  >
-                                    Search
-                                  </button>
-                                  <button
-                                    className="comman_btn2 d-none"
-                                    type="reset"
-                                    id="Resets"
-                                  >
-                                    Search
-                                  </button>
-                                </div>
-                              </form>
-                              <div className="row">
-                                <div className="col-12 comman_table_design px-0">
-                                  <div className="table-responsive p-0">
-                                    <MDBDataTable
-                                      bordered
-                                      displayEntries={false}
-                                      className="userData"
-                                      hover
-                                      data={rejected}
-                                      noBottomColumns
-                                      sortable
-                                    />
                                   </div>
                                 </div>
                               </div>
@@ -952,11 +731,7 @@ const DeliveryManagement = () => {
                       onChange={(e) => onFileSelection(e, "upload_file")}
                     />
                   </div>
-                  {/* <div className="col-12">
-                    <button className="comman_btn" type="submit">
-                      Submit
-                    </button>
-                  </div> */}
+
                   <div className="col-4 d-none">
                     <button id="reset_mass_add_form" type="reset">
                       Reset
@@ -1019,6 +794,108 @@ const DeliveryManagement = () => {
               >
                 Delete
               </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        className="modal fade"
+        id="addDeliveryPricings"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabIndex="-1"
+        aria-labelledby="addDeliveryPricingLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-lg">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="addDeliveryPricingLabel">
+                Add Delivery Pricing
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                id="DeliveryPricingClose"
+                onClick={() => {
+                  setFromCity("");
+                  setToCities([]);
+                }}
+              ></button>
+            </div>
+            <div className="modal-body">
+              <form>
+                <div className="row">
+                  <div className="col-md-12 mb-3">
+                    <label className="form-label">From City</label>
+                    <select
+                      onChange={(e) => {
+                        setFromCity(e.target.value);
+                      }}
+                      className="form-select"
+                      required
+                    >
+                      <option value="">Select City</option>
+                      {saudiCities.map((city) => (
+                        <option key={city} value={city}>
+                          {city}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label">To Cities</label>
+                  <div className="row">
+                    {saudiCities?.map((city) => (
+                      <div key={city} className="col-md-4 mb-2">
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id={`city-${city}`}
+                            value={city}
+                            onChange={(e) => {
+                              const selectedCity = e.target.value;
+                              setToCities((prev) =>
+                                prev.includes(selectedCity)
+                                  ? prev.filter((c) => c !== selectedCity)
+                                  : [...prev, selectedCity]
+                              );
+                            }}
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor={`city-${city}`}
+                          >
+                            {city}
+                          </label>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-danger"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+              <a
+                onClick={(e) => HandleAddDeliveries(e)}
+                type="button"
+                className="btn comman_btn"
+              >
+                Save Cities
+              </a>
             </div>
           </div>
         </div>

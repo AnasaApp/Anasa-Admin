@@ -520,6 +520,7 @@ const Services = () => {
                           <label htmlFor="">Orders/Service</label>
                           <input
                             type="number"
+                            placeholder="Enter Number of Orders"
                             className="form-control"
                             name="orderService"
                             value={orderService}

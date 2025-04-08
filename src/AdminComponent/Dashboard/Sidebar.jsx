@@ -79,13 +79,13 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
       path: "/Admin/Dashboard/Category-Management",
       key: "CM",
     },
-    // {
-    //   label: "Delivery Management",
-    //   value: "Category-Management",
-    //   icon: "fas fa-shipping-fast",
-    //   path: "/Admin/Dashboard/Delivery-Management",
-    //   key: "DelM",
-    // },
+    {
+      label: "Delivery Management",
+      value: "Category-Management",
+      icon: "fas fa-shipping-fast",
+      path: "/Admin/Dashboard/Delivery-Management",
+      key: "DelM",
+    },
     {
       label: "Transaction Management",
       value: "Transaction-Management",
