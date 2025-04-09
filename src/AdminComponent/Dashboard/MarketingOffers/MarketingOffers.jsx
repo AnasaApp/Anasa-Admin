@@ -810,12 +810,12 @@ const MarketingOffers = () => {
                 </div>
 
                 <div className="form-group mb-0 col-12 text-center mt-3">
-                  <a
+                  {/* <a
                     className="comman_btn mx-3 "
                     onClick={() => addFormFields2()}
                   >
                     Add more +
-                  </a>
+                  </a> */}
 
                   <button className="comman_btn" type="submit">
                     Save
