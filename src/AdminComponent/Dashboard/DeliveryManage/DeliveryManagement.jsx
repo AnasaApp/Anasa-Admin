@@ -5,11 +5,8 @@ import Swal from "sweetalert2";
 import {
   AddDelivery,
   AllVendors,
-  changeVendorStatus,
   deleteVendorSoft,
-  getVendorDetails,
   importVendorServices,
-  UpdateDeliveryData,
   UpdateVendorDelivery,
   VendorsCount,
 } from "../../httpServices/dashHttpService";

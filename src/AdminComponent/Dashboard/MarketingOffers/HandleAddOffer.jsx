@@ -21,14 +21,8 @@ const HandleAddOffer = ({ getAllOffers }) => {
   const [vendors, setVendors] = useState([]);
   const [services, setServices] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
-
   const [allVendors, setAllVendors] = useState([]);
   const [allServices, setAllServices] = useState([]);
-
-  // Search states for each field type
-  const [categorySearch, setCategorySearch] = useState("");
-  const [vendorSearch, setVendorSearch] = useState("");
-  const [serviceSearch, setServiceSearch] = useState("");
 
   const [formValues, setFormValues] = useState([
     { category: "", vendor: "", service: "", price: "" },
@@ -41,12 +35,14 @@ const HandleAddOffer = ({ getAllOffers }) => {
   } = useForm();
 
   useEffect(() => {
+    
     const fetchCategories = async () => {
       const { data } = await AllCategory();
       if (!data.error) {
         setAllCategories(data.results?.categories || []);
       }
     };
+
     const fetchVendors = async () => {
       const { data } = await AllVendors({
         status: "APPROVED",
@@ -55,12 +51,14 @@ const HandleAddOffer = ({ getAllOffers }) => {
         setAllVendors(data.results?.vendors || []);
       }
     };
+
     const fetchServices = async () => {
       const { data } = await getServices();
       if (!data.error) {
         setAllServices(data.results?.services || []);
       }
     };
+
     fetchServices();
     fetchCategories();
     fetchVendors();
@@ -126,18 +124,15 @@ const HandleAddOffer = ({ getAllOffers }) => {
     const fieldName = e.target.name;
     const fieldValue = e.target.value;
 
-    // Default to existing values
     let updatedCategory = newFormValues[index].category;
     let updatedVendor = newFormValues[index].vendor;
 
-    // If selecting a service, pull related vendor/category from selected service data
     if (fieldName === "service" && dataItm?.[0]?.data) {
       const selectedService = dataItm[0].data;
 
       updatedCategory = selectedService?.category?._id || updatedCategory;
       updatedVendor = selectedService?.vendor?._id || updatedVendor;
 
-      // Optional: Load vendor/services list based on auto-filled category/vendor
       VendorsList(updatedCategory, index);
       createOptionsServices(updatedVendor, index);
     }
@@ -154,37 +149,6 @@ const HandleAddOffer = ({ getAllOffers }) => {
     };
 
     setFormValues(newFormValues);
-  };
-
-  // Filter functions for search functionality
-  const filterCategories = () => {
-    return allCategories
-      .filter((cat) => cat.status === true)
-      .filter(
-        (cat) =>
-          categorySearch === "" ||
-          cat.name_en.toLowerCase().includes(categorySearch.toLowerCase())
-      );
-  };
-
-  const filterVendors = (index) => {
-    return (
-      vendors[index]?.filter(
-        (vendor) =>
-          vendorSearch === "" ||
-          vendor.full_name.toLowerCase().includes(vendorSearch.toLowerCase())
-      ) || []
-    );
-  };
-
-  const filterServices = (index) => {
-    return (
-      services[index]?.filter(
-        (service) =>
-          serviceSearch === "" ||
-          service.name_en.toLowerCase().includes(serviceSearch.toLowerCase())
-      ) || []
-    );
   };
 
   const onSubmit = async (data) => {
@@ -237,29 +201,56 @@ const HandleAddOffer = ({ getAllOffers }) => {
     }
   };
 
-  const handleSelectChange = async (index, field, selectedOption) => {
+  const handleSelectChange = async (
+    index,
+    field,
+    selectedOption,
+    dataItm = null
+  ) => {
     const newFormValues = [...formValues];
     const newValue = selectedOption?.value || "";
 
-    newFormValues[index] = {
-      ...newFormValues[index],
-      [field]: newValue,
-    };
+    let updatedEntry = { ...newFormValues[index], [field]: newValue };
+
+    // 🟢 When selecting a service, auto-fill related category, vendor, price
+    if (field === "service" && dataItm?.[0]?.data) {
+      const selectedService = dataItm[0].data;
+      updatedEntry.category = selectedService?.category?._id || "";
+      updatedEntry.vendor = selectedService?.vendor?._id || "";
+      updatedEntry.price = selectedService?.price || "";
+
+      VendorsList(selectedService?.category?._id, index);
+      createOptionsServices(selectedService?.vendor?._id, index);
+    }
 
     if (field === "category") {
-      const { data } = await GetVendorByCate(newValue);
-      if (!data?.error) {
-        console.log(data);
+      if (newValue) {
+        const { data } = await GetVendorByCate(newValue);
+        if (!data?.error) {
+          const filteredVendors = data.results.vendors || [];
+          setAllVendors(filteredVendors);
+        }
+      }
 
-        const filteredVendors = data.results.vendors || [];
-        setAllVendors(filteredVendors);
+      if (!newValue) {
+        updatedEntry.vendor = "";
+        updatedEntry.service = "";
+        updatedEntry.price = "";
       }
     }
 
     if (field === "vendor") {
-      createOptionsServices(newValue, index);
+      if (newValue) {
+        createOptionsServices(newValue, index);
+      }
+
+      if (!newValue) {
+        updatedEntry.service = "";
+        updatedEntry.price = "";
+      }
     }
 
+    newFormValues[index] = updatedEntry;
     setFormValues(newFormValues);
   };
 
@@ -450,9 +441,8 @@ const HandleAddOffer = ({ getAllOffers }) => {
                 />
               </div>
 
-              {/* Remove button */}
               <div className="form-group col-1 mt-4">
-                {formValues.length > 1 && (
+                {formValues?.length > 1 && (
                   <button
                     className="comman_btn mt-2"
                     style={{ padding: "5px 20px" }}

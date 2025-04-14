@@ -9,17 +9,29 @@ import {
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
 import Swal from "sweetalert2";
+import CustomizationModal from "../VendorManage/CustomizationModal";
 
 const ServicesManage = () => {
   const [slide, setSlide] = useState("SM");
   const [sideBar, setSideBar] = useState();
+  const [customizationModalVisible, setCustomizationModalVisible] =
+    useState(false);
+  const [customizationData, setCustomizationData] = useState({
+    status: false,
+    options: [],
+    maxSelection: 1,
+    isRequired: false,
+  });
+
   const [newData, setNewData] = useState([
     { name_en: "", name_ar: "", price: "" },
   ]);
+
   const getBarClick = (val) => {
     console.log(val);
     setSideBar(val);
   };
+
   const {
     register: register2,
     handleSubmit: handleSubmit2,
@@ -98,7 +110,7 @@ const ServicesManage = () => {
       values?.map((list, index) => {
         const returnData = {};
         returnData.sn = index + 1 + ".";
-        
+
         returnData.name_en = list?.name_en;
         returnData.name_ar = list?.name_ar;
         returnData.name_vendor = list?.vendor?.full_name;
@@ -134,10 +146,16 @@ const ServicesManage = () => {
               // data-bs-target="#staticBackdrop447"
               className="comman_btn ms-1 table_viewbtn"
               // to={`/Admin/Dashboard/Vendor-Management/Services/${list?.vendor?._id}`}
-              to={`/Admin/Dashboard/Vendor-Management/Services/${list?.vendor?._id}/${list?.name_en}`}
+              to={`/Admin/Dashboard/Vendor-Management/Services/${list?.vendor?._id}`}
             >
               Edit
             </Link>
+            <button
+              className="comman_btn py-1 mt-2 table_viewbtn"
+              onClick={() => handleEditCustomization(list)}
+            >
+              Edit Customization
+            </button>
           </>
         );
         newRows.push(returnData);
@@ -158,6 +176,22 @@ const ServicesManage = () => {
         confirmButtonColor: "#e25829",
       });
     }
+  };
+
+  const handleEditCustomization = (item) => {
+    if (item.customization) {
+      setCustomizationData(item);
+    } else {
+      setCustomizationData({
+        status: false,
+        options: [],
+        isRequired: false,
+        item: item,
+        customized_option_title_ar: "",
+        customized_option_title_en: "",
+      });
+    }
+    setCustomizationModalVisible(true);
   };
 
   const onEdit = async (data) => {
@@ -344,6 +378,15 @@ const ServicesManage = () => {
           </div>
         </div>
       </div>
+
+      <CustomizationModal
+        visible={customizationModalVisible}
+        onClose={() => setCustomizationModalVisible(false)}
+        onSave={(updatedCustomizations) => {
+          console.log(updatedCustomizations);
+        }}
+        initialData={customizationData}
+      />
     </div>
   );
 };

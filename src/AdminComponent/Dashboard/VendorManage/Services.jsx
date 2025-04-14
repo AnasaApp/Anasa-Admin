@@ -12,6 +12,7 @@ import {
 import Sidebar from "../Sidebar";
 import Swal from "sweetalert2";
 import ImageEdit from "../../CropImage/ImageEdit";
+import CustomizationModal from "./CustomizationModal";
 
 const Services = () => {
   const [vendorService, setVendorService] = useState();
@@ -21,8 +22,14 @@ const Services = () => {
   const [dataToEdit, setDataToEdit] = useState(null);
   const [category, setCategory] = useState();
   const [selectedEnCategory, setSelectedEnCategory] = useState("");
-    const [preprationTime, setPreprationTime] = useState();
-    const [orderService, setOrderService] = useState();
+  const [preprationTime, setPreprationTime] = useState();
+  const [orderService, setOrderService] = useState();
+  const [deliveryType, setDeliveryType] = useState({
+    normalDelivery: false,
+    truckDelivery: false,
+    coldDelivery: false,
+    pickUpOnly: false,
+  });
 
   const [selectedArCategory, setSelectedArCategory] = useState("");
   const [selectedEnSubCategory, setSelectedEnSubCategory] = useState("");
@@ -42,6 +49,35 @@ const Services = () => {
   const [serviceImage, setServiceImage] = useState();
 
   const [subCat_Id, setSubCat_Id] = useState();
+
+  console.log({ deliveryType });
+
+  const [customizationModalVisible, setCustomizationModalVisible] =
+    useState(false);
+
+  const [customizationData, setCustomizationData] = useState({
+    status: false,
+    options: [],
+    maxSelection: 1,
+    isRequired: false,
+  });
+
+  const handleEditCustomization = (item) => {
+    if (item.customization) {
+      setCustomizationData(item);
+    } else {
+      setCustomizationData({
+        status: false,
+        options: [],
+        isRequired: false,
+        item: item,
+        customized_option_title_ar: "",
+        customized_option_title_en: "",
+      });
+    }
+    setDataToEdit(item);
+    setCustomizationModalVisible(true);
+  };
 
   let id = useParams();
   // console.log(id);
@@ -111,6 +147,12 @@ const Services = () => {
     setSelectedEnCategory(item?.category?.name_en);
     setSelectedEnSubCategory(item?.subCategory?.name_en || "");
     setSelectedArSubCategory(item?.subCategory?.name_ar || "");
+    setDeliveryType({
+      normalDelivery: item?.normalDelivery,
+      truckDelivery: item?.truckDelivery,
+      coldDelivery: item?.coldDelivery,
+      pickUpOnly: item?.pickUpOnly,
+    });
   };
 
   const handleCategoryEnChange = (e) => {
@@ -172,12 +214,25 @@ const Services = () => {
     formData.append("description_ar", descriptionNameAr);
     formData.append("preparationTime", preprationTime);
     formData.append("no_of_order_per_service", orderService);
-    
+
     formData.append("categoryId", category_id?._id);
     formData.append("subCategoryId", subCat_Id ? subCat_Id : "");
     formData.append("price", price);
     formData.append("images", croppedImage);
     formData.append("removeImage", [serviceImage]);
+    formData.append(
+      "normalDelivery",
+      deliveryType.normalDelivery ? "TRUE" : "FALSE"
+    );
+    formData.append(
+      "truckDelivery",
+      deliveryType.truckDelivery ? "TRUE" : "FALSE"
+    );
+    formData.append(
+      "coldDelivery",
+      deliveryType.coldDelivery ? "TRUE" : "FALSE"
+    );
+    formData.append("pickUpOnly", deliveryType.pickUpOnly ? "TRUE" : "FALSE");
 
     let { data } = await UpdateServices(id, formData);
     if (!data.error) {
@@ -283,77 +338,88 @@ const Services = () => {
                               className="d-none"
                               onClick={() => {
                                 changeVendorServiceStatus(item?._id);
-                                }}
-                              />
-                              <label htmlFor={item?._id}></label>
-                              </div>
-                              <div className="text-end position-absolute bottom-0 pb-2">
+                              }}
+                            />
+                            <label htmlFor={item?._id}></label>
+                          </div>
+                          <div className="text-end position-absolute bottom-0 pb-2">
+                            <div className="text-end position-absolute bottom-0 pb-2">
                               <button
-                                className="comman_btn py-1 px-4"
+                                className="comman_btn py-1 px-4 me-2"
                                 onClick={() => handleEdit(item)}
                               >
                                 Edit
                               </button>
-                              </div>
+                              {}
+                              <button
+                                className="comman_btn py-1 px-4"
+                                onClick={() => handleEditCustomization(item)}
+                              >
+                                Edit Customization
+                              </button>
+                            </div>
+                          </div>
 
-                              <div className="col-6 py-1">
-                              <div className="row mx-0">
-                                <div className="col-6">
+                          <div className="col-6 py-1">
+                            <div className="row mx-0">
+                              <div className="col-6">
                                 <strong className="booking_head">
                                   Image :
                                 </strong>
-                                </div>
-                                <div className="col-6">
+                              </div>
+                              <div className="col-6">
                                 <span className="booking_head">
                                   <img
-                                  style={{
-                                    width: "32%",
-                                    height: "4rem",
-                                    borderRadius: "12px",
-                                  }}
-                                  src={item?.images?.[item?.images?.length - 1]}
+                                    style={{
+                                      width: "32%",
+                                      height: "4rem",
+                                      borderRadius: "12px",
+                                    }}
+                                    src={
+                                      item?.images?.[item?.images?.length - 1]
+                                    }
                                   />
                                 </span>
-                                </div>
                               </div>
-                              </div>
-                              {console.log(croppedImage)}
+                            </div>
+                          </div>
+                          {console.log(croppedImage)}
 
-                              <div className="col-6 py-1">
-                              <div className="row mx-0">
-                                <div className="col-6">
+                          <div className="col-6 py-1">
+                            <div className="row mx-0">
+                              <div className="col-6">
                                 <strong className="booking_head">
                                   Service Name :
                                 </strong>
-                                </div>
-                                <div className="col-6">
+                              </div>
+                              <div className="col-6">
                                 <span className="booking_head">
                                   {item?.name_en}
                                 </span>
-                                </div>
                               </div>
-                              </div>
-                              <div className="col-6 py-1">
-                              <div className="row mx-0">
-                                <div className="col-6">
+                            </div>
+                          </div>
+                          <div className="col-6 py-1">
+                            <div className="row mx-0">
+                              <div className="col-6">
                                 <strong className="booking_head">
                                   Customization :
                                 </strong>
-                                </div>
-                                <div className="col-6">
+                              </div>
+                              <div className="col-6">
                                 <span className="booking_head">
                                   {item?.customization ? "YES" : "NO"}
                                 </span>
-                                </div>
                               </div>
-                              </div>
-                              <div className="col-6 py-1">
-                              <div className="row mx-0">
-                                <div className="col-6">
+                            </div>
+                          </div>
+                          <div className="col-6 py-1">
+                            <div className="row mx-0">
+                              <div className="col-6">
                                 <strong className="booking_head">
                                   Category :
                                 </strong>
-                                </div>
+                              </div>
                               <div className="col-6">
                                 <span className="booking_head">
                                   {item?.category?.name_en}
@@ -511,9 +577,7 @@ const Services = () => {
                             className="form-control"
                             name="preparationTime"
                             value={preprationTime}
-                            onChange={(e) =>
-                              setPreprationTime(e.target.value)
-                            }
+                            onChange={(e) => setPreprationTime(e.target.value)}
                           />
                         </div>
                         <div className="form-group col-6">
@@ -524,13 +588,10 @@ const Services = () => {
                             className="form-control"
                             name="orderService"
                             value={orderService}
-                            onChange={(e) =>
-                              setOrderService(e.target.value)
-                            }
+                            onChange={(e) => setOrderService(e.target.value)}
                           />
                         </div>
 
-                        
                         <div className="form-group col-6">
                           <label htmlFor="">Select Category (En)</label>
                           <select
@@ -601,6 +662,93 @@ const Services = () => {
                             </div>
                           </>
                         )}
+                        <div className="form-group col-6">
+                          <label>Delivery Type</label>
+
+                          <div className="form-check">
+                            <input
+                              type="checkbox"
+                              className="form-check-input"
+                              id="normalDelivery"
+                              checked={deliveryType.normalDelivery}
+                              onChange={() =>
+                                setDeliveryType((prev) => ({
+                                  ...prev,
+                                  normalDelivery: !prev.normalDelivery,
+                                }))
+                              }
+                            />
+                            <label
+                              className="form-check-label"
+                              htmlFor="normalDelivery"
+                            >
+                              Normal Delivery
+                            </label>
+                          </div>
+
+                          <div className="form-check">
+                            <input
+                              type="checkbox"
+                              className="form-check-input"
+                              id="truckDelivery"
+                              checked={deliveryType.truckDelivery}
+                              onChange={() =>
+                                setDeliveryType((prev) => ({
+                                  ...prev,
+                                  truckDelivery: !prev.truckDelivery,
+                                }))
+                              }
+                            />
+                            <label
+                              className="form-check-label"
+                              htmlFor="truckDelivery"
+                            >
+                              Truck Delivery
+                            </label>
+                          </div>
+
+                          <div className="form-check">
+                            <input
+                              type="checkbox"
+                              className="form-check-input"
+                              id="coldDelivery"
+                              checked={deliveryType.coldDelivery}
+                              onChange={() =>
+                                setDeliveryType((prev) => ({
+                                  ...prev,
+                                  coldDelivery: !prev.coldDelivery,
+                                }))
+                              }
+                            />
+                            <label
+                              className="form-check-label"
+                              htmlFor="coldDelivery"
+                            >
+                              Cold Delivery
+                            </label>
+                          </div>
+
+                          <div className="form-check">
+                            <input
+                              type="checkbox"
+                              className="form-check-input"
+                              id="pickUpOnly"
+                              checked={deliveryType.pickUpOnly}
+                              onChange={() =>
+                                setDeliveryType((prev) => ({
+                                  ...prev,
+                                  pickUpOnly: !prev.pickUpOnly,
+                                }))
+                              }
+                            />
+                            <label
+                              className="form-check-label"
+                              htmlFor="pickUpOnly"
+                            >
+                              Pick Up Only
+                            </label>
+                          </div>
+                        </div>
 
                         <div className="form-group col-6">
                           <label htmlFor="">Service Image</label>
@@ -683,7 +831,18 @@ const Services = () => {
           setCroppedImageUrl={setCroppedImageUrl}
         />
       </div>
-      
+
+      {/* Customization Modal */}
+      <CustomizationModal
+        visible={customizationModalVisible}
+        onClose={() => setCustomizationModalVisible(false)}
+        onSave={(updatedCustomizations) => {
+          // Call API or update parent data
+          console.log(updatedCustomizations);
+          // Optionally call GetVendorServices()
+        }}
+        initialData={customizationData}
+      />
     </div>
   );
 };
