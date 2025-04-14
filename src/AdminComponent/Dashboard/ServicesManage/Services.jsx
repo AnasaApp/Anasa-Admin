@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import {
   changeServiceStatus,
+  deleteService,
   getServices,
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
@@ -156,6 +157,12 @@ const ServicesManage = () => {
             >
               Edit Customization
             </button>
+            <button
+              className="comman_btn2 py-1 mt-2 table_viewbtn"
+              onClick={() => handleDelete(list?._id)}
+            >
+              Delete
+            </button>
           </>
         );
         newRows.push(returnData);
@@ -192,6 +199,19 @@ const ServicesManage = () => {
       });
     }
     setCustomizationModalVisible(true);
+  };
+
+  const handleDelete = async (id) => {
+    const { data } = await deleteService(id);
+    if (!data?.error) {
+      getAllServices();
+      Swal.fire({
+        title: "Service Deleted!",
+        icon: "success",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
   };
 
   const onEdit = async (data) => {
