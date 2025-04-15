@@ -80,6 +80,12 @@ const ServicesManage = () => {
         width: 100,
       },
       {
+        label: "Customization",
+        field: "custom",
+        sort: "asc",
+        width: 100,
+      },
+      {
         label: "Status",
         field: "status",
         sort: "asc",
@@ -97,7 +103,7 @@ const ServicesManage = () => {
 
   useEffect(() => {
     getAllServices();
-  }, []);
+  }, [customizationModalVisible]);
 
   const getAllServices = async () => {
     const { data } = await getServices();
@@ -117,6 +123,7 @@ const ServicesManage = () => {
         returnData.name_vendor = list?.vendor?.full_name;
         returnData.number = list?.price;
         returnData.date = moment(list?.createdAt).format("L");
+        returnData.custom = list?.customization && "Yes" ? "Yes" : "No";
         returnData.status = (
           <div className="check_toggle" key={list?._id}>
             <input
@@ -132,6 +139,7 @@ const ServicesManage = () => {
             <label for={list?._id}></label>
           </div>
         );
+
         returnData.action = (
           <>
             <Link
@@ -186,7 +194,7 @@ const ServicesManage = () => {
   };
 
   const handleEditCustomization = (item) => {
-    if (item.customization) {
+    if (item.packages?.length) {
       setCustomizationData(item);
     } else {
       setCustomizationData({

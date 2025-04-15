@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button, Input, Checkbox, message, Divider, Space } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
+import { UpdateServices } from "../../httpServices/dashHttpService";
 
 const defaultCustomization = {
   status: true,
@@ -22,21 +23,19 @@ const CustomizationModal = ({ visible, onClose, onSave, initialData }) => {
   const [allEnabled, setAllEnabled] = useState(true);
 
   useEffect(() => {
+    setAllEnabled(initialData?.customization);
     if (initialData?.packages?.length) {
-      // Deep clone to avoid referencing props directly
-      const cloned = initialData.packages.map((pkg) => ({
+      const cloned = initialData?.packages?.map((pkg) => ({
         ...pkg,
-        options: pkg.options.map((opt) => ({ ...opt })),
+        options: pkg?.options?.map((opt) => ({ ...opt })),
       }));
       setCustomizations(cloned);
-      setAllEnabled(initialData?.customization);
     } else {
       setCustomizations([defaultCustomization]);
-      setAllEnabled(true);
     }
   }, [initialData]);
 
-  console.log(customizations);
+  console.log({ initialData });
 
   const handlePackageChange = (index, field, value) => {
     const updated = [...customizations];
@@ -83,31 +82,18 @@ const CustomizationModal = ({ visible, onClose, onSave, initialData }) => {
   const toggleAllStatus = (checked) => {
     setAllEnabled(checked);
   };
+  console.log({ customizations });
 
   const handleSave = async () => {
-    const isValid = customizations.every((pkg) =>
-      pkg.options.every((opt) => opt.title_en.trim() && opt.title_ar.trim())
-    );
-    if (!isValid) {
-      message.error(
-        "Each option must have a title in both English and Arabic."
-      );
-      return;
-    }
+    let formData = new FormData();
+    formData.append("customization", allEnabled);
+    allEnabled && formData.append("packages", JSON.stringify(customizations));
 
     try {
-      // const { data, error } = await GetUser(id);
-      // if (!error && data?.results) {
-      //   const userData = data.results.user;
-      //   setPreviewImage(userData?.profileImage || null);
-      //   reset({
-      //     name: userData?.fullName || "NA",
-      //     email: userData?.email || "NA",
-      //     mobile: userData?.phoneNumber || "NA",
-      //     permissions: userData?.permissions || [],
-      //     image: null,
-      //   });
-      // }
+      const { data, error } = await UpdateServices(initialData?.item?._id || initialData?._id, formData);
+      if (!error && data?.results) {
+        onClose();
+      }
     } catch (error) {
       console.error("Error fetching user:", error);
     }
@@ -138,140 +124,146 @@ const CustomizationModal = ({ visible, onClose, onSave, initialData }) => {
         </Checkbox>
       </div>
 
-      <div className="space-y-6">
-        {customizations?.map((pkg, pkgIndex) => (
-          <div
-            key={pkgIndex}
-            className="p-4 border rounded-lg bg-gray-50 space-y-4 shadow-sm gap-2"
-          >
-            <div className="flex flex-wrap gap-2 items-center">
-              <Input
-                placeholder="Title EN"
-                value={pkg.customized_option_title_en}
-                onChange={(e) =>
-                  handlePackageChange(
-                    pkgIndex,
-                    "customized_option_title_en",
-                    e.target.value
-                  )
-                }
-                style={{ width: 200 }}
-              />
-              <Input
-                placeholder="Title AR"
-                value={pkg.customized_option_title_ar}
-                className="mx-2"
-                onChange={(e) =>
-                  handlePackageChange(
-                    pkgIndex,
-                    "customized_option_title_ar",
-                    e.target.value
-                  )
-                }
-                style={{ width: 200 }}
-              />
-              <Input
-                placeholder="Max Selection"
-                type="number"
-                min={1}
-                value={pkg.option_select_count}
-                onChange={(e) =>
-                  handlePackageChange(
-                    pkgIndex,
-                    "maxSelection",
-                    parseInt(e.target.value)
-                  )
-                }
-                style={{ width: 150 }}
-              />
-              <Checkbox
-                checked={pkg.is_required}
-                className="mx-2"
-                onChange={(e) =>
-                  handlePackageChange(pkgIndex, "isRequired", e.target.checked)
-                }
-              >
-                Required
-              </Checkbox>
+      {allEnabled && (
+        <div className="space-y-6">
+          {customizations?.map((pkg, pkgIndex) => (
+            <div
+              key={pkgIndex}
+              className="p-4 border rounded-lg bg-gray-50 space-y-4 shadow-sm gap-2"
+            >
+              <div className="flex flex-wrap gap-2 items-center">
+                <Input
+                  placeholder="Title EN"
+                  value={pkg.customized_option_title_en}
+                  onChange={(e) =>
+                    handlePackageChange(
+                      pkgIndex,
+                      "customized_option_title_en",
+                      e.target.value
+                    )
+                  }
+                  style={{ width: 200 }}
+                />
+                <Input
+                  placeholder="Title AR"
+                  value={pkg.customized_option_title_ar}
+                  className="mx-2"
+                  onChange={(e) =>
+                    handlePackageChange(
+                      pkgIndex,
+                      "customized_option_title_ar",
+                      e.target.value
+                    )
+                  }
+                  style={{ width: 200 }}
+                />
+                <Input
+                  placeholder="Max Selection"
+                  type="number"
+                  min={1}
+                  value={pkg.option_select_count}
+                  onChange={(e) =>
+                    handlePackageChange(
+                      pkgIndex,
+                      "option_select_count",
+                      parseInt(e.target.value)
+                    )
+                  }
+                  style={{ width: 150 }}
+                />
+                <Checkbox
+                  checked={pkg.is_required}
+                  className="mx-2"
+                  onChange={(e) =>
+                    handlePackageChange(
+                      pkgIndex,
+                      "is_required",
+                      e.target.checked
+                    )
+                  }
+                >
+                  Required
+                </Checkbox>
+
+                <Button
+                  type="text"
+                  danger
+                  icon={<DeleteOutlined />}
+                  onClick={() => removeCustomization(pkgIndex)}
+                  className="rounded-full"
+                />
+              </div>
+
+              <Divider>Options</Divider>
+
+              <div className="space-y-3">
+                {pkg?.options.map((opt, optIndex) => (
+                  <div key={optIndex} className="flex gap-3 items-center">
+                    <Input
+                      placeholder="Option Title EN"
+                      value={opt.option_en}
+                      className="mb-2"
+                      onChange={(e) =>
+                        handleOptionChange(
+                          pkgIndex,
+                          optIndex,
+                          "option_en",
+                          e.target.value
+                        )
+                      }
+                      style={{ width: 250 }}
+                    />
+                    <Input
+                      placeholder="Option Title AR"
+                      className="mx-2 mb-2"
+                      value={opt.option_ar}
+                      onChange={(e) =>
+                        handleOptionChange(
+                          pkgIndex,
+                          optIndex,
+                          "option_ar",
+                          e.target.value
+                        )
+                      }
+                      style={{ width: 250 }}
+                    />
+                    <Input
+                      placeholder="Option Price"
+                      className="mb-2"
+                      value={opt.price}
+                      onChange={(e) =>
+                        handleOptionChange(
+                          pkgIndex,
+                          optIndex,
+                          "price",
+                          e.target.value
+                        )
+                      }
+                      style={{ width: 200 }}
+                    />
+                    <Button
+                      type="text"
+                      danger
+                      icon={<DeleteOutlined />}
+                      onClick={() => removeOption(pkgIndex, optIndex)}
+                      className="rounded-full"
+                    />
+                  </div>
+                ))}
+              </div>
 
               <Button
-                type="text"
-                danger
-                icon={<DeleteOutlined />}
-                onClick={() => removeCustomization(pkgIndex)}
-                className="rounded-full"
-              />
+                type="dashed"
+                onClick={() => addOption(pkgIndex)}
+                icon={<PlusOutlined />}
+                className="w-full rounded-full"
+              >
+                Add Option
+              </Button>
             </div>
-
-            <Divider>Options</Divider>
-
-            <div className="space-y-3">
-              {pkg?.options.map((opt, optIndex) => (
-                <div key={optIndex} className="flex gap-3 items-center">
-                  <Input
-                    placeholder="Option Title EN"
-                    value={opt.option_en}
-                    className="mb-2"
-                    onChange={(e) =>
-                      handleOptionChange(
-                        pkgIndex,
-                        optIndex,
-                        "option_en",
-                        e.target.value
-                      )
-                    }
-                    style={{ width: 250 }}
-                  />
-                  <Input
-                    placeholder="Option Title AR"
-                    className="mx-2 mb-2"
-                    value={opt.option_ar}
-                    onChange={(e) =>
-                      handleOptionChange(
-                        pkgIndex,
-                        optIndex,
-                        "option_ar",
-                        e.target.value
-                      )
-                    }
-                    style={{ width: 250 }}
-                  />
-                  <Input
-                    placeholder="Option Price"
-                    className="mb-2"
-                    value={opt.price}
-                    onChange={(e) =>
-                      handleOptionChange(
-                        pkgIndex,
-                        optIndex,
-                        "price",
-                        e.target.value
-                      )
-                    }
-                    style={{ width: 200 }}
-                  />
-                  <Button
-                    type="text"
-                    danger
-                    icon={<DeleteOutlined />}
-                    onClick={() => removeOption(pkgIndex, optIndex)}
-                    className="rounded-full"
-                  />
-                </div>
-              ))}
-            </div>
-
-            <Button
-              type="dashed"
-              onClick={() => addOption(pkgIndex)}
-              icon={<PlusOutlined />}
-              className="w-full rounded-full"
-            >
-              Add Option
-            </Button>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       <Button
         type="primary"

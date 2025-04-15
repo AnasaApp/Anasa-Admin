@@ -63,7 +63,9 @@ const Services = () => {
   });
 
   const handleEditCustomization = (item) => {
-    if (item.customization) {
+    console.log({item});
+    
+    if (item.packages?.length) {
       setCustomizationData(item);
     } else {
       setCustomizationData({
@@ -85,7 +87,7 @@ const Services = () => {
     GetVendorServices();
     GetVendor();
     getAllCategory();
-  }, []);
+  }, [customizationModalVisible]);
 
   const GetVendor = async () => {
     const { data } = await getVendorDetails(id?.id, { status: "APPROVED" });
@@ -837,9 +839,7 @@ const Services = () => {
         visible={customizationModalVisible}
         onClose={() => setCustomizationModalVisible(false)}
         onSave={(updatedCustomizations) => {
-          // Call API or update parent data
           console.log(updatedCustomizations);
-          // Optionally call GetVendorServices()
         }}
         initialData={customizationData}
       />
