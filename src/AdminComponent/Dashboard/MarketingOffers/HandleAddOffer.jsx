@@ -153,7 +153,6 @@ const HandleAddOffer = ({ getAllOffers }) => {
 
   const onSubmit = async (data) => {
     if (
-      !formValues[0]?.category ||
       !formValues[0]?.vendor ||
       !formValues[0]?.service
     ) {
@@ -162,7 +161,7 @@ const HandleAddOffer = ({ getAllOffers }) => {
         icon: "error",
         confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
-        text: "Category, Vendor or Service are empty, Please choose",
+        text: "Vendor or Service are empty, Please choose",
       });
       return;
     }

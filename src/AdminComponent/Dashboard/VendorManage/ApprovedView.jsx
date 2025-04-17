@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { saveAs } from "file-saver";
 import {
   AddCity,
   downloadFiles,
@@ -81,7 +80,16 @@ const ApprovedView = () => {
         "customer_contact_number",
         info?.customer_contact_number
       );
-      formData?.append("city", info?.city);
+      formData?.append(
+        "city",
+        cities?.find((itm) => itm?._id === info?.city)?.city
+      );
+
+      formData?.append(
+        "city_ar",
+        cities?.find((itm) => itm?._id === info?.city)?.city_ar
+      );
+
       formData?.append("shop_address", info?.shop_address);
       formData?.append("shop_name", info?.shop_name);
       formData?.append("building_name", info?.building_name);
@@ -468,7 +476,6 @@ const ApprovedView = () => {
                     <h4 className="user_name">{vendor?.full_name}</h4>
                   </div>
 
-                  {/* Name */}
                   <div className="col-md-6 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Name:</span>
@@ -486,7 +493,6 @@ const ApprovedView = () => {
                     </div>
                   </div>
 
-                  {/* Email */}
                   <div className="col-md-6 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Email:</span>
@@ -504,7 +510,6 @@ const ApprovedView = () => {
                     </div>
                   </div>
 
-                  {/* Mobile Number */}
                   <div className="col-md-6 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Mobile Number:</span>
@@ -522,7 +527,6 @@ const ApprovedView = () => {
                     </div>
                   </div>
 
-                  {/* Customer Contact Number */}
                   <div className="col-md-6 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Customer Contact Number:</span>
@@ -557,7 +561,6 @@ const ApprovedView = () => {
                     </div>
                   </div>
 
-                  {/* Shop Name */}
                   <div className="col-md-6 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Shop Name:</span>
@@ -574,8 +577,6 @@ const ApprovedView = () => {
                       </div>
                     </div>
                   </div>
-
-                  {/* Building Name */}
                   <div className="col-md-6 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Building Name:</span>
@@ -593,7 +594,6 @@ const ApprovedView = () => {
                     </div>
                   </div>
 
-                  {/* Locality */}
                   <div className="col-md-6 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Locality:</span>
@@ -611,17 +611,27 @@ const ApprovedView = () => {
                     </div>
                   </div>
 
-                  {/* City */}
                   <div className="col-md-6 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>City:</span>
                       <div className="col">
                         {isEditing ? (
-                          <input
-                            type="text"
-                            className="form-control"
+                        
+                          <select
+                            className="form-select"
                             {...register("city")}
-                          />
+                            placeholder="Select City"
+                            onChange={(e) => {
+                              setValue("city", e.target.value);
+                            }}
+                          >
+                            <option value="">Select City</option>
+                            {cities?.map((itm, index) => (
+                              <option value={itm?._id} key={index}>
+                                {itm?.city}
+                              </option>
+                            ))}
+                          </select>
                         ) : (
                           <strong>{vendor?.city}</strong>
                         )}
@@ -629,7 +639,6 @@ const ApprovedView = () => {
                     </div>
                   </div>
 
-                  {/* Country Code */}
                   <div className="col-md-6 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Country Code:</span>
@@ -650,7 +659,6 @@ const ApprovedView = () => {
 
                   {/* Country Name */}
 
-                 
                   <div className="col-md-6 mb-4 d-flex align-items-stretch">
                     <div className="row view-inner-box border mx-0 w-100">
                       <span>Serviceable cities:</span>
@@ -699,9 +707,6 @@ const ApprovedView = () => {
                       </div>
                     </div>
                   </div>
-
-                  
-
 
                   {/* Edit Button */}
                   {!isEditing && (
@@ -1160,7 +1165,7 @@ const ApprovedView = () => {
                         </div>
                       ) : (
                         <button
-                        type="button"
+                          type="button"
                           onClick={() => {
                             setModalVisible2(true);
                           }}

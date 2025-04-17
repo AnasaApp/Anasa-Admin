@@ -449,7 +449,7 @@ const DeliveryManagement = () => {
       <div>
         <div className="admin_panel_data height_adjust">
           <div className="row vendor-management justify-content-center">
-            {activeTab === "delivery" && (
+            {/* {activeTab === "delivery" && ( */}
               <div className="col-12 text-end mb-4">
                 <Link
                   className="comman_btn2 ms-2"
@@ -459,18 +459,18 @@ const DeliveryManagement = () => {
                   + Add New
                 </Link>
               </div>
-            )}
+            {/* )} */}
             <div className="col-12">
               <div className="row mx-0">
                 <div className="col-12 design_outter_comman shadow">
                   <div className="row comman_header justify-content-between">
                     <div className="col-auto">
-                      <h2>Vendor Management</h2>
+                      <h2>Delivery Management</h2>
                     </div>
                   </div>
                   <div className="row">
                     <div className="col-12 px-0">
-                      <ul
+                      {/* <ul
                         className="nav nav-tabs comman_tabs"
                         id="myTab"
                         role="tablist"
@@ -505,9 +505,9 @@ const DeliveryManagement = () => {
                             Delivery Prices{" "}
                           </button>
                         </li>
-                      </ul>
-                      <div className="tab-content" id="myTabContent">
-                        <div
+                      </ul> */}
+
+                      {/* <div
                           className="tab-pane fade show active"
                           id="home"
                           role="tabpanel"
@@ -515,10 +515,12 @@ const DeliveryManagement = () => {
                         >
                           <div className="row mx-0">
                             <div className="col-12">
+
                               <form
                                 className="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"
                                 action=""
                               >
+
                                 <div className="form-group mb-0 col-5 col-lg-5 col-sm-auto">
                                   <label htmlFor="">From</label>
                                   <input
@@ -530,6 +532,7 @@ const DeliveryManagement = () => {
                                     onChange={handleDate}
                                   />
                                 </div>
+
                                 <div className="form-group mb-0 col-5 col-lg-5 col-sm-auto">
                                   <label htmlFor="">To</label>
                                   <input
@@ -541,6 +544,7 @@ const DeliveryManagement = () => {
                                     onChange={handleDate}
                                   />
                                 </div>
+
                                 <div className="form-group mb-0 col-auto">
                                   <button
                                     className="comman_btn2"
@@ -556,7 +560,9 @@ const DeliveryManagement = () => {
                                     Search
                                   </button>
                                 </div>
+
                               </form>
+
                               <div className="row">
                                 <div className="col-12 comman_table_design px-0">
                                   <div className="table-responsive">
@@ -580,26 +586,25 @@ const DeliveryManagement = () => {
                               </div>
                             </div>
                           </div>
-                        </div>
-                        <div
+                        </div> */}
+                      {/* <div
                           className="tab-pane fade"
                           id="profile"
                           role="tabpanel"
                           aria-labelledby="profile-tab"
-                        >
-                          <div className="row mx-0">
-                            <div className="col-12">
-                              <div className="row">
-                                <div className="col-12 comman_table_design px-0">
-                                  <div className="table-responsive p-0">
-                                    <DeliveryPricingTable />
-                                  </div>
-                                </div>
+                        > */}
+                      <div className="row mx-0">
+                        <div className="col-12">
+                          <div className="row">
+                            <div className="col-12 comman_table_design px-0">
+                              <div className="table-responsive p-0">
+                                <DeliveryPricingTable />
                               </div>
                             </div>
                           </div>
                         </div>
                       </div>
+                      {/* </div> */}
                     </div>
                   </div>
                 </div>
