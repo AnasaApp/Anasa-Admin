@@ -63,8 +63,8 @@ const Services = () => {
   });
 
   const handleEditCustomization = (item) => {
-    console.log({item});
-    
+    console.log({ item });
+
     if (item.packages?.length) {
       setCustomizationData(item);
     } else {
@@ -125,6 +125,7 @@ const Services = () => {
   const closeModal = () => {
     setDataToEdit(null);
     setModalVisible(false);
+    window.location.reload(false);
   };
 
   const handleEdit = async (item) => {
@@ -188,10 +189,8 @@ const Services = () => {
     setSubCat_Id(selectedSubCategory?._id);
   };
   const changeVendorServiceStatus = async (id) => {
-    // console.log(id);
     const { data } = await vendorServiceStatus(id);
     GetVendorServices();
-    // console.log(data);
     Swal.fire({
       toast: true,
       position: "top-end",
@@ -243,6 +242,8 @@ const Services = () => {
         icon: "success",
         confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
+      }).then(() => {
+        window.location.reload(false);
       });
     }
     setModalVisible(false);
