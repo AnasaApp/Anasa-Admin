@@ -105,13 +105,16 @@ const Services = () => {
     setCategory(data?.results?.categories);
     // console.log(data?.results?.categories);
   };
-  const getAllSubCategory = async (categoryId) => {
+  const getAllSubCategory = async (categoryId, subCatId) => {
     // console.log(categoryId);
     const { data } = await getSubCategory({ categoryId });
     if (data?.results?.subCategories) {
       setSubCategory(data?.results?.subCategories);
       setSelectedArSubCategory(data?.results?.subCategories[0]?.name_ar || " ");
-      setSubCat_Id(data?.results?.subCategories[0]?._id);
+      let selectedSubCategory = data?.results?.subCategories?.find(
+        (subCat) => subCatId === subCat?._id
+      );
+      setSubCat_Id(selectedSubCategory?._id);
     } else {
       setSelectedArSubCategory();
       setSelectedEnSubCategory();
@@ -132,7 +135,7 @@ const Services = () => {
     let categoryId = item?.category?._id;
     // console.log(categoryId);
     if (categoryId) {
-      await getAllSubCategory(categoryId);
+      await getAllSubCategory(categoryId, item?.subCategory?._id);
     } else {
       setSubCategory([]);
     }
@@ -182,12 +185,15 @@ const Services = () => {
   const handleSubCatChange = (e) => {
     let value = e.target.value;
     setSelectedEnSubCategory(value);
-    let selectedSubCategory = subCategory.find(
+    let selectedSubCategory = subCategory?.find(
       (subCat) => subCat?.name_en === value
     );
     setSelectedArSubCategory(selectedSubCategory.name_ar || "");
     setSubCat_Id(selectedSubCategory?._id);
   };
+
+  console.log({ subCat_Id });
+
   const changeVendorServiceStatus = async (id) => {
     const { data } = await vendorServiceStatus(id);
     GetVendorServices();
