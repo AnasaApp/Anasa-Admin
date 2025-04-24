@@ -35,7 +35,6 @@ const HandleAddOffer = ({ getAllOffers }) => {
   } = useForm();
 
   useEffect(() => {
-    
     const fetchCategories = async () => {
       const { data } = await AllCategory();
       if (!data.error) {
@@ -152,10 +151,7 @@ const HandleAddOffer = ({ getAllOffers }) => {
   };
 
   const onSubmit = async (data) => {
-    if (
-      !formValues[0]?.vendor ||
-      !formValues[0]?.service
-    ) {
+    if (!formValues[0]?.vendor || !formValues[0]?.service) {
       Swal.fire({
         title: "Error!",
         icon: "error",
@@ -171,6 +167,7 @@ const HandleAddOffer = ({ getAllOffers }) => {
     formData.append("name_en", data.combo_en);
     formData.append("name_ar", data.combo_ar);
     formData.append("comboPrice", data.discount);
+    formData.append("deliveryCharge", data.free_delivery_price);
     formData.append("validFrom", data.dateFrom);
     formData.append("validTo", data.dateTo);
     formData.append("type", JSON.stringify(formValues));
@@ -317,7 +314,7 @@ const HandleAddOffer = ({ getAllOffers }) => {
           />
         </div>
 
-        <div className="form-group col-4">
+        <div className="form-group col-3">
           <label htmlFor="">Package Price</label>
           <input
             type="number"
@@ -342,7 +339,36 @@ const HandleAddOffer = ({ getAllOffers }) => {
             <small className="errorText mx-1">{errors.discount.message}</small>
           )}
         </div>
-        <div className="form-group col-4">
+
+        <div className="form-group col-3">
+          <label htmlFor="">Free Delivery Price</label>
+          <input
+            type="number"
+            className={classNames("form-control", {
+              "is-invalid": errors.discount,
+            })}
+            name="free_delivery_price"
+            {...register("free_delivery_price", {
+              required: "*Discount % is required!",
+              maxLength: {
+                value: 4,
+                message: "*Max character Length is 5",
+              },
+            })}
+            onInput={(e) => {
+              if (e.target.value.length > 4) {
+                e.target.value = e.target.value.slice(0, 4);
+              }
+            }}
+          />
+          {errors.free_delivery_price && (
+            <small className="errorText mx-1">
+              {errors.free_delivery_price.message}
+            </small>
+          )}
+        </div>
+
+        <div className="form-group col-3">
           <label htmlFor="">Valid From</label>
           <input
             type="date"
@@ -358,7 +384,7 @@ const HandleAddOffer = ({ getAllOffers }) => {
             <small className="errorText mx-1">{errors.dateFrom.message}</small>
           )}
         </div>
-        <div className="form-group col-4">
+        <div className="form-group col-3">
           <label htmlFor="">Valid Till</label>
           <input
             type="date"
@@ -374,6 +400,7 @@ const HandleAddOffer = ({ getAllOffers }) => {
             <small className="errorText mx-1">{errors.dateTo.message}</small>
           )}
         </div>
+
         {formValues?.map((element, index) => {
           const categoryOptions = mapOptions(allCategories || [], "name_en");
           const vendorOptions = mapOptions(allVendors || [], "full_name");

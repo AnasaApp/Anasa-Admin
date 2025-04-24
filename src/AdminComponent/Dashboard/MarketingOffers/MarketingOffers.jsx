@@ -1,27 +1,19 @@
 import classNames from "classnames";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import Select, { useStateManager } from "react-select";
 import Swal from "sweetalert2";
 import {
-  AddCombo,
   AllCategory,
   AllOffers,
-  AllVendors,
   DeleteOffer,
   editOffer,
-  getSubCategory,
   GetVendorByCate,
   getViewCombo,
-  getViewPromo,
-  ImageUpload,
   SearchUser,
-  SearchVendorServices,
   VendorServices,
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
 import { MDBDataTable } from "mdbreact";
-import moment from "moment";
 import ImageEdit from "../../CropImage/ImageEdit";
 import HandleAddOffer from "./HandleAddOffer";
 
@@ -32,13 +24,10 @@ const MarketingOffers = () => {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
   const [searchKey, setSearchKey] = useState("");
-  const [searchKey2, setSearchKey2] = useState("");
   const [options, setOptions] = useState([]);
   const [options2, setOptions2] = useState([]);
   const [allCategories, setAllCategories] = useState();
-  const [subCategory, setSubCategory] = useState();
   const [categoryData, setCategoryData] = useState();
-  const [subCategoryData, setSubCategoryData] = useState();
   const [offers, setAllOffers] = useState([]);
   const [offerId, setOfferId] = useState();
   const [totalPrice, setTotalPrice] = useState(0);
@@ -67,8 +56,6 @@ const MarketingOffers = () => {
     },
   ]);
   const {
-    register,
-    handleSubmit,
     formState: { errors },
   } = useForm();
 
@@ -178,7 +165,7 @@ const MarketingOffers = () => {
                     ? list?.image
                     : require("../../../assets/img/Nupload.jpg")
                 }
-                alt="image"
+                alt="imagse"
                 className="table_img"
               />
             </div>
@@ -260,7 +247,6 @@ const MarketingOffers = () => {
     }
   };
 
-  console.log(options2);
   const VendorsList = async (id, ind) => {
     setCategoryData(id);
     await GetVendorByCate(id).then((res) => {
@@ -275,9 +261,9 @@ const MarketingOffers = () => {
       }
     });
   };
-  console.log(formValues, "f");
 
   const onEdit = async (data) => {
+    console.log(data, "data");
     let tempData = [];
     formValues2?.map((item) => {
       tempData.push({
@@ -287,13 +273,16 @@ const MarketingOffers = () => {
       });
     });
     let formData = new FormData();
-    formData.append("image", croppedImage);
+
+    croppedImage && formData.append("image", croppedImage);
     formData.append("name_en", data?.combo_en_edit);
     formData.append("name_ar", data?.combo_ar_edit_ar);
     formData.append("comboPrice", data?.Edit_Discount);
     formData.append("validFrom", data?.dateFrom);
     formData.append("validTo", data?.dateTo);
     formData.append("type", JSON.stringify(tempData));
+    formData.append("deliveryCharge", data?.free_delivery_price);
+
     await editOffer(offerId, formData).then((res) => {
       if (!res.data.error) {
         document.getElementById("closed").click();
@@ -303,7 +292,7 @@ const MarketingOffers = () => {
         setCroppedImageUrl("");
         setModalVisible2(false);
         setFormValues2([]);
-        setFormValues([]);
+        setFormValues([]); 
         Swal.fire({
           title: "Offer Modified Successfully!",
           icon: "success",
@@ -401,26 +390,6 @@ const MarketingOffers = () => {
       return acc + parseFloat(next?.price || 0);
     }, 0);
     setTotalPrice(totalPrice);
-  };
-
-  const addFormFields = (e) => {
-    setFormValues([
-      ...formValues,
-      {
-        service: "",
-        package: "",
-      },
-    ]);
-  };
-
-  const addFormFields2 = (e) => {
-    setFormValues2([
-      ...formValues2,
-      {
-        service: "",
-        package: "",
-      },
-    ]);
   };
 
   const calculateTotal = () => {
@@ -662,6 +631,29 @@ const MarketingOffers = () => {
                     </small>
                   )}
                 </div>
+                <div className="form-group col-4">
+                  <label htmlFor="">Free Delivery Price </label>
+                  <input
+                    type="number"
+                    className={classNames("form-control", {
+                      "is-invalid": errors2.free_delivery_price,
+                    })}
+                    {...register2("free_delivery_price", {
+                      required: "*Please Enter Price",
+                    })}
+                    onInput={(e) => {
+                      if (e.target.value.length > 4) {
+                        e.target.value = e.target.value.slice(0, 4);
+                      }
+                    }}
+                    name="free_delivery_price"
+                  />
+                  {errors2.free_delivery_price && (
+                    <small className="errorText mx-1">
+                      {errors2.free_delivery_price.message}
+                    </small>
+                  )}
+                </div>
 
                 {offerData?.validFrom?.slice(0, 10) >
                   new Date().toISOString().slice(0, 10) && (
@@ -730,15 +722,12 @@ const MarketingOffers = () => {
                               name="service"
                               id={index}
                               value={element.service || ""}
-                              // onChange={(e) => {
-                              //   handleChange(index, e);
-                              // }}
                               onChange={(e) => {
                                 const selectedPrice =
                                   services[index]?.find(
                                     (item) => item?._id === e.target.value
-                                  )?.price || 0; // Fetch the price of the selected service
-                                handleChange2(index, e, selectedPrice); // Pass the price to handleChange
+                                  )?.price || 0;
+                                handleChange2(index, e, selectedPrice);
                               }}
                             >
                               <option selected={true} value="">

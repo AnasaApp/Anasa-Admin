@@ -96,14 +96,12 @@ const Services = () => {
 
   const GetVendorServices = async () => {
     const { data } = await getVendorServices(id?.id);
-    // console.warn(data.results.services);
     let values = data.results.services;
     setVendorService(data?.results?.services);
   };
   const getAllCategory = async () => {
     const { data } = await AllCategory();
     setCategory(data?.results?.categories);
-    // console.log(data?.results?.categories);
   };
   const getAllSubCategory = async (categoryId, subCatId) => {
     // console.log(categoryId);
