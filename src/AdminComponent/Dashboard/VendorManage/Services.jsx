@@ -29,6 +29,7 @@ const Services = () => {
     truckDelivery: false,
     coldDelivery: false,
     pickUpOnly: false,
+    freeDelivery: false,
   });
 
   const [selectedArCategory, setSelectedArCategory] = useState("");
@@ -96,7 +97,6 @@ const Services = () => {
 
   const GetVendorServices = async () => {
     const { data } = await getVendorServices(id?.id);
-    let values = data.results.services;
     setVendorService(data?.results?.services);
   };
   const getAllCategory = async () => {
@@ -131,7 +131,6 @@ const Services = () => {
 
   const handleEdit = async (item) => {
     let categoryId = item?.category?._id;
-    // console.log(categoryId);
     if (categoryId) {
       await getAllSubCategory(categoryId, item?.subCategory?._id);
     } else {
@@ -156,6 +155,7 @@ const Services = () => {
       truckDelivery: item?.truckDelivery,
       coldDelivery: item?.coldDelivery,
       pickUpOnly: item?.pickUpOnly,
+      freeDelivery: item?.freeDelivery,
     });
   };
 
@@ -236,6 +236,10 @@ const Services = () => {
     formData.append(
       "coldDelivery",
       deliveryType.coldDelivery ? "TRUE" : "FALSE"
+    );
+    formData.append(
+      "freeDelivery ",
+      deliveryType.freeDelivery ? "TRUE" : "FALSE"
     );
     formData.append("pickUpOnly", deliveryType.pickUpOnly ? "TRUE" : "FALSE");
 
@@ -753,6 +757,26 @@ const Services = () => {
                               htmlFor="pickUpOnly"
                             >
                               Pick Up Only
+                            </label>
+                          </div>
+                          <div className="form-check">
+                            <input
+                              type="checkbox"
+                              className="form-check-input"
+                              id="freeDelivery"
+                              checked={deliveryType.freeDelivery}
+                              onChange={() =>
+                                setDeliveryType((prev) => ({
+                                  ...prev,
+                                  freeDelivery: !prev.freeDelivery,
+                                }))
+                              }
+                            />
+                            <label
+                              className="form-check-label"
+                              htmlFor="freeDelivery"
+                            >
+                              Free Delivery
                             </label>
                           </div>
                         </div>

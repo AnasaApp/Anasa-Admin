@@ -217,21 +217,7 @@ const BookingDetails = () => {
                                     </div>
                                   </div>
                                 </div>
-                                {/* <div className="col-6 py-1">
-                              <div className="row mx-0">
-                                <div className="col-6">
-                                  <strong className="booking_head">
-                                    Payment Status:
-                                  </strong>
-                                </div>
-                                <div className="col-6">
-                                  <span className="booking_head">
-                                    Successful
-                                  </span>
-                                </div>
-                              </div>
-                            </div> */}
-
+                                
                                 <div className="col-6 py-1">
                                   <div className="row mx-0">
                                     <div className="col-6">
@@ -320,6 +306,7 @@ const BookingDetails = () => {
                                     </div>
                                   </div>
                                 </div>
+
                                 <div className="col-6 py-1">
                                   <div className="row mx-0">
                                     <div className="col-6">
@@ -330,8 +317,8 @@ const BookingDetails = () => {
                                     <div className="col-6">
                                       <span className="booking_head">
                                         SAR{" "}
-                                        {earning?.amount -
-                                          booking?.total * 0.01}
+                                        {Math.round(earning?.amount -
+                                          booking?.total * 0.01)}
                                       </span>
                                     </div>
                                   </div>

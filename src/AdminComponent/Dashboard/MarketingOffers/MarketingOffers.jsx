@@ -47,6 +47,7 @@ const MarketingOffers = () => {
       price: "",
     },
   ]);
+
   const [formValues2, setFormValues2] = useState([
     {
       category: "",
@@ -55,6 +56,7 @@ const MarketingOffers = () => {
       price: "",
     },
   ]);
+
   const {
     formState: { errors },
   } = useForm();
@@ -131,6 +133,7 @@ const MarketingOffers = () => {
     ],
     rows: [],
   });
+
   useEffect(() => {
     getAllCat();
     getAllOffers();
@@ -263,7 +266,7 @@ const MarketingOffers = () => {
   };
 
   const onEdit = async (data) => {
-    console.log(data, "data");
+    
     let tempData = [];
     formValues2?.map((item) => {
       tempData.push({
@@ -272,8 +275,8 @@ const MarketingOffers = () => {
         service: item.service,
       });
     });
-    let formData = new FormData();
 
+    let formData = new FormData();
     croppedImage && formData.append("image", croppedImage);
     formData.append("name_en", data?.combo_en_edit);
     formData.append("name_ar", data?.combo_ar_edit_ar);
@@ -317,12 +320,6 @@ const MarketingOffers = () => {
       getAllOffers();
     }
   };
-
-  const onFileSelection = async (e, key) => {
-    setFiles({ ...files, [key]: e.target.files[0] });
-  };
-
-  console.log(files);
 
   const handleView = async (id) => {
     setOfferId(id);
