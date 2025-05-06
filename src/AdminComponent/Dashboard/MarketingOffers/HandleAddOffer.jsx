@@ -298,6 +298,7 @@ const HandleAddOffer = ({ getAllOffers }) => {
             <small className="errorText mx-1">{errors.combo_ar.message}</small>
           )}
         </div>
+        
         <div className="form-group col-4 choose_file position-relative">
           <span>Upload Image </span>{" "}
           <label htmlFor="upload_video">
@@ -384,6 +385,7 @@ const HandleAddOffer = ({ getAllOffers }) => {
             <small className="errorText mx-1">{errors.dateFrom.message}</small>
           )}
         </div>
+
         <div className="form-group col-3">
           <label htmlFor="">Valid Till</label>
           <input
@@ -408,7 +410,7 @@ const HandleAddOffer = ({ getAllOffers }) => {
 
           return (
             <div className="row mt-3" key={index}>
-              {/* Category */}
+
               <div className="form-group col-4">
                 <label>Select Category</label>
                 <Select
@@ -423,7 +425,6 @@ const HandleAddOffer = ({ getAllOffers }) => {
                 />
               </div>
 
-              {/* Vendor */}
               <div className="form-group col-4">
                 <label>Select Vendor</label>
                 <Select
@@ -438,7 +439,6 @@ const HandleAddOffer = ({ getAllOffers }) => {
                 />
               </div>
 
-              {/* Service */}
               <div
                 className={`form-group ${
                   formValues.length <= 1 ? "col-4" : "col-3"
@@ -479,17 +479,20 @@ const HandleAddOffer = ({ getAllOffers }) => {
                   </button>
                 )}
               </div>
+
             </div>
           );
         })}
 
         <hr />
+
         <div>
           <div className="d-flex align-items-center justify-content-between">
             <p>Total Price:</p>
             <p className="fw-bold">{totalPrice}</p>
           </div>
         </div>
+
         <hr />
 
         <div className="form-group mb-0 col-12 text-center mt-3">

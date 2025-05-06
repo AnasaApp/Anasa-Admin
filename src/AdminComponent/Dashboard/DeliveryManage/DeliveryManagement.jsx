@@ -11,7 +11,6 @@ import {
   VendorsCount,
 } from "../../httpServices/dashHttpService";
 import Sidebar from "../Sidebar";
-import { MDBDataTable } from "mdbreact";
 import moment from "moment";
 import Loader from "../Loader";
 import DeliveryPricingTable from "./DeliveryPricingTable";

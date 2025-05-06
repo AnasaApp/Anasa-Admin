@@ -116,6 +116,7 @@ const DeliveryPricingTable = () => {
     }
   };
 
+  
   const HandleUpdateDeliveries = (() => {
     let timeoutId;
 
@@ -132,6 +133,9 @@ const DeliveryPricingTable = () => {
           updateData.cold = value;
         } else if (key === "normal") {
           updateData.normal = value;
+        }
+        else if (key === "special") {
+          updateData.deliveryCharge = value;
         }
         if (fromCity) {
           updateData.fromCity = fromCity;
@@ -272,7 +276,7 @@ const DeliveryPricingTable = () => {
           <tr>
             <th rowSpan="2">From</th>
             <th rowSpan="2">To</th>
-            <th colSpan="3" className="text-center">
+            <th colSpan="4" className="text-center">
               Delivery
             </th>
             <th rowSpan="2">Action</th>
@@ -281,6 +285,8 @@ const DeliveryPricingTable = () => {
             <th>Normal</th>
             <th>Cold</th>
             <th>Truck</th>
+            <th>Special</th>
+
           </tr>
         </thead>
         {console.log(data)}
@@ -345,6 +351,25 @@ const DeliveryPricingTable = () => {
                     placeholder="Enter Price"
                   />
                 </td>
+
+                <td>
+                  <input
+                    type="text"
+                    value={row.prices[toIndex].special}
+                    onChange={(e) =>
+                      handlePriceChange(
+                        fromIndex,
+                        toIndex,
+                        "special",
+                        e.target.value,
+                        row?.prices[toIndex]?.id
+                      )
+                    }
+                    className="form-control"
+                    placeholder="Enter Price"
+                  />
+                </td>
+
                 <td>
                   <button
                     className="btn btn-danger rounded "
