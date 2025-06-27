@@ -168,13 +168,10 @@ export async function changeServiceStatus(id) {
   }
 }
 
-
 export async function deleteService(id) {
   try {
     const { data } = await appHttpService.delete(
-      `${process.env.REACT_APP_APIENDPOINT}api/admin/deleteService` +
-        "/" +
-        id
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/deleteService` + "/" + id
     );
     return { data };
   } catch (error) {
@@ -1484,6 +1481,37 @@ export async function AddPromoCode(formData) {
     return { error };
   }
 }
+
+export async function AddOccassion(formData) {
+  try {
+    const { data } = await appHttpService.post(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/createOccasion`,
+      formData
+    );
+    // console.log(data);
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      // console.log(error?.response?.data);
+      Swal.fire({
+        title: error?.response?.data.message,
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
 export async function AllPromocodes() {
   try {
     const { data } = await appHttpService.post(
@@ -1513,6 +1541,38 @@ export async function AllPromocodes() {
     return { error };
   }
 }
+
+export async function AllOccassions(payload) {
+  try {
+    const { data } = await appHttpService.post(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/getAllOccasions`,
+      payload
+    );
+    // console.log(data);
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      // console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
+
 export async function DeletePromoCode(formData) {
   try {
     const { data } = await appHttpService.post(
@@ -1657,6 +1717,30 @@ export async function getViewPromo(id) {
     return { error };
   }
 }
+
+export async function getViewOccassion(id) {
+  try {
+    const { data } = await appHttpService.get(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/viewOccasion` + "/" + id
+    );
+    // console.log(data);
+
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      // console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
+
 export async function editPromocode(id, formData) {
   try {
     const { data } = await appHttpService.post(
@@ -1687,10 +1771,67 @@ export async function editPromocode(id, formData) {
     return { error };
   }
 }
+
+export async function editOccassion(formData) {
+  try {
+    const { data } = await appHttpService.post(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/editOccasion`,
+      formData
+    );
+    // console.log(data);
+    if (data?.error) {
+      Swal.fire({
+        title: data?.message,
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      // console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
+
 export async function changePromocodeStatus(id) {
   try {
     const { data } = await appHttpService.post(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/promocodeStatus` + "/" + id
+    );
+    // console.log(data);
+
+    return { data };
+  } catch (error) {
+    if (error.response) {
+      // console.log(error?.response);
+      Swal.fire({
+        title: "Error!",
+        text: "",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
+    return { error };
+  }
+}
+
+export async function changeOccassionStatus(id) {
+  try {
+    const { data } = await appHttpService.get(
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/changeOccasionStatus` +
+        "/" +
+        id
     );
     // console.log(data);
 
@@ -2888,7 +3029,7 @@ export async function AddDelivery(formData) {
   }
 }
 
-export async function EditDelivery(formData,id) {
+export async function EditDelivery(formData, id) {
   try {
     const { data } = await appHttpService.put(
       `${process.env.REACT_APP_APIENDPOINT}api/admin/editDelivery/${id}`,
@@ -2921,7 +3062,7 @@ export async function EditDelivery(formData,id) {
 export async function DeleteDelivery(id) {
   try {
     const { data } = await appHttpService.delete(
-      `${process.env.REACT_APP_APIENDPOINT}api/admin/deleteDelivery/${id}`,
+      `${process.env.REACT_APP_APIENDPOINT}api/admin/deleteDelivery/${id}`
     );
     if (data?.error) {
       Swal.fire({

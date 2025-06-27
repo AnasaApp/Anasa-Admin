@@ -139,8 +139,7 @@ const BookingDetails = () => {
                     <ul
                       className="nav nav-tabs comman_tabs"
                       id="myTab"
-                      role="tablist"
-                    >
+                      role="tablist">
                       <li className="nav-item w-100" role="presentation">
                         <button
                           className="nav-link active"
@@ -150,8 +149,7 @@ const BookingDetails = () => {
                           type="button"
                           role="tab"
                           aria-controls="home"
-                          aria-selected="true"
-                        >
+                          aria-selected="true">
                           Booking Details
                         </button>
                       </li>
@@ -161,8 +159,7 @@ const BookingDetails = () => {
                         className="tab-pane fade show active"
                         id="home"
                         role="tabpanel"
-                        aria-labelledby="home-tab"
-                      >
+                        aria-labelledby="home-tab">
                         {loading ? (
                           <div className="d-flex justify-content-center py-5">
                             <Loader />
@@ -217,7 +214,7 @@ const BookingDetails = () => {
                                     </div>
                                   </div>
                                 </div>
-                                
+
                                 <div className="col-6 py-1">
                                   <div className="row mx-0">
                                     <div className="col-6">
@@ -317,8 +314,10 @@ const BookingDetails = () => {
                                     <div className="col-6">
                                       <span className="booking_head">
                                         SAR{" "}
-                                        {Math.round(earning?.amount -
-                                          booking?.total * 0.01)}
+                                        {Math.round(
+                                          earning?.amount -
+                                            booking?.total * 0.01
+                                        )}
                                       </span>
                                     </div>
                                   </div>
@@ -411,8 +410,7 @@ const BookingDetails = () => {
           data-bs-keyboard="false"
           tabIndex={-1}
           aria-labelledby="staticBackdropLabel"
-          aria-hidden="true"
-        >
+          aria-hidden="true">
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content border-0">
               <div className="modal-header">
@@ -505,8 +503,7 @@ const BookingDetails = () => {
           data-bs-keyboard="false"
           tabIndex={-1}
           aria-labelledby="staticBackdropLabel"
-          aria-hidden="true"
-        >
+          aria-hidden="true">
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-body p-4">

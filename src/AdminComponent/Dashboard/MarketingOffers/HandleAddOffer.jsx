@@ -208,7 +208,6 @@ const HandleAddOffer = ({ getAllOffers }) => {
 
     let updatedEntry = { ...newFormValues[index], [field]: newValue };
 
-    // 🟢 When selecting a service, auto-fill related category, vendor, price
     if (field === "service" && dataItm?.[0]?.data) {
       const selectedService = dataItm[0].data;
       updatedEntry.category = selectedService?.category?._id || "";
@@ -255,8 +254,7 @@ const HandleAddOffer = ({ getAllOffers }) => {
       <form
         className="form-design py-4 px-3 help-support-form row  justify-content-between"
         action=""
-        onSubmit={handleSubmit(onSubmit)}
-      >
+        onSubmit={handleSubmit(onSubmit)}>
         <div className="form-group col-4">
           <label htmlFor="">Combo Name (En)</label>
           <input
@@ -298,7 +296,7 @@ const HandleAddOffer = ({ getAllOffers }) => {
             <small className="errorText mx-1">{errors.combo_ar.message}</small>
           )}
         </div>
-        
+
         <div className="form-group col-4 choose_file position-relative">
           <span>Upload Image </span>{" "}
           <label htmlFor="upload_video">
@@ -410,7 +408,6 @@ const HandleAddOffer = ({ getAllOffers }) => {
 
           return (
             <div className="row mt-3" key={index}>
-
               <div className="form-group col-4">
                 <label>Select Category</label>
                 <Select
@@ -442,8 +439,7 @@ const HandleAddOffer = ({ getAllOffers }) => {
               <div
                 className={`form-group ${
                   formValues.length <= 1 ? "col-4" : "col-3"
-                }`}
-              >
+                }`}>
                 <label>Select Service</label>
                 <Select
                   options={serviceOptions.map((opt) => ({
@@ -473,13 +469,11 @@ const HandleAddOffer = ({ getAllOffers }) => {
                     className="comman_btn mt-2"
                     style={{ padding: "5px 20px" }}
                     type="button"
-                    onClick={() => removeFormFields(index)}
-                  >
+                    onClick={() => removeFormFields(index)}>
                     <i className="fa fa-minus mt-1 mx-1" />
                   </button>
                 )}
               </div>
-
             </div>
           );
         })}

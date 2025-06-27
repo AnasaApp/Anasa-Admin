@@ -40,6 +40,7 @@ import ServicesManage from "./AdminComponent/Dashboard/ServicesManage/Services";
 import EventManagement from "./AdminComponent/Dashboard/EventManage/EventManagement";
 import NewServices from "./AdminComponent/Dashboard/VendorManage/NewServices";
 import DeliveryManagement from "./AdminComponent/Dashboard/DeliveryManage/DeliveryManagement";
+import OccassionManagement from "./AdminComponent/Dashboard/OccassionManage/OccassionManagement";
 // import EVM from "./AdminComponent/Dashboard/EventManage/EVM";
 
 function App() {
@@ -139,10 +140,10 @@ function App() {
               path="/Admin/Dashboard/Event-Management"
               element={<EventManagement />}
             />
-            {/* <Route
-              path="/Admin/Dashboard/Event-Management1"
-              element={<EVM />}
-            /> */}
+            <Route
+              path="/Admin/Dashboard/Occassion-Management"
+              element={<OccassionManagement />}
+            />
             <Route
               path="/Admin/Dashboard/Adds-Management"
               element={<AdvertiseManagement />}

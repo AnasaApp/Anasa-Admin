@@ -183,8 +183,7 @@ const PromoManagement = () => {
               className="comman_btn table_viewbtn mx-1"
               data-bs-toggle="modal"
               data-bs-target="#staticBackdrop22"
-              onClick={() => handleView(list?._id)}
-            >
+              onClick={() => handleView(list?._id)}>
               Edit
             </a>
             {/* <a className="comman_btn2 table_viewbtn" onClick={DeleteCode}>
@@ -325,8 +324,7 @@ const PromoManagement = () => {
                 <form
                   className="form-design py-4 px-3 help-support-form row  justify-content-between"
                   action=""
-                  onSubmit={handleSubmit(onSubmit)}
-                >
+                  onSubmit={handleSubmit(onSubmit)}>
                   <div className="form-group col-4">
                     <label htmlFor="">Promo Code (En)</label>
                     <input
@@ -463,13 +461,13 @@ const PromoManagement = () => {
                       className="comman_btn d-none"
                       type="reset"
                       id="ResetPromo"
-                      onClick={() => setSelectedUsers({ usersSelected: [] })}
-                    >
+                      onClick={() => setSelectedUsers({ usersSelected: [] })}>
                       Reset
                     </button>
                   </div>
                 </form>
               </div>
+
               <div className="col-12 mb-4 design_outter_comman border shadow">
                 <div className="row comman_header justify-content-between">
                   <div className="col-auto">
@@ -517,8 +515,7 @@ const PromoManagement = () => {
         data-bs-keyboard="false"
         tabIndex={-1}
         aria-labelledby="staticBackdropLabel"
-        aria-hidden="true"
-      >
+        aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content border-0">
             <div className="modal-header">
@@ -543,8 +540,7 @@ const PromoManagement = () => {
                 className="form-design px-3 py-2 help-support-form row  justify-content-center"
                 action=""
                 onSubmit={handleSubmit2(onEdit)}
-                noValidate
-              >
+                noValidate>
                 <div className="form-group col-6 choose_file position-relative">
                   <span>Promo Code Image </span>{" "}
                   {croppedImageUrl ? (
@@ -557,8 +553,7 @@ const PromoManagement = () => {
                       onClick={() => {
                         setModalVisible2(true);
                       }}
-                      className="comman_btn"
-                    >
+                      className="comman_btn">
                       Upload New Image
                     </button>
                   )}
@@ -680,8 +675,7 @@ const PromoManagement = () => {
                   <button
                     className="comman_btn d-none"
                     type="reset"
-                    id="resetModal"
-                  >
+                    id="resetModal">
                     reset
                   </button>
                 </div>
@@ -696,8 +690,7 @@ const PromoManagement = () => {
         }`}
         tabIndex="-1"
         role="dialog"
-        aria-hidden="true"
-      >
+        aria-hidden="true">
         <ImageEdit
           setModalVisible2={setModalVisible2}
           setCroppedImage={setCroppedImage}

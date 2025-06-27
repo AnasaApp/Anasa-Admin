@@ -87,6 +87,13 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
       key: "DelM",
     },
     {
+      label: "Occassion Management",
+      value: "Occassion-Management",
+      icon: "fas fa-calendar-alt",
+      path: "/Admin/Dashboard/Occassion-Management",
+      key: "OccM",
+    },
+    {
       label: "Transaction Management",
       value: "Transaction-Management",
       icon: "fas fa-repeat",
@@ -168,11 +175,11 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
   // Filtered modules based on access
   let accessibleModules = allModules;
 
-  if (AdminData?.access?.length > 0) {
-    accessibleModules = allModules?.filter((module) =>
-      AdminData.access.includes(module.value)
-    );
-  }
+  // if (AdminData?.access?.length > 0) {
+  //   accessibleModules = allModules?.filter((module) =>
+  //     AdminData.access.includes(module.value)
+  //   );
+  // }
 
   return (
     <div>
@@ -185,8 +192,7 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
                 onClick={() => {
                   setSideBar(!sideBar);
                   getBarClick("close");
-                }}
-              >
+                }}>
                 <i class="fa fa-close "></i>
               </a>
             ) : (
@@ -209,8 +215,7 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
                         if (width < 768) {
                           setSideBar(!sideBar);
                         }
-                      }}
-                    >
+                      }}>
                       <i className={module.icon} />
                       {module.label}
                     </Link>
@@ -238,8 +243,7 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
                     onClick={() => {
                       setSideBar(!sideBar);
                       getBarClick("close");
-                    }}
-                  >
+                    }}>
                     <i class="fa fa-close "></i>
                   </a>
                 ) : (
@@ -248,8 +252,7 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
                     onClick={() => {
                       setSideBar(!sideBar);
                       getBarClick("click");
-                    }}
-                  >
+                    }}>
                     <i class="fa fa-bars "></i>
                   </a>
                 )}
@@ -262,8 +265,7 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
                     onClick={() => {
                       setSideBar(!sideBar);
                       getBarClick("click");
-                    }}
-                  >
+                    }}>
                     <i class="fa fa-bars "></i>
                   </a>
                 ) : (
@@ -272,8 +274,7 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
                     onClick={() => {
                       setSideBar(!sideBar);
                       getBarClick("close");
-                    }}
-                  >
+                    }}>
                     <i class="fa fa-close "></i>
                   </a>
                 )}
@@ -283,8 +284,7 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
             <div className="col-auto d-flex align-items-center">
               <Link
                 className="notification_icon"
-                to="/Admin/Dashboard/Notifications-Management"
-              >
+                to="/Admin/Dashboard/Notifications-Management">
                 <i className="fas fa-bell" />
                 <span>1</span>
               </Link>
@@ -295,8 +295,7 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
                   type="button"
                   id="dropdownMenuButton1"
                   data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
+                  aria-expanded="false">
                   <img
                     className="position-absolute top-0 start-0 rounded-circle w-100 h-100 "
                     src={
@@ -310,8 +309,7 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
                 </button>
                 <ul
                   className="dropdown-menu"
-                  aria-labelledby="dropdownMenuButton1"
-                >
+                  aria-labelledby="dropdownMenuButton1">
                   <li>
                     <Link
                       className={
@@ -319,16 +317,14 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
                           ? "d-none"
                           : "dropdown-item"
                       }
-                      to="/Admin/Dashboard/Edit-Profile"
-                    >
+                      to="/Admin/Dashboard/Edit-Profile">
                       Edit Profile
                     </Link>
                   </li>
                   <li>
                     <Link
                       className="dropdown-item"
-                      to="/Admin/Dashboard/Update-Password"
-                    >
+                      to="/Admin/Dashboard/Update-Password">
                       Change Password
                     </Link>
                   </li>
