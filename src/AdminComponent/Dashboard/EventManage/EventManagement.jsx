@@ -158,7 +158,7 @@ const EventManagement = () => {
         returnData.sn = index + 1 + ".";
         returnData.name = list?.eventName;
         returnData.address = address;
-        returnData.desc = list?.description;
+        returnData.desc = list?.comment;
         returnData.buyer = list?.buyer?.full_name;
         returnData.buyerContact = list?.buyer?.phone_number;
         const startTime = list?.startTime;
@@ -207,8 +207,7 @@ const EventManagement = () => {
                   : list?.status === "Completed"
                   ? manageEvent(list?._id)
                   : ""
-              }
-            >
+              }>
               {list?.status === "Pending"
                 ? "Approve"
                 : list?.status === "Paid"
@@ -220,10 +219,9 @@ const EventManagement = () => {
 
             {list?.status === "Rejected" ? (
               <Link
-              style={{cursor:"none"}}
+                style={{ cursor: "none" }}
                 className={"comman_btn table_viewbtn bg-none  mt-2 "}
-                disabled
-              >
+                disabled>
                 Declined
               </Link>
             ) : (
@@ -570,8 +568,7 @@ const EventManagement = () => {
                 data-bs-toggle="modal"
                 data-bs-target="#staticBackdrop"
                 type="button"
-                className="position-absolute top-0 end-0 border-0 bg-white"
-              >
+                className="position-absolute top-0 end-0 border-0 bg-white">
                 <i className="fa-solid fa-pen"></i>
               </button>
               <div
@@ -581,8 +578,7 @@ const EventManagement = () => {
                 data-bs-keyboard="false"
                 tabindex="-1"
                 aria-labelledby="staticBackdropLabel"
-                aria-hidden="true"
-              >
+                aria-hidden="true">
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
@@ -594,8 +590,7 @@ const EventManagement = () => {
                         id="updateServiceChargeClose"
                         class="btn-close"
                         data-bs-dismiss="modal"
-                        aria-label="Close"
-                      ></button>
+                        aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                       <form onSubmit={handleServiceCharge}>
@@ -615,8 +610,7 @@ const EventManagement = () => {
                           type="reset"
                           id="resetServiceModal"
                           className="d-none"
-                          data-bs-dismiss="modal"
-                        >
+                          data-bs-dismiss="modal">
                           Reset
                         </button>
                         <button type="submit" className="comman_btn mt-3">
@@ -640,8 +634,7 @@ const EventManagement = () => {
                         className="tab-pane fade show active"
                         id="home"
                         role="tabpanel"
-                        aria-labelledby="home-tab"
-                      >
+                        aria-labelledby="home-tab">
                         <div className="row p-4 mx-0">
                           <div className="col-12 inner_design_comman border">
                             <div className="row comman_header justify-content-between">
@@ -684,8 +677,7 @@ const EventManagement = () => {
         data-bs-keyboard="false"
         tabIndex={-1}
         aria-labelledby="staticBackdropLabel"
-        aria-hidden="true"
-      >
+        aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content border-0">
             <div className="modal-header">
@@ -715,8 +707,7 @@ const EventManagement = () => {
               <form
                 className="form-design px-3 py-2 help-support-form row  justify-content-center"
                 action=""
-                onSubmit={handleSubmit2(onEditSave)}
-              >
+                onSubmit={handleSubmit2(onEditSave)}>
                 <div className="form-group col-4">
                   <label htmlFor="">Event Name</label>
                   <input
@@ -770,8 +761,7 @@ const EventManagement = () => {
                               );
                             }
                             console.log(services.price);
-                          }}
-                        >
+                          }}>
                           <option selected="" value="">
                             Select
                           </option>
@@ -789,8 +779,7 @@ const EventManagement = () => {
                           aria-label="Default select example"
                           name="package"
                           value={element.package || ""}
-                          onChange={(e) => handleChange(index, e)}
-                        >
+                          onChange={(e) => handleChange(index, e)}>
                           <option selected="" value="">
                             Select
                           </option>
@@ -829,8 +818,7 @@ const EventManagement = () => {
                           style={{ padding: "5px 20px" }}
                           type="button"
                           disabled={formValues?.length <= 1 ? true : false}
-                          onClick={() => removeFormFields(index)}
-                        >
+                          onClick={() => removeFormFields(index)}>
                           <i className="fa fa-minus mt-1 mx-1" />
                         </button>
                       </div>
@@ -847,8 +835,7 @@ const EventManagement = () => {
                 <div className="form-group mb-0 col-12 text-center mt-3">
                   <a
                     className="comman_btn mx-3 "
-                    onClick={() => addFormFields()}
-                  >
+                    onClick={() => addFormFields()}>
                     Add more +
                   </a>
                   <button className="comman_btn" type="submit">
@@ -859,8 +846,7 @@ const EventManagement = () => {
                   <button
                     className="comman_btn d-none"
                     type="reset"
-                    id="ResetSSS"
-                  >
+                    id="ResetSSS">
                     Reset
                   </button>
                 </div>
@@ -877,8 +863,7 @@ const EventManagement = () => {
         data-bs-keyboard="false"
         tabIndex={-1}
         aria-labelledby="staticBackdropLabel"
-        aria-hidden="true"
-      >
+        aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content border-0">
             <div className="modal-header">
@@ -890,8 +875,7 @@ const EventManagement = () => {
                   style={{ marginLeft: "60%" }}
                   type="button"
                   className="comman_btn border border-light py-1 px-4 ml-auto"
-                  onClick={(e) => sendEventInfo(e, eventInfo)}
-                >
+                  onClick={(e) => sendEventInfo(e, eventInfo)}>
                   Edit
                 </button>
               ) : (
@@ -914,8 +898,7 @@ const EventManagement = () => {
               <form
                 className="form-design px-3 py-2 help-support-form row  justify-content-center"
                 key={eventInfo}
-                action=""
-              >
+                action="">
                 <div className="form-group col-4">
                   <label htmlFor="">Event Name</label>
                   <input
@@ -949,8 +932,7 @@ const EventManagement = () => {
                 {(eventInfo?.packages || []).map((element, index) => (
                   <div
                     className="form-group mb-0 col-12 border-bottom"
-                    key={index}
-                  >
+                    key={index}>
                     <div className="row">
                       <div className="form-group col-6 mt-3">
                         <label htmlFor="">Service</label>
@@ -1026,8 +1008,7 @@ const EventManagement = () => {
                   <button
                     className="comman_btn d-none"
                     type="reset"
-                    id="ResetSSS"
-                  >
+                    id="ResetSSS">
                     Reset
                   </button>
                 </div>
@@ -1036,8 +1017,7 @@ const EventManagement = () => {
                     <button
                       className="comman_btn green_btn rounded-pill py-3 px-5"
                       type="button"
-                      onClick={(e) => approveParty(e, eventInfo?._id)}
-                    >
+                      onClick={(e) => approveParty(e, eventInfo?._id)}>
                       Approve
                     </button>
                   </div>
@@ -1049,8 +1029,7 @@ const EventManagement = () => {
                     <button
                       className="comman_btn"
                       type="button"
-                      onClick={updateEvent}
-                    >
+                      onClick={updateEvent}>
                       Update
                     </button>
                   </div>
@@ -1068,8 +1047,7 @@ const EventManagement = () => {
         data-bs-keyboard="false"
         tabIndex={-1}
         aria-labelledby="staticBackdropLabel"
-        aria-hidden="true"
-      >
+        aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content border-0">
             <div className="modal-header">
@@ -1087,8 +1065,7 @@ const EventManagement = () => {
             <div className="modal-body">
               <form
                 className="form-design px-3 py-2 help-support-form row  justify-content-center"
-                action=""
-              >
+                action="">
                 <div className="form-group mb-0 col-12 text-center mt-3">
                   <h2>Are you sure ?</h2>
                 </div>
@@ -1096,16 +1073,14 @@ const EventManagement = () => {
                   <button
                     className="comman_btn mx-2"
                     type="button"
-                    onClick={() => DeclineParty()}
-                  >
+                    onClick={() => DeclineParty()}>
                     Yes
                   </button>
                   <button
                     data-bs-dismiss="modal"
                     aria-label="Close"
                     className="comman_btn2"
-                    type="button"
-                  >
+                    type="button">
                     No
                   </button>
                 </div>
