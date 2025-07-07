@@ -1,323 +1,420 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Sidebar from "../Sidebar";
-// import { useForm } from "react-hook-form";
 import Select from "react-select";
+import Swal from "sweetalert2";
 import {
   AddAddvertise,
   AllAdvertisement,
   AllCategory,
   AllVendors,
   DeleteAddvertise,
-  SearchVendor,
+  getServices,
 } from "../../httpServices/dashHttpService";
-import { useEffect } from "react";
-import Swal from "sweetalert2";
+import moment from "moment/moment";
 
 const AdvertiseManagement = () => {
-  const [slide, setSlide] = useState("ADM");
-  const [selectedUsers, setSelectedUsers] = useState([]);
-  const [selectedNewVendor, setSelectedNewVendor] = useState([]);
-  const [selectedNewCate, setSelectedNewCate] = useState([]);
-  const [selectedCate, setSelectedCate] = useState([]);
+  const [slide] = useState("ADM");
   const [type, setType] = useState("TV");
-  const [allAdds, setAllAdds] = useState([]);
-  const [allAddsCate, setAllAddsCate] = useState([]);
   const [sideBar, setSideBar] = useState();
-  const [options, setOptions] = useState([]);
-  const [optionsCate, setOptionsCate] = useState([]);
-  const [optionsNewCate, setOptionsNewCate] = useState([]);
-  const [optionsNewVendors, setOptionsNewVendors] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [tabLoading, setTabLoading] = useState(false);
   const [searchKey, setSearchKey] = useState("");
   const [searchKey2, setSearchKey2] = useState("");
   const [searchKey3, setSearchKey3] = useState("");
   const [searchKey4, setSearchKey4] = useState("");
-  const [allCategories, setAllCategories] = useState([]);
+  const [searchKey5, setSearchKey5] = useState("");
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [selectedNewVendor, setSelectedNewVendor] = useState([]);
+  const [selectedNewCate, setSelectedNewCate] = useState([]);
+  const [selectedServices, setSelectedServices] = useState([]);
+  const [selectedCate, setSelectedCate] = useState([]);
+  const [options, setOptions] = useState([]);
+  const [optionsCate, setOptionsCate] = useState([]);
+  const [optionsNewCate, setOptionsNewCate] = useState([]);
+  const [optionsServices, setOptionsServices] = useState([]);
+  const [optionsNewVendors, setOptionsNewVendors] = useState([]);
+  const [allAdds, setAllAdds] = useState([]);
+  const [allAddsCate, setAllAddsCate] = useState([]);
   const [vendorAdds, setAddsVendor] = useState([]);
   const [categoryAdds, setAddsCategory] = useState([]);
+  const [serviceAdds, setServiceAdds] = useState([]);
+  const [activeTab, setActiveTab] = useState("topVendors");
 
-  useEffect(() => {
-    createOptions();
-  }, [searchKey]);
+  const tabs = [
+    { id: "topVendors", label: "Top Vendors", type: "vendor" },
+    { id: "topCategories", label: "Top Categories", type: "category" },
+    { id: "newVendors", label: "New Vendors", type: "newVendor" },
+    { id: "newCategories", label: "New Categories", type: "newCategory" },
+    {
+      id: "recommendations",
+      label: "Anasa Recommends",
+      type: "Recommendation",
+    },
+  ];
 
-  useEffect(() => {
-    createOptionsCate();
-  }, [searchKey2]);
-  useEffect(() => {
-    createOptionsNewCate();
-  }, [searchKey4]);
-  useEffect(() => {
-    createOptionsVendor();
-  }, [searchKey3]);
+  const fetchInitialOptions = useCallback(async () => {
+    try {
+      setIsLoading(true);
 
-  useEffect(() => {
-    GetAllAdds();
-    GetAddscate();
-    GetAddsNewCategory();
-    GetAddsNewVendor();
-    getAllCat();
-    getAllVendors();
+      // Fetch vendors
+      const vendorsRes = await AllVendors({ status: "APPROVED" });
+      const vendorOptions = vendorsRes.data?.results?.vendors
+        ?.map((item) => ({
+          value: item?._id,
+          label: item?.full_name || "Unnamed Vendor",
+        }))
+        .filter((item) => item.label.trim() !== "")
+        .sort((a, b) => a.label.localeCompare(b.label));
+
+      setOptions(vendorOptions);
+      setOptionsNewVendors(vendorOptions);
+
+      // Fetch categories
+      const categoriesRes = await AllCategory();
+      const categoryOptions = categoriesRes.data?.results?.categories
+        ?.filter((item) => item.status)
+        ?.map((item) => ({
+          value: item?._id,
+          label: item?.name_en,
+        }))
+        .sort((a, b) => a.label.localeCompare(b.label));
+
+      setOptionsCate(categoryOptions);
+      setOptionsNewCate([...categoryOptions]);
+
+      // Fetch services
+      const servicesRes = await getServices();
+      setOptionsServices(
+        servicesRes.data?.results?.services
+          ?.filter((item) => item.status)
+          ?.map((item) => ({
+            value: item?._id,
+            label: item?.name_en,
+          }))
+          .sort((a, b) => a.label.localeCompare(b.label))
+      );
+
+      // Load initial tab data
+      await fetchTabData("topVendors");
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      Swal.fire({
+        title: "Loading Failed",
+        text: "Could not fetch initial data",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
-  const getAllVendors = async () => {
-    const { data } = await AllVendors({
-      status: "APPROVED",
-    });
-    let options = data?.results?.vendors;
-    let optionList = options?.map((item, index) => ({
-      value: item?._id,
-      label: item?.full_name,
-    }));
-    optionList = optionList.filter((item) => item.label.trim() !== "");
-    optionList.sort((a, b) => a.label.localeCompare(b.label));
-    setOptionsNewVendors(optionList);
-    setOptions(optionList);
-  };
-  const getAllCat = async () => {
-    const { data } = await AllCategory();
-    setAllCategories(data?.results?.categories);
-  };
+  const fetchTabData = async (tabId) => {
+    try {
+      setTabLoading(true);
+      const tab = tabs.find((t) => t.id === tabId);
+      if (!tab) return;
 
-  const createOptions = async () => {
-    await SearchVendor({ search: searchKey }).then((res) => {
-      if (!res.error) {
-        let data = res?.data.results?.vendor;
-        const optionList = data?.map((item, index) => ({
-          value: item?._id._id,
-          label: item?._id.full_name,
-        }));
-        optionList.sort((a, b) => a.label.localeCompare(b.label));
-        // setOptions(optionList);
-      }
-    });
-  };
+      const res = await AllAdvertisement({ type: tab.type });
+      const data = res.data?.results?.advertisements || [];
 
-  const createOptionsVendor = async () => {
-    await SearchVendor({ search: searchKey3 }).then((res) => {
-      if (!res.error) {
-        let data = res?.data.results?.vendor;
-        const optionList = data
-          ?.filter((item) => item.status === true)
-          ?.map((item, index) => ({
-            value: item?._id._id,
-            label: item?._id.full_name,
-          }));
-        // console.log(optionList);
-        optionList.sort((a, b) => a.label.localeCompare(b.label));
-        setOptionsNewVendors(optionList);
+      switch (tabId) {
+        case "topVendors":
+          setAllAdds(data);
+          break;
+        case "topCategories":
+          setAllAddsCate(data);
+          break;
+        case "newVendors":
+          setAddsVendor(data);
+          break;
+        case "newCategories":
+          setAddsCategory(data);
+          break;
+        case "recommendations":
+          setServiceAdds(data);
+          break;
+        default:
+          break;
       }
-    });
-  };
-
-  const createOptionsCate = async () => {
-    await AllCategory().then((res) => {
-      if (!res.error) {
-        let data = res?.data.results?.categories;
-        // console.log(data);
-        const optionList = data
-          ?.filter((item) => item.status === true)
-          ?.map((item, index) => ({
-            value: item?._id,
-            label: item?.name_en,
-          }));
-        optionList.sort((a, b) => a.label.localeCompare(b.label));
-        setOptionsCate(optionList);
-      }
-    });
-  };
-  const createOptionsNewCate = async () => {
-    await AllCategory().then((res) => {
-      if (!res.error) {
-        let data = res?.data.results?.categories;
-        // console.log(data);
-        const optionList = data
-          ?.filter((item) => item.status === true)
-          ?.map((item, index) => ({
-            value: item?._id,
-            label: item?.name_en,
-          }));
-        optionList.sort((a, b) => a.label.localeCompare(b.label));
-        setOptionsNewCate(optionList);
-      }
-    });
-  };
-
-  const DeleteAdd = async (id, typ) => {
-    // console.log(id);
-    const { data } = await DeleteAddvertise({
-      type: typ,
-      Id: id,
-    });
-    if (!data.error) {
-      GetAllAdds();
-      GetAddscate();
-      GetAddsNewCategory();
-      GetAddsNewVendor();
+    } catch (error) {
+      console.error(`Error fetching ${tabId} data:`, error);
       Swal.fire({
-        title: "Addvertisement Deleted!",
+        title: "Loading Failed",
+        text: `Could not fetch ${tabId} data`,
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    } finally {
+      setTabLoading(false);
+    }
+  };
+
+  const handleTabChange = async (tabId) => {
+    setActiveTab(tabId);
+    await fetchTabData(tabId);
+  };
+
+  useEffect(() => {
+    fetchInitialOptions();
+  }, [fetchInitialOptions]);
+
+  const deleteAdvertisement = async (id, advType) => {
+    try {
+      await DeleteAddvertise({ type: advType, Id: id });
+      await fetchTabData(activeTab); // Refresh current tab data
+      Swal.fire({
+        title: "Advertisement Deleted!",
         icon: "success",
         confirmButtonText: "Okay",
         confirmButtonColor: "#e25829",
       });
+    } catch (error) {
+      Swal.fire({
+        title: "Deletion Failed",
+        text: error.response?.data?.message || "Something went wrong",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
     }
   };
 
-  useEffect(() => {
-    setSelectedUsers({
-      usersSelected: [],
-    });
-    setSelectedNewVendor({
-      newVendorSelected: [],
-    });
-    setSelectedNewCate({
-      newCateSelected: [],
-    });
-    setSelectedCate({
-      cateSelected: [],
-    });
-  }, [type]);
-  const handleChange = (selected) => {
-    setSelectedUsers({
-      usersSelected: selected,
-    });
-  };
-  const handleInputChange = (inputValue) => {
-    setSearchKey(inputValue);
-  };
-  const handleChangeNewVendor = (selected) => {
-    setSelectedNewVendor({
-      newVendorSelected: selected,
-    });
-  };
-  const handleInputChangeNewVendor = (inputValue) => {
-    setSearchKey3(inputValue);
-  };
-  const handleChangeNewCategory = (selected) => {
-    setSelectedNewCate({
-      newCateSelected: selected,
-    });
-  };
-  const handleInputChangeNewCategory = (inputValue) => {
-    setSearchKey4(inputValue);
-  };
-  const handleChangeCate = (selected) => {
-    setSelectedCate({
-      cateSelected: selected,
-    });
-  };
-  const handleInputChangeCate = (inputValue) => {
-    setSearchKey2(inputValue);
-  };
-
-  const GetAllAdds = async () => {
-    await AllAdvertisement({ type: "vendor" }).then((res) => {
-      setAllAdds(res?.data.results.advertisements);
-      console.log(res?.data.results.advertisements);
-    });
-  };
-  const GetAddscate = async () => {
-    await AllAdvertisement({ type: "category" }).then((res) => {
-      setAllAddsCate(res?.data.results.advertisements);
-      console.log(res?.data.results.advertisements);
-    });
-  };
-  const GetAddsNewVendor = async () => {
-    await AllAdvertisement({ type: "newVendor" }).then((res) => {
-      console.log(res?.data);
-      setAddsVendor(res?.data.results.advertisements);
-    });
-  };
-  const GetAddsNewCategory = async () => {
-    await AllAdvertisement({ type: "newCategory" }).then((res) => {
-      setAddsCategory(res?.data.results.advertisements);
-      console.log(res?.data.results.advertisements);
-    });
-  };
-  const saveAdd = async (e) => {
+  const saveAdvertisement = async (e) => {
     e.preventDefault();
-    // console.log(selectedCate?.cateSelected?.map((item) => item?.value));
-    // console.log(selectedUsers);
-    // console.log(selectedNewVendor);
-    // console.log(selectedCate);
-    // console.log(selectedNewCate.newCateSelected.length);
-    // console.log(type);
-    if (
-      (type === "TC" && selectedCate.cateSelected.length < 1) ||
-      (type === "NC" && selectedNewCate.newCateSelected.length < 1)
-    ) {
-      Swal.fire({
-        title: "Please Select Category",
-        icon: "warning",
-        confirmButtonText: "Okay",
-        confirmButtonColor: "#e25829",
-      });
-      return false;
-    } else if (
-      (type === "TV" && selectedUsers.usersSelected.length < 1) ||
-      (type === "NV" && selectedNewVendor.newVendorSelected.length < 1)
-    ) {
-      // console.log(selectedUsers);
-      // console.log(selectedNewVendor);
-      Swal.fire({
-        title: "Please Select Vendors",
-        icon: "warning",
-        confirmButtonText: "Okay",
-        confirmButtonColor: "#e25829",
-      });
-      return false;
-    }
-    await AddAddvertise({
-      vendor:
-        (type === "TV" &&
-          selectedUsers?.usersSelected?.map((item) => item?.value)) ||
-        (type === "NV" &&
-          selectedNewVendor?.newVendorSelected?.map((item) => item?.value)),
-      category:
-        (type === "TC" &&
-          selectedCate?.cateSelected?.map((item) => item?.value)) ||
-        (type === "NC" &&
-          selectedNewCate?.newCateSelected?.map((item) => item?.value)),
 
-      type:
-        (type === "TC" && "category") ||
-        (type === "TV" && "vendor") ||
-        (type === "NC" && "newCategory") ||
-        (type === "NV" && "newVendor"),
-    }).then((res) => {
-      if (!res.data.error) {
-        setSelectedUsers({
-          usersSelected: [],
-        });
-        setSelectedCate({
-          cateSelected: [],
-        });
-        setSelectedNewCate({
-          newCateSelected: [],
-        });
-        setSelectedNewVendor({
-          newVendorSelected: [],
-        });
-        GetAllAdds();
-        GetAddscate();
-        GetAddsNewCategory();
-        GetAddsNewVendor();
-        type === "TC" && document.getElementById("profile-tab").click();
-        type === "NV" && document.getElementById("profile-tab2").click();
-        type === "NC" && document.getElementById("profile-tab3").click();
-        type === "TV" && document.getElementById("home-tab").click();
-        Swal.fire({
-          title: "Advertise Added!",
-          icon: "success",
-          confirmButtonText: "Okay",
-          confirmButtonColor: "#e25829",
-        });
-      }
-    });
+    // Validation
+    const validations = {
+      TV: selectedUsers.length < 1,
+      TC: selectedCate.length < 1,
+      NV: selectedNewVendor.length < 1,
+      NC: selectedNewCate.length < 1,
+      AR: selectedServices.length < 1,
+    };
+
+    if (validations[type]) {
+      Swal.fire({
+        title: `Please Select ${
+          type === "AR"
+            ? "Services"
+            : type.includes("V")
+            ? "Vendors"
+            : "Categories"
+        }`,
+        icon: "warning",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+      return;
+    }
+
+    try {
+      // Prepare request data
+      const requestData = {
+        type:
+          type === "TC"
+            ? "category"
+            : type === "TV"
+            ? "vendor"
+            : type === "NC"
+            ? "newCategory"
+            : type === "NV"
+            ? "newVendor"
+            : "Recommendation",
+        [type === "AR"
+          ? "service"
+          : type.includes("V")
+          ? "vendor"
+          : "category"]:
+          type === "TV"
+            ? selectedUsers.map((i) => i.value)
+            : type === "TC"
+            ? selectedCate.map((i) => i.value)
+            : type === "NV"
+            ? selectedNewVendor.map((i) => i.value)
+            : type === "NC"
+            ? selectedNewCate.map((i) => i.value)
+            : selectedServices.map((i) => i.value),
+      };
+
+      await AddAddvertise(requestData);
+
+      // Reset selections
+      setSelectedUsers([]);
+      setSelectedCate([]);
+      setSelectedNewCate([]);
+      setSelectedNewVendor([]);
+      setSelectedServices([]);
+
+      // Switch tabs based on type and refresh data
+      const tabMap = {
+        TC: "topCategories",
+        NV: "newVendors",
+        NC: "newCategories",
+        TV: "topVendors",
+        AR: "recommendations",
+      };
+      const newTab = tabMap[type];
+      setActiveTab(newTab);
+      await fetchTabData(newTab);
+
+      Swal.fire({
+        title: "Advertisement Added!",
+        icon: "success",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    } catch (error) {
+      Swal.fire({
+        title: "Operation Failed",
+        text: error.response?.data?.message || "Something went wrong",
+        icon: "error",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#e25829",
+      });
+    }
   };
 
   const getBarClick = (val) => {
-    // console.log(val);
     setSideBar(val);
   };
+
+  const renderTableRows = (data, columns) => {
+    if (tabLoading) {
+      return (
+        <tr>
+          <td colSpan={columns.length + 1} className="text-center py-5">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+            <p className="mt-2">Loading data...</p>
+          </td>
+        </tr>
+      );
+    }
+
+    if (!data || data.length === 0) {
+      return (
+        <tr>
+          <td colSpan={columns.length + 1} className="text-center py-5">
+            No advertisements found
+          </td>
+        </tr>
+      );
+    }
+
+    return data.map((item, index) => (
+      <tr className="bg-light" key={item._id}>
+        {columns.map((col) => (
+          <td className="text-center" key={col.key}>
+            {col.render ? col.render(item, index) : item[col.key]}
+          </td>
+        ))}
+        <td className="d-flex ">
+          <button
+            className="comman_btn2 table_viewbtn"
+            onClick={() =>
+              deleteAdvertisement(
+                item._id,
+                activeTab === "recommendations"
+                  ? "Recommendation"
+                  : activeTab === "topVendors"
+                  ? "vendor"
+                  : activeTab === "topCategories"
+                  ? "category"
+                  : activeTab === "newVendors"
+                  ? "newVendor"
+                  : "newCategory"
+              )
+            }>
+            Delete
+          </button>
+        </td>
+      </tr>
+    ));
+  };
+
+  const getCurrentTableData = () => {
+    switch (activeTab) {
+      case "topVendors":
+        return {
+          data: allAdds,
+          columns: [
+            { key: null, render: (_, index) => index + 1 },
+            {
+              key: "vendor",
+              render: (item) => item.vendor?.full_name || "N/A",
+            },
+            { key: "vendor", render: (item) => item.vendor?.email || "N/A" },
+          ],
+        };
+      case "topCategories":
+        return {
+          data: allAddsCate,
+          columns: [
+            { key: null, render: (_, index) => index + 1 },
+            {
+              key: "category",
+              render: (item) => item.category?.name_en || "N/A",
+            },
+            {
+              key: "category",
+              render: (item) => item.category?.name_ar || "N/A",
+            },
+          ],
+        };
+      case "newVendors":
+        return {
+          data: vendorAdds,
+          columns: [
+            { key: null, render: (_, index) => index + 1 },
+            {
+              key: "vendor",
+              render: (item) => item.vendor?.full_name || "N/A",
+            },
+            { key: "vendor", render: (item) => item.vendor?.email || "N/A" },
+            { key: "vendor", render: (item) => item.vendor?.vendorID || "N/A" },
+          ],
+        };
+      case "newCategories":
+        return {
+          data: categoryAdds,
+          columns: [
+            { key: null, render: (_, index) => index + 1 },
+            {
+              key: "category",
+              render: (item) => item.category?.name_en || "N/A",
+            },
+            {
+              key: "category",
+              render: (item) => item.category?.name_ar || "N/A",
+            },
+          ],
+        };
+      case "recommendations":
+        return {
+          data: serviceAdds,
+          columns: [
+            { key: null, render: (_, index) => index + 1 },
+            {
+              key: "service",
+              render: (item) => item.service?.name_en || "N/A",
+            },
+            {
+              key: "date",
+              render: (item) =>
+                moment(item.createdAt).format("MM/DD/YYYY") || "N/A",
+            },
+          ],
+        };
+      default:
+        return { data: [], columns: [] };
+    }
+  };
+
+  const { data, columns } = getCurrentTableData();
 
   return (
     <div className={sideBar === "click" ? "expanded_main" : "admin_main"}>
@@ -326,436 +423,171 @@ const AdvertiseManagement = () => {
         <div className="row advertisment-management justify-content-center">
           <div className="col-12">
             <div className="row">
+              {/* Advertisement Form */}
               <div className="col-12 mb-4 design_outter_comman border shadow">
                 <div className="row comman_header justify-content-between">
                   <div className="col-auto">
-                    <h2>Add Advertisment</h2>
+                    <h2>Add Advertisement</h2>
                   </div>
                 </div>
-                <form
-                  className="form-design py-4 px-3 help-support-form row  justify-content-between"
-                  action=""
-                >
+                <form className="form-design py-4 px-3 help-support-form row justify-content-between">
                   <div className="form-group col-md-4">
-                    <label htmlFor="">Select Type</label>
+                    <label>Select Type</label>
                     <select
                       className="form-select"
-                      aria-label="Default select example"
-                      onChange={(e) => setType(e.target.value)}
-                    >
-                      <option selected="" value="TV">
-                        Top Vendors
-                      </option>
+                      value={type}
+                      onChange={(e) => setType(e.target.value)}>
+                      <option value="TV">Top Vendors</option>
                       <option value="TC">Top Categories</option>
                       <option value="NV">New Vendor</option>
                       <option value="NC">New Category</option>
+                      <option value="AR">Anasa Recommends</option>
                     </select>
                   </div>
 
-                  <div className={type === "TC" ? "form-group col" : "d-none"}>
-                    <label htmlFor="">Select Category</label>
-                    <Select
-                      defaultValue=""
-                      isMulti
-                      name="users"
-                      options={optionsCate}
-                      className="basic-multi-select z-3"
-                      classNamePrefix="select"
-                      onChange={handleChangeCate}
-                      onInputChange={handleInputChangeCate}
-                      value={selectedCate?.cateSelected}
-                    />
-                  </div>
+                  {/* Dynamic Fields */}
+                  {type === "TC" && (
+                    <div className="form-group col">
+                      <label>Select Category</label>
+                      <Select
+                        isMulti
+                        options={optionsCate}
+                        className="basic-multi-select z-3"
+                        classNamePrefix="select"
+                        onChange={setSelectedCate}
+                        onInputChange={setSearchKey2}
+                        value={selectedCate}
+                      />
+                    </div>
+                  )}
 
-                  <div className={type === "TV" ? "form-group col" : "d-none"}>
-                    <label htmlFor="">Search Vendors</label>
-                    <Select
-                      defaultValue=""
-                      isMulti
-                      name="users"
-                      options={options}
-                      className="basic-multi-select z-3"
-                      classNamePrefix="select"
-                      onChange={handleChange}
-                      onInputChange={handleInputChange}
-                      value={selectedUsers?.usersSelected}
-                    />
-                  </div>
-                  <div className={type === "NV" ? "form-group col" : "d-none"}>
-                    <label htmlFor="">Search New Vendors</label>
-                    <Select
-                      defaultValue=""
-                      isMulti
-                      name="users"
-                      options={optionsNewVendors}
-                      className="basic-multi-select z-3"
-                      classNamePrefix="select"
-                      onChange={handleChangeNewVendor}
-                      onInputChange={handleInputChangeNewVendor}
-                      value={selectedNewVendor?.newVendorSelected}
-                    />
-                  </div>
-                  <div className={type === "NC" ? "form-group col" : "d-none"}>
-                    <label htmlFor="">Search New Category</label>
-                    <Select
-                      defaultValue=""
-                      isMulti
-                      name="users"
-                      options={optionsNewCate}
-                      className="basic-multi-select z-3"
-                      classNamePrefix="select"
-                      onChange={handleChangeNewCategory}
-                      onInputChange={handleInputChangeNewCategory}
-                      value={selectedNewCate?.newCateSelected}
-                    />
-                  </div>
+                  {type === "TV" && (
+                    <div className="form-group col">
+                      <label>Search Vendors</label>
+                      <Select
+                        isMulti
+                        options={options}
+                        className="basic-multi-select z-3"
+                        classNamePrefix="select"
+                        onChange={setSelectedUsers}
+                        onInputChange={setSearchKey}
+                        value={selectedUsers}
+                      />
+                    </div>
+                  )}
+
+                  {type === "NV" && (
+                    <div className="form-group col">
+                      <label>Search New Vendors</label>
+                      <Select
+                        isMulti
+                        options={optionsNewVendors}
+                        className="basic-multi-select z-3"
+                        classNamePrefix="select"
+                        onChange={setSelectedNewVendor}
+                        onInputChange={setSearchKey3}
+                        value={selectedNewVendor}
+                      />
+                    </div>
+                  )}
+
+                  {type === "NC" && (
+                    <div className="form-group col">
+                      <label>Search New Category</label>
+                      <Select
+                        isMulti
+                        options={optionsNewCate}
+                        className="basic-multi-select z-3"
+                        classNamePrefix="select"
+                        onChange={setSelectedNewCate}
+                        onInputChange={setSearchKey4}
+                        value={selectedNewCate}
+                      />
+                    </div>
+                  )}
+
+                  {type === "AR" && (
+                    <div className="form-group col">
+                      <label>Search Services</label>
+                      <Select
+                        isMulti
+                        options={optionsServices}
+                        className="basic-multi-select z-3"
+                        classNamePrefix="select"
+                        onChange={setSelectedServices}
+                        onInputChange={setSearchKey5}
+                        value={selectedServices}
+                      />
+                    </div>
+                  )}
 
                   <div className="form-group mb-0 col-auto mt-4">
-                    <button className="comman_btn" onClick={saveAdd}>
+                    <button
+                      type="button"
+                      className="comman_btn"
+                      onClick={saveAdvertisement}>
                       Save
                     </button>
                   </div>
                 </form>
               </div>
+
+              {/* Advertisement Management */}
               <div className="col-12 mb-4 design_outter_comman border shadow">
                 <div className="row comman_header justify-content-between">
                   <div className="col-auto">
-                    <h2>Advertisment Management</h2>
-                  </div>
-                  <div className="col-3">
-                    {/* <form className="form-design" action="">
-                      <div className="form-group mb-0 position-relative icons_set">
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Search"
-                          name="name"
-                          id="name"
-                          onChange={(e) => {
-                            onSearch(e);
-                          }}
-                        />
-                        <i className="far fa-search" />
-                      </div>
-                    </form> */}
+                    <h2>Advertisement Management</h2>
                   </div>
                 </div>
                 <div className="row">
                   <div className="col-12 px-0">
-                    <ul
-                      className="nav nav-tabs comman_tabs"
-                      id="myTab"
-                      role="tablist"
-                    >
-                      <li className="nav-item" role="presentation">
+                    <div className="nav nav-tabs  d-flex comman_tabs">
+                      {tabs?.map((tab) => (
                         <button
-                          className="nav-link active"
-                          id="home-tab"
-                          data-bs-toggle="tab"
-                          data-bs-target="#home"
-                          type="button"
-                          role="tab"
-                          aria-controls="home"
-                          aria-selected="true"
-                        >
-                          Top Vendors
+                          key={tab.id}
+                          style={{
+                            width: "20%",
+                          }}
+                          className={`nav-link ${
+                            activeTab === tab.id ? "active" : ""
+                          }`}
+                          onClick={() => handleTabChange(tab.id)}
+                          disabled={tabLoading}>
+                          {tab.label}
                         </button>
-                      </li>
-                      <li className="nav-item" role="presentation">
-                        <button
-                          className="nav-link"
-                          id="profile-tab"
-                          data-bs-toggle="tab"
-                          data-bs-target="#profile"
-                          type="button"
-                          role="tab"
-                          aria-controls="profile"
-                          aria-selected="false"
-                        >
-                          Top Categories
-                        </button>
-                      </li>
-                      <li className="nav-item" role="presentation">
-                        <button
-                          className="nav-link"
-                          id="profile-tab2"
-                          data-bs-toggle="tab"
-                          data-bs-target="#profile2"
-                          type="button"
-                          role="tab"
-                          aria-controls="profile"
-                          aria-selected="false"
-                        >
-                          New Vendors
-                        </button>
-                      </li>
-                      <li className="nav-item" role="presentation">
-                        <button
-                          className="nav-link"
-                          id="profile-tab3"
-                          data-bs-toggle="tab"
-                          data-bs-target="#profile3"
-                          type="button"
-                          role="tab"
-                          aria-controls="profile"
-                          aria-selected="false"
-                        >
-                          New Categories
-                        </button>
-                      </li>
-                    </ul>
-                    <div className="tab-content" id="myTabContent">
-                      <div
-                        className="tab-pane fade show active"
-                        id="home"
-                        role="tabpanel"
-                        aria-labelledby="home-tab"
-                      >
-                        <div className="row p-4 mx-0">
-                          <div className="col-12 inner_design_comman border">
-                            <div className="row">
-                              <div className="col-12 comman_table_design px-0">
-                                <div className="table-responsive">
-                                  <table className="table mb-0">
-                                    <thead>
-                                      <tr>
-                                        <th>S.No.</th>
-                                        <th>Vendors</th>
-                                        <th>Email</th>
-                                        <th>Action</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      {allAdds?.map((item, ind) => (
-                                        <tr>
-                                          <td>{ind + 1}.</td>
-                                          <td>
-                                            <li className="list-unstyled">
-                                              {item?.vendor?.full_name
-                                                ? item?.vendor?.full_name
-                                                : "No results"}
-                                            </li>
-                                          </td>
-                                          <td>
-                                            <li className="list-unstyled">
-                                              {item?.vendor?.email
-                                                ? item?.vendor?.email
-                                                : "No results"}
-                                            </li>
-                                          </td>
-                                          <td>
-                                            <a
-                                              className="comman_btn2 table_viewbtn"
-                                              href="javascript:;"
-                                              onClick={() =>
-                                                DeleteAdd(item?._id, "vendor")
-                                              }
-                                            >
-                                              Delete
-                                            </a>
-                                          </td>
-                                        </tr>
-                                      ))}
-                                    </tbody>
-                                  </table>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div
-                        className="tab-pane fade"
-                        id="profile"
-                        role="tabpanel"
-                        aria-labelledby="profile-tab"
-                      >
-                        <div className="row p-4 mx-0">
-                          <div className="col-12 inner_design_comman border">
-                            <div className="row">
-                              <div className="col-12 comman_table_design px-0">
-                                <div className="table-responsive">
-                                  <table className="table mb-0">
-                                    <thead>
-                                      <tr>
-                                        <th>S.No.</th>
-                                        <th>Categories(en)</th>
-                                        <th>Categories(ar)</th>
-                                        <th>Action</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      {allAddsCate
-                                        ?.sort(
-                                          (a, b) =>
-                                            new Date(b.updatedAt) -
-                                            new Date(a.updatedAt)
-                                        )
-                                        ?.map((item, ind) => (
-                                          <tr key={item._id}>
-                                            <td>{ind + 1}</td>
-                                            <td>
-                                              <li className="list-unstyled">
-                                                {item?.category?.name_en}
-                                              </li>
-                                            </td>
-                                            <td>
-                                              <li className="list-unstyled">
-                                                {item?.category?.name_ar}
-                                              </li>
-                                            </td>
-                                            <td>
-                                              <a
-                                                className="comman_btn2 table_viewbtn"
-                                                onClick={() =>
-                                                  DeleteAdd(
-                                                    item._id,
-                                                    "category"
-                                                  )
-                                                }
-                                              >
-                                                Delete
-                                              </a>
-                                            </td>
-                                          </tr>
-                                        ))}
-                                    </tbody>
-                                  </table>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div
-                        className="tab-pane fade"
-                        id="profile2"
-                        role="tabpanel"
-                        aria-labelledby="profile-tab2"
-                      >
-                        <div className="row p-4 mx-0">
-                          <div className="col-12 inner_design_comman border">
-                            <div className="row">
-                              <div className="col-12 comman_table_design px-0">
-                                <div className="table-responsive">
-                                  <table className="table mb-0">
-                                    <thead>
-                                      <tr>
-                                        <th>S.No.</th>
-                                        <th>Vendor Name(en)</th>
-                                        <th>Email Address</th>
-                                        <th>Vendor Id</th>
-                                        <th>Action</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      {vendorAdds
-                                        ?.sort(
-                                          (a, b) =>
-                                            new Date(b.updatedAt) -
-                                            new Date(a.updatedAt)
-                                        )
-                                        ?.map((item, ind) => (
-                                          <tr>
-                                            <td>{ind + 1}</td>
-                                            <td>
-                                              <li className="list-unstyled">
-                                                {item?.vendor?.full_name}
-                                              </li>
-                                            </td>
-                                            <td>
-                                              <li className="list-unstyled">
-                                                {item?.vendor?.email}
-                                              </li>
-                                            </td>
-                                            <td>
-                                              <li className="list-unstyled">
-                                                {item?.vendor?.vendorID}
-                                              </li>
-                                            </td>
-                                            <td>
-                                              <a
-                                                className="comman_btn2 table_viewbtn"
-                                                onClick={() =>
-                                                  DeleteAdd(
-                                                    item?._id,
-                                                    "newVendor"
-                                                  )
-                                                }
-                                              >
-                                                Delete
-                                              </a>
-                                            </td>
-                                          </tr>
-                                        ))}
-                                    </tbody>
-                                  </table>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div
-                        className="tab-pane fade"
-                        id="profile3"
-                        role="tabpanel"
-                        aria-labelledby="profile-tab3"
-                      >
-                        <div className="row p-4 mx-0">
-                          <div className="col-12 inner_design_comman border">
-                            <div className="row">
-                              <div className="col-12 comman_table_design px-0">
-                                <div className="table-responsive">
-                                  <table className="table mb-0">
-                                    <thead>
-                                      <tr>
-                                        <th>S.No.</th>
-                                        <th>Categories(en)</th>
-                                        <th>Categories(ar)</th>
-                                        <th>Action</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      {categoryAdds
-                                        ?.sort(
-                                          (a, b) =>
-                                            new Date(b.updatedAt) -
-                                            new Date(a.updatedAt)
-                                        )
-                                        ?.map((item, ind) => (
-                                          <tr>
-                                            <td>{ind + 1}</td>
-                                            <td>
-                                              <li className="list-unstyled">
-                                                {item?.category?.name_en}
-                                              </li>
-                                            </td>
-                                            <td>
-                                              <li className="list-unstyled">
-                                                {item?.category?.name_ar}
-                                              </li>
-                                            </td>
-                                            <td>
-                                              <a
-                                                className="comman_btn2 table_viewbtn"
-                                                onClick={() =>
-                                                  DeleteAdd(
-                                                    item?._id,
-                                                    "newCategory"
-                                                  )
-                                                }
-                                              >
-                                                Delete
-                                              </a>
-                                            </td>
-                                          </tr>
-                                        ))}
-                                    </tbody>
-                                  </table>
-                                </div>
-                              </div>
-                            </div>
+                      ))}
+                    </div>
+
+                    <div className="tab-content p-4 mx-0">
+                      <div className="col-12 inner_design_comman ">
+                        <div className="comman_table_design">
+                          <div className="table-responsive">
+                            <table className="table mb-0">
+                              <thead>
+                                <tr>
+                                  <th>S.No.</th>
+                                  {columns.slice(1).map((col, index) => (
+                                    <th key={index}>
+                                      {col.key === "vendor"
+                                        ? index === 0
+                                          ? "Vendors"
+                                          : index === 1
+                                          ? "Email"
+                                          : "Vendor ID"
+                                        : col.key === "category"
+                                        ? index === 0
+                                          ? "Categories(en)"
+                                          : "Categories(ar)"
+                                        : col.key === "service"
+                                        ? "Service Name"
+                                        : "Date"}
+                                    </th>
+                                  ))}
+                                  <th>Action</th>
+                                </tr>
+                              </thead>
+                              <tbody>{renderTableRows(data, columns)}</tbody>
+                            </table>
                           </div>
                         </div>
                       </div>
@@ -763,90 +595,6 @@ const AdvertiseManagement = () => {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div
-        className="modal fade comman_modal"
-        id="staticBackdrop"
-        data-bs-backdrop="static"
-        data-bs-keyboard="false"
-        tabIndex={-1}
-        aria-labelledby="staticBackdropLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content border-0">
-            <div className="modal-header">
-              <h5 className="modal-title" id="staticBackdropLabel">
-                Advertisment Management View
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              />
-            </div>
-            <div className="modal-body">
-              <form
-                className="form-design px-3 py-2 help-support-form row align-items-end justify-content-center"
-                action=""
-              >
-                <div className="form-group col-4">
-                  <label htmlFor="">Select Vendor</label>
-                  <select
-                    className="form-select form-control"
-                    aria-label="Default select example"
-                  >
-                    <option selected="">lorem</option>
-                    <option value={1}>lorem</option>
-                  </select>
-                </div>
-                <div className="form-group col-4">
-                  <label htmlFor="">Select Category</label>
-                  <select
-                    className="form-select form-control"
-                    aria-label="Default select example"
-                  >
-                    <option selected="">lorem</option>
-                    <option value={1}>lorem</option>
-                  </select>
-                </div>
-                <div className="form-group col-4">
-                  <label htmlFor="">Select Sub Category </label>
-                  <select
-                    className="form-select form-control"
-                    aria-label="Default select example"
-                  >
-                    <option selected="">lorem</option>
-                    <option value={1}>lorem</option>
-                  </select>
-                </div>
-                <div className="form-group col-6">
-                  <label htmlFor="">Select Users</label>
-                  <select
-                    className="form-select form-control"
-                    aria-label="Default select example"
-                  >
-                    <option selected="">2</option>
-                    <option value={1}>lorem</option>
-                  </select>
-                </div>
-                <div className="form-group col-6">
-                  <label htmlFor="">Search User</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    defaultValue="lorem"
-                  />
-                </div>
-                <div className="form-group mb-0 col-auto mt-3">
-                  <button className="comman_btn">Save</button>
-                </div>
-              </form>
             </div>
           </div>
         </div>
