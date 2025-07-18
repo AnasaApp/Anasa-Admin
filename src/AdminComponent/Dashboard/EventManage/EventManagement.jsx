@@ -91,12 +91,11 @@ const EventManagement = () => {
       {
         label: "EVENT LOCATION",
         field: "address",
-        sort: "asc",
         width: 150,
       },
       {
-        label: "DESCRIPTION",
-        field: "desc",
+        label: "CATEGORIES",
+        field: "cate",
         sort: "asc",
         width: 100,
       },
@@ -145,20 +144,22 @@ const EventManagement = () => {
       console.log(values);
       values?.map((list, index) => {
         const returnData = {};
-        let address =
-          list?.event_location?.house_number +
-          "," +
-          list?.event_location?.building_name +
-          " " +
-          list?.event_location?.locality +
-          " " +
-          list?.event_location?.city +
-          "," +
-          list?.event_location?.city;
+
         returnData.sn = index + 1 + ".";
         returnData.name = list?.eventName;
-        returnData.address = address;
-        returnData.desc = list?.comment;
+        returnData.address = (
+          <a
+            rel="noreferrer"
+            target="_blank"
+            className="fw-bold text-primary"
+            style={{
+              fontSize: "12px",
+            }}
+            href={`https://www.google.com/maps/search/?api=1&query=${list?.event_location?.latitude},${list?.event_location?.longitude}`}>
+            View in Google Maps
+          </a>
+        );
+        returnData.cate = list?.categories?.map((itm) => itm?.name_en + ",");
         returnData.buyer = list?.buyer?.full_name;
         returnData.buyerContact = list?.buyer?.phone_number;
         const startTime = list?.startTime;

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import {
   changeBuyerStatus,
@@ -237,12 +237,13 @@ const BookingDetails = () => {
                                       </strong>
                                     </div>
                                     <div className="col-6">
-                                      <span className="booking_head">
-                                        {booking?.event_location?.house_number}/
-                                        {booking?.event_location?.building_name}
-                                        ,{booking?.event_location?.city}-
-                                        {booking?.event_location?.country}
-                                      </span>
+                                      <a
+                                        rel="noreferrer"
+                                        target="_blank"
+                                        className="fs-6 fw-bold"
+                                        href={`https://www.google.com/maps/search/?api=1&query=${booking?.event_location?.latitude},${booking?.event_location?.longitude}`}>
+                                        View in Google Maps
+                                      </a>
                                     </div>
                                   </div>
                                 </div>
@@ -285,6 +286,24 @@ const BookingDetails = () => {
                                       <span className="booking_head">
                                         {booking?.vendor?.phone_number}
                                       </span>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="col-6 py-1">
+                                  <div className="row mx-0">
+                                    <div className="col-6">
+                                      <strong className="booking_head">
+                                        Vendor Location:
+                                      </strong>
+                                    </div>
+                                    <div className="col-6">
+                                      <a
+                                        rel="noreferrer"
+                                        target="_blank"
+                                        className="fs-6 fw-bold"
+                                        href={`https://www.google.com/maps/search/?api=1&query=${booking?.vendor?.latitude},${booking?.vendor?.longitude}`}>
+                                        View in Google Maps
+                                      </a>
                                     </div>
                                   </div>
                                 </div>
