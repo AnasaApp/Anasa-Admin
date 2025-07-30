@@ -19,6 +19,7 @@ import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 
 import DateTimePicker from "react-datetime-picker";
+import FsLightbox from "fslightbox-react";
 
 const EventManagement = () => {
   const [slide, setSlide] = useState("EM");
@@ -52,6 +53,19 @@ const EventManagement = () => {
       package: "",
     },
   ]);
+  const [lightboxController, setLightboxController] = useState({
+    toggler: false,
+    slide: 1,
+    sources: [],
+  });
+
+  const openLightbox = (images) => {
+    setLightboxController({
+      toggler: !lightboxController.toggler,
+      slide: 1,
+      sources: images || [],
+    });
+  };
 
   const {
     register: register2,
@@ -96,6 +110,12 @@ const EventManagement = () => {
       {
         label: "CATEGORIES",
         field: "cate",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "IMAGES",
+        field: "image",
         sort: "asc",
         width: 100,
       },
@@ -147,6 +167,17 @@ const EventManagement = () => {
 
         returnData.sn = index + 1 + ".";
         returnData.name = list?.eventName;
+        returnData.image = (
+          <button
+            onClick={() => openLightbox(list?.images)}
+            className="fw-bold text-primary border-0 bg-transparent"
+            style={{
+              fontSize: "12px",
+              cursor: "pointer",
+            }}>
+            View Images
+          </button>
+        );
         returnData.address = (
           <a
             rel="noreferrer"
@@ -159,7 +190,7 @@ const EventManagement = () => {
             View in Google Maps
           </a>
         );
-        returnData.cate = list?.categories?.map((itm) => itm?.name_en + ",");
+        returnData.cate = list?.category?.map((itm) => itm?.name_en + ",");
         returnData.buyer = list?.buyer?.full_name;
         returnData.buyerContact = list?.buyer?.phone_number;
         const startTime = list?.startTime;
@@ -1090,6 +1121,12 @@ const EventManagement = () => {
           </div>
         </div>
       </div>
+
+      <FsLightbox
+        toggler={lightboxController.toggler}
+        sources={lightboxController.sources}
+        slide={lightboxController.slide}
+      />
     </div>
   );
 };
