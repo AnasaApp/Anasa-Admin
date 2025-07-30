@@ -19,7 +19,6 @@ import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 
 import DateTimePicker from "react-datetime-picker";
-import FsLightbox from "fslightbox-react";
 
 const EventManagement = () => {
   const [slide, setSlide] = useState("EM");
@@ -63,7 +62,7 @@ const EventManagement = () => {
     setLightboxController({
       toggler: !lightboxController.toggler,
       slide: 1,
-      sources: images || [],
+      sources: images || [], // Use the event images or empty array
     });
   };
 
@@ -167,17 +166,22 @@ const EventManagement = () => {
 
         returnData.sn = index + 1 + ".";
         returnData.name = list?.eventName;
-        returnData.image = (
-          <button
-            onClick={() => openLightbox(list?.images)}
-            className="fw-bold text-primary border-0 bg-transparent"
-            style={{
-              fontSize: "12px",
-              cursor: "pointer",
-            }}>
-            View Images
-          </button>
-        );
+        returnData.image =
+          list?.images && list.images.length > 0 ? (
+            <img
+              src={list.images[0]}
+              alt="Event"
+              style={{
+                width: "60px",
+                height: "40px",
+                objectFit: "cover",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            />
+          ) : (
+            <span style={{ fontSize: "12px", color: "#888" }}>No Image</span>
+          );
         returnData.address = (
           <a
             rel="noreferrer"
@@ -1121,12 +1125,6 @@ const EventManagement = () => {
           </div>
         </div>
       </div>
-
-      <FsLightbox
-        toggler={lightboxController.toggler}
-        sources={lightboxController.sources}
-        slide={lightboxController.slide}
-      />
     </div>
   );
 };
