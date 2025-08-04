@@ -113,6 +113,18 @@ const EventManagement = () => {
         width: 100,
       },
       {
+        label: "BUDGET COST",
+        field: "budget",
+        sort: "asc",
+        width: 100,
+      },
+      {
+        label: "COMMENTS",
+        field: "comment",
+        sort: "asc",
+        width: 100,
+      },
+      {
         label: "IMAGES",
         field: "image",
         sort: "asc",
@@ -197,6 +209,8 @@ const EventManagement = () => {
         returnData.cate = list?.category?.map((itm) => itm?.name_en + ",");
         returnData.buyer = list?.buyer?.full_name;
         returnData.buyerContact = list?.buyer?.phone_number;
+        returnData.budget = list?.budget_cost;
+        returnData.comment = list?.comment?.slice(0, 300);
         const startTime = list?.startTime;
 
         let formattedTime;
