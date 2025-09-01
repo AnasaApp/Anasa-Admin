@@ -156,8 +156,7 @@ const TransactionManagement = () => {
             <Link
               to="/Admin/Dashboard/Vendor-Management/Approved"
               state={{ id: list?.vendor?._id }}
-              className="comman_btn table_viewbtn mx-1"
-            >
+              className="comman_btn table_viewbtn mx-1">
               View
             </Link>
             <Link
@@ -171,8 +170,7 @@ const TransactionManagement = () => {
                   status: list?.status,
                   amount: list?.deposit || list?.withdrawl,
                 });
-              }}
-            >
+              }}>
               Manage
             </Link>
           </>
@@ -207,8 +205,7 @@ const TransactionManagement = () => {
             <Link
               to="/Admin/Dashboard/Buyer-Details"
               state={{ id: list?.buyer?._id }}
-              className="comman_btn table_viewbtn mx-1"
-            >
+              className="comman_btn table_viewbtn mx-1">
               View
             </Link>
           </>
@@ -246,6 +243,14 @@ const TransactionManagement = () => {
 
   const onUpdate = async (e) => {
     e.preventDefault();
+    if (vendorId === undefined) {
+      return Swal.fire({
+        title: "Error!",
+        text: "Something went wrong, Please try again later.",
+        icon: "error",
+        confirmButtonText: "Okay",
+      });
+    }
     const { data } = await UpdateTransactions(vendorId, {
       status: e.target.value,
     });
@@ -301,8 +306,7 @@ const TransactionManagement = () => {
                     <ul
                       className="nav nav-tabs comman_tabs"
                       id="myTab"
-                      role="tablist"
-                    >
+                      role="tablist">
                       <li className="nav-item" role="presentation">
                         <button
                           className="nav-link active"
@@ -312,8 +316,7 @@ const TransactionManagement = () => {
                           type="button"
                           role="tab"
                           aria-controls="home"
-                          aria-selected="true"
-                        >
+                          aria-selected="true">
                           Buyers
                         </button>
                       </li>
@@ -326,8 +329,7 @@ const TransactionManagement = () => {
                           type="button"
                           role="tab"
                           aria-controls="profile"
-                          aria-selected="false"
-                        >
+                          aria-selected="false">
                           Vendor
                         </button>
                       </li>
@@ -337,8 +339,7 @@ const TransactionManagement = () => {
                         className="tab-pane fade show active"
                         id="home"
                         role="tabpanel"
-                        aria-labelledby="home-tab"
-                      >
+                        aria-labelledby="home-tab">
                         <div className="row p-4 mx-0">
                           <div className="col-12 inner_design_comman border">
                             <div className="row comman_header justify-content-between">
@@ -348,8 +349,7 @@ const TransactionManagement = () => {
                             </div>
                             <form
                               className="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"
-                              action=""
-                            >
+                              action="">
                               <div className="form-group mb-0 col-5">
                                 <label htmlFor="">From</label>
                                 <input
@@ -375,15 +375,13 @@ const TransactionManagement = () => {
                               <div className="form-group mb-0 col-auto">
                                 <button
                                   className="comman_btn2"
-                                  onClick={onSearch}
-                                >
+                                  onClick={onSearch}>
                                   Search
                                 </button>
                                 <button
                                   className="comman_btn2 d-none"
                                   type="reset"
-                                  id="Resets"
-                                >
+                                  id="Resets">
                                   Reset
                                 </button>
                               </div>
@@ -452,8 +450,7 @@ const TransactionManagement = () => {
                         className="tab-pane fade"
                         id="profile"
                         role="tabpanel"
-                        aria-labelledby="profile-tab"
-                      >
+                        aria-labelledby="profile-tab">
                         <div className="row p-4 mx-0">
                           <div className="col-12 inner_design_comman border">
                             <div className="row comman_header justify-content-between">
@@ -463,8 +460,7 @@ const TransactionManagement = () => {
                             </div>
                             <form
                               className="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"
-                              action=""
-                            >
+                              action="">
                               <div className="form-group mb-0 col-5">
                                 <label htmlFor="">From</label>
                                 <input
@@ -490,15 +486,13 @@ const TransactionManagement = () => {
                               <div className="form-group mb-0 col-auto">
                                 <button
                                   className="comman_btn2"
-                                  onClick={onSearch}
-                                >
+                                  onClick={onSearch}>
                                   Search
                                 </button>
                                 <button
                                   className="comman_btn2 d-none"
                                   type="reset"
-                                  id="Resets"
-                                >
+                                  id="Resets">
                                   Reset
                                 </button>
                               </div>
@@ -571,8 +565,7 @@ const TransactionManagement = () => {
         data-bs-keyboard="false"
         tabIndex={-1}
         aria-labelledby="staticBackdropLabel"
-        aria-hidden="true"
-      >
+        aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content border-0">
             <div className="modal-header">
@@ -592,8 +585,7 @@ const TransactionManagement = () => {
               <form
                 className="form-design px-3 py-2 help-support-form row align-items-end justify-content-center"
                 action=""
-                onSubmit={handleSubmit2(onEdit)}
-              >
+                onSubmit={handleSubmit2(onEdit)}>
                 <div className="form-group col-6">
                   <label htmlFor="">Total Amount (En)</label>
                   <input
@@ -634,8 +626,7 @@ const TransactionManagement = () => {
                     className="form-select form-control"
                     aria-label="Default select example"
                     name="category"
-                    onChange={(e) => onUpdate(e)}
-                  >
+                    onChange={(e) => onUpdate(e)}>
                     <option selected="">{trans.status}</option>
                     <option value="Paid">Paid</option>
                     <option value="Pending">Pending</option>
@@ -643,7 +634,7 @@ const TransactionManagement = () => {
                     <option value="Refund">Refund</option>
                   </select>
                 </div>
-                <div className="form-group col-6">
+                {/* <div className="form-group col-6">
                   <label htmlFor="">Withdrawl Amount</label>
                   <input
                     type="number"
@@ -668,7 +659,7 @@ const TransactionManagement = () => {
                       {errors2.combo_ar_edit_ar.message}
                     </small>
                   )}
-                </div>
+                </div> */}
                 <div className="form-group mb-0 col-auto ">
                   <button className="comman_btn" type="submit">
                     Confirm
