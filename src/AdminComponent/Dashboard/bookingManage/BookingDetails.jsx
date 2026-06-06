@@ -361,6 +361,7 @@ const BookingDetails = () => {
                                 </div>
 
                                 <div className="mt-3">
+
                                   {booking?.services?.map((item, index) => (
                                     <div className=" border rounded  bg-white row m-2 p-2">
                                       <div className="col-6 py-1">
@@ -409,6 +410,7 @@ const BookingDetails = () => {
                                       </div>
                                     </div>
                                   ))}
+
                                 </div>
                               </div>
                             </div>
@@ -424,7 +426,9 @@ const BookingDetails = () => {
         </div>
       </div>
       <>
+      
         {/* Modal */}
+
         <div
           className="modal fade reply_modal"
           id="staticBackdrop"
@@ -519,6 +523,7 @@ const BookingDetails = () => {
             </div>
           </div>
         </div>
+
         <div
           className="modal fade Update_modal"
           id="staticBackdrop12"
