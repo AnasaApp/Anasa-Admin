@@ -73,6 +73,13 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
       key: "BM",
     },
     {
+      label: "New-Flow Orders",
+      value: "New-Flow-Orders",
+      icon: "fas fa-receipt",
+      path: "/Admin/Dashboard/New-Flow-Orders",
+      key: "NFO",
+    },
+    {
       label: "Category Management",
       value: "Category-Management",
       icon: "fas fa-list-ol",
@@ -92,6 +99,13 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
       icon: "fas fa-calendar-alt",
       path: "/Admin/Dashboard/Occassion-Management",
       key: "OccM",
+    },
+    {
+      label: "Event Setup (New Flow)",
+      value: "Event-Setup",
+      icon: "fas fa-sitemap",
+      path: "/Admin/Dashboard/Event-Setup",
+      key: "ES",
     },
     {
       label: "Transaction Management",
@@ -155,6 +169,20 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
       icon: "fas fa-bell",
       path: "/Admin/Dashboard/Notifications-Management",
       key: "NM",
+    },
+    {
+      label: "Pop-ups",
+      value: "Popups-Management",
+      icon: "fas fa-window-restore",
+      path: "/Admin/Dashboard/Popups-Management",
+      key: "PU",
+    },
+    {
+      label: "App Settings",
+      value: "App-Settings",
+      icon: "fas fa-sliders-h",
+      path: "/Admin/Dashboard/App-Settings",
+      key: "AS",
     },
     {
       label: "Help & Support",
