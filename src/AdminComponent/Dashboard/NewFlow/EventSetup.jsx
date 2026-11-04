@@ -387,6 +387,14 @@ const Occasions = ({ eventTypes }) => {
 };
 
 // ==================== Packages ====================
+// Why the app leaves a package out, and how to fix it (shown on hover)
+const HIDDEN_REASONS = {
+  expired: ["Expired", "Valid Till has passed: set a later date in Marketing Offers"],
+  service_off: ["Service off", "A service in it is switched off or deleted: turn it on or replace it"],
+  vendor_off: ["Vendor off", "A vendor in it is inactive, blocked or deleted"],
+  no_occasion: ["No active occasion", "Add it to an occasion that is switched on (Occasion Management)"],
+};
+
 const Packages = ({ cities }) => {
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -425,17 +433,32 @@ const Packages = ({ cities }) => {
   const guestText = (offer) =>
     offer.min_guests || offer.max_guests ? `${offer.min_guests || 1} – ${offer.max_guests || "any"}` : "Any";
 
+  // hidden_reasons comes from the server (getAllOffer), with the app's rules
+  const statusOf = (offer) => {
+    if (!offer.hidden_reasons) return <span className="text-muted">-</span>;
+    if (!offer.hidden_reasons.length) return <span className="badge bg-success">Shown in app</span>;
+    return offer.hidden_reasons.map((reason) => {
+      const [label, hint] = HIDDEN_REASONS[reason] || [reason, ""];
+      return (
+        <span key={reason} className="badge bg-danger me-1 mb-1" title={hint}>
+          {label}
+        </span>
+      );
+    });
+  };
+
   return (
     <>
       <Card title="Package details for the new flow" className="">
         <p className="px-3 pt-3 text-muted mb-0">
-          Packages only show for events whose guest count fits and, when cities are set, in those cities. The badge is worked
+          Packages only show for events whose guest count fits and, when cities are set, in those cities. Status says why
+          the app hides one (hover a red label for the fix). The badge is worked
           out from prices unless you set one here.
         </p>
         <Table
           loading={loading}
           empty={!offers.length}
-          head={["Image", "Package", "Price", "Guests", "Cities", "Badge", "Action"]}
+          head={["Image", "Package", "Price", "Guests", "Cities", "Badge", "Status", "Action"]}
         >
           {offers.map((offer) => (
             <tr key={offer._id}>
@@ -449,6 +472,7 @@ const Packages = ({ cities }) => {
               <td>{guestText(offer)}</td>
               <td className="small">{names(cities, offer.cities) || <span className="text-muted">All</span>}</td>
               <td className="small">{BADGES.find((b) => b.value === (offer.badge_override || ""))?.label}</td>
+              <td>{statusOf(offer)}</td>
               <td>
                 <button className="comman_btn table_viewbtn" type="button" onClick={() => setEditing({ ...offer })}>
                   Edit
