@@ -41,6 +41,10 @@ import EventManagement from "./AdminComponent/Dashboard/EventManage/EventManagem
 import NewServices from "./AdminComponent/Dashboard/VendorManage/NewServices";
 import DeliveryManagement from "./AdminComponent/Dashboard/DeliveryManage/DeliveryManagement";
 import PartyTypesManagement from "./AdminComponent/Dashboard/OccassionManage/PartyTypesManagement";
+import EventOrders from "./AdminComponent/Dashboard/NewFlow/EventOrders";
+import EventSetup from "./AdminComponent/Dashboard/NewFlow/EventSetup";
+import PopupsManagement from "./AdminComponent/Dashboard/NewFlow/PopupsManagement";
+import AppSettings from "./AdminComponent/Dashboard/NewFlow/AppSettings";
 // import EVM from "./AdminComponent/Dashboard/EventManage/EVM";
 
 function App() {
@@ -143,6 +147,22 @@ function App() {
             <Route
               path="/Admin/Dashboard/Occassion-Management"
               element={<PartyTypesManagement />}
+            />
+            <Route
+              path="/Admin/Dashboard/New-Flow-Orders"
+              element={<EventOrders />}
+            />
+            <Route
+              path="/Admin/Dashboard/Event-Setup"
+              element={<EventSetup />}
+            />
+            <Route
+              path="/Admin/Dashboard/Popups-Management"
+              element={<PopupsManagement />}
+            />
+            <Route
+              path="/Admin/Dashboard/App-Settings"
+              element={<AppSettings />}
             />
             <Route
               path="/Admin/Dashboard/Adds-Management"

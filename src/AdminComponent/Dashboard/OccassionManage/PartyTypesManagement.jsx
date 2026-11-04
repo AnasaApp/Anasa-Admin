@@ -20,7 +20,87 @@ import {
   getAllPartyTypes,
 } from "../../httpServices/dashHttpService";
 
-const initialTypeForm = { name_en: "", name_ar: "" };
+const initialTypeForm = {
+  name_en: "",
+  name_ar: "",
+  sort_order: 0,
+  needs_age_group: false,
+  is_other: false,
+  icon: null, // a newly chosen file
+  iconUrl: "",
+};
+
+// Multipart, so the new-flow icon can be uploaded with the names
+const typePayload = (form, extra = {}) => {
+  const payload = new FormData();
+  Object.entries(extra).forEach(([key, value]) => payload.append(key, value));
+  payload.append("name_en", form.name_en.trim());
+  payload.append("name_ar", form.name_ar.trim());
+  payload.append("sort_order", Number(form.sort_order) || 0);
+  payload.append("needs_age_group", Boolean(form.needs_age_group));
+  payload.append("is_other", Boolean(form.is_other));
+  if (form.icon) payload.append("icon", form.icon);
+  return payload;
+};
+
+// New-flow fields of an occasion type, shared by the add form and edit modal
+const TypeFlowFields = ({ form, setForm, idPrefix, colClass }) => (
+  <>
+    <div className={`form-group ${colClass}`}>
+      <label>Icon (new flow)</label>
+      <div className="d-flex align-items-center gap-2">
+        {form.icon || form.iconUrl ? (
+          <img
+            src={form.icon ? URL.createObjectURL(form.icon) : form.iconUrl}
+            alt=""
+            style={{ width: 40, height: 40, objectFit: "contain" }}
+          />
+        ) : null}
+        <input
+          type="file"
+          accept="image/png,image/jpeg"
+          className="form-control"
+          onChange={(e) => setForm((p) => ({ ...p, icon: e.target.files[0] || null }))}
+        />
+      </div>
+    </div>
+    <div className={`form-group ${colClass}`}>
+      <label>Sort order (lower shows first)</label>
+      <input
+        type="number"
+        className="form-control"
+        value={form.sort_order}
+        onChange={(e) => setForm((p) => ({ ...p, sort_order: e.target.value }))}
+      />
+    </div>
+    <div className={`form-group ${colClass}`}>
+      <div className="form-check mt-4">
+        <input
+          className="form-check-input"
+          type="checkbox"
+          id={`${idPrefix}-age`}
+          checked={form.needs_age_group}
+          onChange={(e) => setForm((p) => ({ ...p, needs_age_group: e.target.checked }))}
+        />
+        <label className="form-check-label" htmlFor={`${idPrefix}-age`}>
+          Ask for age group (child / teen / adult)
+        </label>
+      </div>
+      <div className="form-check">
+        <input
+          className="form-check-input"
+          type="checkbox"
+          id={`${idPrefix}-other`}
+          checked={form.is_other}
+          onChange={(e) => setForm((p) => ({ ...p, is_other: e.target.checked }))}
+        />
+        <label className="form-check-label" htmlFor={`${idPrefix}-other`}>
+          &quot;Other&quot; (user describes the event)
+        </label>
+      </div>
+    </div>
+  </>
+);
 
 const PartyTypesManagement = () => {
   const [slide] = useState("OccM");
@@ -249,10 +329,7 @@ const PartyTypesManagement = () => {
     }
     setTypesLoading(true);
     try {
-      const { data } = await createPartyType({
-        name_en: addTypeForm.name_en.trim(),
-        name_ar: addTypeForm.name_ar.trim(),
-      });
+      const { data } = await createPartyType(typePayload(addTypeForm));
       if (data && !data.error) {
         Swal.fire({ title: "Occasion type added!", icon: "success", confirmButtonText: "Okay", confirmButtonColor: "#e25829" });
         setAddTypeForm(initialTypeForm);
@@ -268,7 +345,15 @@ const PartyTypesManagement = () => {
 
   const handleTypeEditClick = (item) => {
     setEditingTypeId(item._id);
-    setEditTypeForm({ name_en: item.name_en || "", name_ar: item.name_ar || "" });
+    setEditTypeForm({
+      name_en: item.name_en || "",
+      name_ar: item.name_ar || "",
+      sort_order: item.sort_order ?? 0,
+      needs_age_group: Boolean(item.needs_age_group),
+      is_other: Boolean(item.is_other),
+      icon: null,
+      iconUrl: item.icon || "",
+    });
     document.getElementById("openEditTypeModal").click();
   };
 
@@ -280,11 +365,7 @@ const PartyTypesManagement = () => {
     }
     setTypesLoading(true);
     try {
-      const { data } = await editPartyType({
-        partyTypeId: editingTypeId,
-        name_en: editTypeForm.name_en.trim(),
-        name_ar: editTypeForm.name_ar.trim(),
-      });
+      const { data } = await editPartyType(typePayload(editTypeForm, { partyTypeId: editingTypeId }));
       if (data && !data.error) {
         document.getElementById("closeEditTypeModal").click();
         Swal.fire({ title: "Occasion type updated!", icon: "success", confirmButtonText: "Okay", confirmButtonColor: "#e25829" });
@@ -529,6 +610,7 @@ const PartyTypesManagement = () => {
                                   onChange={(e) => setAddTypeForm((p) => ({ ...p, name_ar: e.target.value }))}
                                 />
                               </div>
+                              <TypeFlowFields form={addTypeForm} setForm={setAddTypeForm} idPrefix="add-type" colClass="col-md-4" />
                               <div className="form-group col-md-2 d-flex align-items-end">
                                 <button type="submit" className="comman_btn w-100" disabled={typesLoading}>
                                   {typesLoading ? "Saving..." : "Save"}
@@ -576,8 +658,11 @@ const PartyTypesManagement = () => {
                                       <thead>
                                         <tr>
                                           <th>S.NO.</th>
+                                          <th>Icon</th>
                                           <th>English Name</th>
                                           <th>Arabic Name</th>
+                                          <th>Order</th>
+                                          <th>New flow</th>
                                           <th>Status</th>
                                           <th>Action</th>
                                         </tr>
@@ -586,8 +671,15 @@ const PartyTypesManagement = () => {
                                         {occasionTypes.map((item, index) => (
                                           <tr key={item._id}>
                                             <td>{(typesPage - 1) * typesPageSize + index + 1}.</td>
+                                            <td>
+                                              {item.icon ? <img src={item.icon} alt="" style={{ width: 32, height: 32, objectFit: "contain" }} /> : "-"}
+                                            </td>
                                             <td>{item.name_en}</td>
                                             <td dir="rtl" lang="ar">{item.name_ar}</td>
+                                            <td>{item.sort_order ?? 0}</td>
+                                            <td className="small">
+                                              {[item.needs_age_group && "Age group", item.is_other && "Other"].filter(Boolean).join(", ") || "-"}
+                                            </td>
                                             <td>
                                               <div className="check_toggle">
                                                 <input
@@ -750,6 +842,7 @@ const PartyTypesManagement = () => {
                     onChange={(e) => setEditTypeForm((p) => ({ ...p, name_ar: e.target.value }))}
                   />
                 </div>
+                <TypeFlowFields form={editTypeForm} setForm={setEditTypeForm} idPrefix="edit-type" colClass="col-12" />
                 <div className="form-group mb-0 col-auto mt-3">
                   <button type="submit" className="comman_btn" disabled={typesLoading}>
                     {typesLoading ? "Saving..." : "Save"}
