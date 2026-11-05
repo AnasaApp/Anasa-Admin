@@ -9,28 +9,22 @@ import {
   getCategoryList,
   getCityList,
   getEventTypeList,
-  getOccasionList,
   getOfferList,
   setCategoryEventTypes,
-  setOccasionEventTypes,
+  setEventTypePackages,
   setPackageDetails,
 } from "../../httpServices/newFlowHttpService";
 
-// Connects the existing catalogue to the new flow: which occasions, packages
+// Connects the existing catalogue to the new flow: which packages
 // and categories show for each event type, package guest limits and cities,
 // and the districts users pick from.
 const TABS = [
   { key: "districts", label: "Districts" },
-  { key: "occasions", label: "Occasions" },
+  { key: "eventTypes", label: "Event types" },
   { key: "packages", label: "Packages" },
   { key: "categories", label: "Categories" },
 ];
 
-const AGE_GROUPS = [
-  { value: "child", label: "Child" },
-  { value: "teen", label: "Teen" },
-  { value: "adult", label: "Adult" },
-];
 
 const BADGES = [
   { value: "", label: "Automatic" },
@@ -302,17 +296,33 @@ const Districts = ({ cities }) => {
   );
 };
 
-// ==================== Occasions ====================
-const Occasions = ({ eventTypes }) => {
-  const [occasions, setOccasions] = useState([]);
+// ==================== Event types ====================
+// The Ready packages the app shows for each event type. Switched-off event
+// types never reach the app, so they are left out; they are switched back
+// on in Occasion Management (Occasion Types).
+const EventTypes = () => {
+  const [types, setTypes] = useState([]);
+  const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(null);
   const [saving, setSaving] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
-    const { data } = await getOccasionList();
-    if (data && !data.error) setOccasions(data.results?.occasions || []);
+    const [typeRes, offerRes] = await Promise.all([getEventTypeList(), getOfferList()]);
+    setTypes(typeRes.data?.results?.partyTypes || []);
+    setPackages(
+      (offerRes.data?.results?.offer || []).map((offer) => ({
+        value: offer._id,
+        // Packages the app hides anyway say why, so linking them is no surprise
+        label: offer.hidden_reasons?.some((r) => r !== "not_linked")
+          ? `${offer.name_en} (hidden: ${offer.hidden_reasons
+              .filter((r) => r !== "not_linked")
+              .map((r) => HIDDEN_REASONS[r]?.[0] || r)
+              .join(", ")})`
+          : offer.name_en,
+      }))
+    );
     setLoading(false);
   }, []);
 
@@ -322,36 +332,47 @@ const Occasions = ({ eventTypes }) => {
 
   const save = async () => {
     setSaving(true);
-    const { data } = await setOccasionEventTypes({
-      occasionId: editing._id,
-      eventTypeIds: editing.event_types || [],
-      ageGroups: editing.age_groups || [],
+    const { data } = await setEventTypePackages({
+      eventTypeId: editing._id,
+      offerIds: editing.offers || [],
     });
     setSaving(false);
     if (data && !data.error) {
       setEditing(null);
-      done("Occasion updated");
+      done("Packages updated");
       load();
     }
   };
 
+  const active = types
+    .filter((type) => type.status !== false)
+    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+  const hiddenCount = types.length - active.length;
+
   return (
     <>
-      <Card title="Occasions shown for each event type" className="">
+      <Card title="Packages for each event type" className="">
         <p className="px-3 pt-3 text-muted mb-0">
-          Leave event types empty to show an occasion for every event type. Age groups narrow it further (empty = all ages).
+          The app shows these packages when a user picks the event type. Guest limits and cities are set on the Packages tab.
+          {hiddenCount > 0 &&
+            ` ${hiddenCount} switched-off event type${hiddenCount === 1 ? " is" : "s are"} not listed: switch them on in Occasion Management.`}
         </p>
-        <Table loading={loading} empty={!occasions.length} head={["Image", "Occasion", "Event types", "Age groups", "Action"]}>
-          {occasions.map((occasion) => (
-            <tr key={occasion._id}>
+        <Table loading={loading} empty={!active.length} head={["Icon", "Event type", "Packages", "Action"]}>
+          {active.map((type) => (
+            <tr key={type._id}>
               <td>
-                <img src={occasion.image || require("../../../assets/img/Nupload.jpg")} alt="" className="table_img" />
+                <img src={type.icon || require("../../../assets/img/Nupload.jpg")} alt="" className="table_img" />
               </td>
-              <td>{occasion.name_en}</td>
-              <td className="small">{names(eventTypes, occasion.event_types) || <span className="text-muted">All</span>}</td>
-              <td className="small">{names(AGE_GROUPS, occasion.age_groups) || <span className="text-muted">All</span>}</td>
+              <td>{type.name_en}</td>
+              <td className="small">
+                {names(packages, type.offers) || <span className="text-danger">None: the app shows no packages</span>}
+              </td>
               <td>
-                <button className="comman_btn table_viewbtn" type="button" onClick={() => setEditing({ ...occasion })}>
+                <button
+                  className="comman_btn table_viewbtn"
+                  type="button"
+                  onClick={() => setEditing({ ...type, offers: (type.offers || []).map(String) })}
+                >
                   Edit
                 </button>
               </td>
@@ -361,23 +382,14 @@ const Occasions = ({ eventTypes }) => {
       </Card>
 
       {editing && (
-        <Modal title={`Link "${editing.name_en}"`} onClose={() => setEditing(null)} onSave={save} saving={saving}>
+        <Modal title={`Packages for "${editing.name_en}"`} onClose={() => setEditing(null)} onSave={save} saving={saving}>
           <div className="form-group col-12">
-            <label>Event types (empty = all)</label>
+            <label>Packages</label>
             <Select
               isMulti
-              options={eventTypes}
-              value={chosen(eventTypes, editing.event_types)}
-              onChange={(val) => setEditing((p) => ({ ...p, event_types: (val || []).map((v) => v.value) }))}
-            />
-          </div>
-          <div className="form-group col-12">
-            <label>Age groups (empty = all)</label>
-            <Select
-              isMulti
-              options={AGE_GROUPS}
-              value={chosen(AGE_GROUPS, editing.age_groups)}
-              onChange={(val) => setEditing((p) => ({ ...p, age_groups: (val || []).map((v) => v.value) }))}
+              options={packages}
+              value={chosen(packages, editing.offers)}
+              onChange={(val) => setEditing((p) => ({ ...p, offers: (val || []).map((v) => v.value) }))}
             />
           </div>
         </Modal>
@@ -392,7 +404,7 @@ const HIDDEN_REASONS = {
   expired: ["Expired", "Valid Till has passed: set a later date in Marketing Offers"],
   service_off: ["Service off", "A service in it is switched off or deleted: turn it on or replace it"],
   vendor_off: ["Vendor off", "A vendor in it is inactive, blocked or deleted"],
-  no_occasion: ["No active occasion", "Add it to an occasion that is switched on (Occasion Management)"],
+  not_linked: ["Not linked", "Link it to an event type: Event Setup, Event types tab"],
 };
 
 const Packages = ({ cities }) => {
@@ -612,7 +624,7 @@ const EventSetup = () => {
   return (
     <NewFlowLayout slide="ES" tabs={TABS} activeTab={tab} onTab={setTab}>
       {tab === "districts" && <Districts cities={cities} />}
-      {tab === "occasions" && <Occasions eventTypes={eventTypes} />}
+      {tab === "eventTypes" && <EventTypes />}
       {tab === "packages" && <Packages cities={cities} />}
       {tab === "categories" && <Categories eventTypes={eventTypes} />}
     </NewFlowLayout>

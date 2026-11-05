@@ -51,6 +51,7 @@ export const editDistrict = (body) => post("editDistrict", body);
 export const deleteDistrict = (id) => get(`deleteDistrict/${id}`);
 
 // Linking to event types
+export const setEventTypePackages = (body) => post("setEventTypePackages", body);
 export const setOccasionEventTypes = (body) => post("setOccasionEventTypes", body);
 export const setPackageDetails = (body) => post("setPackageDetails", body);
 export const setCategoryEventTypes = (body) => post("setCategoryEventTypes", body);
