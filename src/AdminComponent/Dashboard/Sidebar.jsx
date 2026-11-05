@@ -171,20 +171,6 @@ const Sidebar = ({ slide, getBarClick, getBar }) => {
       key: "NM",
     },
     {
-      label: "Pop-ups",
-      value: "Popups-Management",
-      icon: "fas fa-window-restore",
-      path: "/Admin/Dashboard/Popups-Management",
-      key: "PU",
-    },
-    {
-      label: "App Settings",
-      value: "App-Settings",
-      icon: "fas fa-sliders-h",
-      path: "/Admin/Dashboard/App-Settings",
-      key: "AS",
-    },
-    {
       label: "Help & Support",
       value: "Help-and-Support",
       icon: "fas fa-hands-holding",
